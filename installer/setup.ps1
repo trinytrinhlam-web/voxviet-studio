@@ -31,7 +31,7 @@ $Warnings = New-Object System.Collections.Generic.List[string]
 function Step($n, $text) { Write-Host ""; Write-Host "[$n/7] $text" -ForegroundColor Yellow }
 function Warn($text) { Write-Host "  ! $text" -ForegroundColor DarkYellow; $script:Warnings.Add($text) }
 function Run($exe, [string[]]$argv, $what) {
-    & $exe @argv
+    & $exe @argv | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "$what thất bại (mã $LASTEXITCODE)." }
 }
 function Refresh-Path {
@@ -136,7 +136,7 @@ try {
 
     # ── 6. Dọn bộ nhớ tạm của trình cài thư viện ──
     Step 6 "Dọn file tạm"
-    & $Uv cache prune --ci 2>$null | Out-Null
+    & $Uv -q cache prune --ci | Out-Null
 
     # ── 7. Kiểm tra ──
     Step 7 "Kiểm tra"

@@ -17,6 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  POWERSHELL_TELEMETRY_OPTOUT: "1"
   UV_VERSION: "0.9.5"
   UV_SHA256: "515dc53d7553f1357d0abc1f70acd921fbb9e30230b1d9a08737236daa6ee920"
   APP: C:\VoxVietTest
@@ -70,82 +71,94 @@ jobs:
         id: install
         if: always() && steps.build.outcome == 'success'
         run: |
-          $exe = (Get-ChildItem installer\Output\*.exe)[0].FullName
-          $p = Start-Process $exe -Wait -PassThru -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$env:APP", "/SKIPGIT=1", "/CPUONLY=1", "/TASKS=desktopicon", "/LOG=$PWD\ci-logs\install.log"
-          Copy-Item "$env:APP\data\.local\setup.log" ci-logs\ -ErrorAction SilentlyContinue
-          Write-Host "Mã thoát trình cài: $($p.ExitCode)"
-          if ($p.ExitCode -ne 0) { exit 1 }
-          foreach ($f in ".venv\Scripts\pythonw.exe", "runtime\uv.exe", "web\voxviet.ico", "app.py", "data\giong_co_san.json") {
-            if (-not (Test-Path "$env:APP\$f")) { throw "Thiếu $f" }
-          }
-          $lnk = Get-ChildItem "$env:USERPROFILE\Desktop\VoxViet Studio.lnk", "$env:PUBLIC\Desktop\VoxViet Studio.lnk" -ErrorAction SilentlyContinue
-          if (-not $lnk) { throw "Thiếu biểu tượng trên Desktop" }
-          & "$env:APP\.venv\Scripts\python.exe" -c "import gradio" 2>$null
-          if ($LASTEXITCODE -eq 0) { throw "gradio không được có trong bản cài" }
-          & "$env:APP\.venv\Scripts\python.exe" -c "import vieneu, sea_g2p; print('lõi giọng OK')"
-          if ($LASTEXITCODE -ne 0) { throw "Không nạp được lõi giọng" }
+          $PSNativeCommandUseErrorActionPreference = $false
+          Start-Transcript -Path "$PWD\ci-logs\install-step.log" | Out-Null
+          try {
+            $exe = (Get-ChildItem installer\Output\*.exe)[0].FullName
+            $p = Start-Process $exe -Wait -PassThru -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$env:APP", "/SKIPGIT=1", "/CPUONLY=1", "/TASKS=desktopicon", "/LOG=$PWD\ci-logs\install.log"
+            Copy-Item "$env:APP\data\.local\setup.log" ci-logs\ -ErrorAction SilentlyContinue
+            Write-Host "Mã thoát trình cài: $($p.ExitCode)"
+            if ($p.ExitCode -ne 0) { throw "Trình cài trả mã $($p.ExitCode)" }
+            foreach ($f in ".venv\Scripts\pythonw.exe", "runtime\uv.exe", "web\voxviet.ico", "app.py", "data\giong_co_san.json") {
+              if (-not (Test-Path "$env:APP\$f")) { throw "Thiếu $f" }
+            }
+            $lnk = Get-ChildItem "$env:USERPROFILE\Desktop\VoxViet Studio.lnk", "$env:PUBLIC\Desktop\VoxViet Studio.lnk" -ErrorAction SilentlyContinue
+            if (-not $lnk) { throw "Thiếu biểu tượng trên Desktop" }
+            & "$env:APP\.venv\Scripts\python.exe" -c "import importlib.util as u, sys; sys.exit(0 if u.find_spec('gradio') else 1)"
+            if ($LASTEXITCODE -eq 0) { throw "gradio không được có trong bản cài" }
+            & "$env:APP\.venv\Scripts\python.exe" -c "import vieneu, sea_g2p; print('lõi giọng OK')"
+            if ($LASTEXITCODE -ne 0) { throw "Không nạp được lõi giọng" }
+          } catch { Write-Host "LỖI: $($_ | Out-String)"; throw } finally { Stop-Transcript | Out-Null }
 
       - name: Mở thử (chế độ ứng dụng, giả lập mô hình)
         id: smoke
         if: always() && steps.install.outcome == 'success'
         run: |
-          $env:VOXVIET_STARTUP_GRACE = "45"; $env:VOXVIET_NO_AUTOCHECK = "1"
-          $py = "$env:APP\.venv\Scripts\pythonw.exe"
-          $local = "$env:APP\data\.local"
-          function State($port, $tok) {
-            Invoke-RestMethod "http://127.0.0.1:$port/api/state" -Headers @{ Cookie = "vv_session=$tok" } -TimeoutSec 5
-          }
-          function Wait-State($tok, $old) {
-            for ($i = 0; $i -lt 60; $i++) {
-              Start-Sleep 1
-              try {
-                $port = (Get-Content "$local\instance.json" | ConvertFrom-Json).port
-                $s = State $port $tok
-                if ($s.boot_id -ne $old) { return $s }
-              } catch {}
+          $PSNativeCommandUseErrorActionPreference = $false
+          Start-Transcript -Path "$PWD\ci-logs\smoke-step.log" | Out-Null
+          try {
+            $env:VOXVIET_STARTUP_GRACE = "45"; $env:VOXVIET_NO_AUTOCHECK = "1"
+            $py = "$env:APP\.venv\Scripts\pythonw.exe"
+            $local = "$env:APP\data\.local"
+            function State($port, $tok) {
+              Invoke-RestMethod "http://127.0.0.1:$port/api/state" -Headers @{ Cookie = "vv_session=$tok" } -TimeoutSec 5
             }
-            throw "Phần mềm không phản hồi"
-          }
-          $t0 = Get-Date
-          Start-Process $py -ArgumentList "`"$env:APP\app.py`"", "--app", "--demo", "--no-browser" -WorkingDirectory $env:APP
-          for ($i = 0; $i -lt 30 -and -not (Test-Path "$local\session_token"); $i++) { Start-Sleep 1 }
-          $tok = (Get-Content "$local\session_token").Trim()
-          $s = Wait-State $tok ""
-          "1. Khởi động: $([int]((Get-Date) - $t0).TotalSeconds)s, phiên bản $($s.version), models_ready=$($s.models_ready)"
-          if ($s.version -ne $env:VERSION) { throw "Sai phiên bản" }
+            function Wait-State($tok, $old) {
+              for ($i = 0; $i -lt 60; $i++) {
+                Start-Sleep 1
+                try {
+                  $port = (Get-Content "$local\instance.json" | ConvertFrom-Json).port
+                  $s = State $port $tok
+                  if ($s.boot_id -ne $old) { return $s }
+                } catch {}
+              }
+              throw "Phần mềm không phản hồi"
+            }
+            $t0 = Get-Date
+            Start-Process $py -ArgumentList "`"$env:APP\app.py`"", "--app", "--demo", "--no-browser" -WorkingDirectory $env:APP
+            for ($i = 0; $i -lt 30 -and -not (Test-Path "$local\session_token"); $i++) { Start-Sleep 1 }
+            $tok = (Get-Content "$local\session_token").Trim()
+            $s = Wait-State $tok ""
+            "1. Khởi động: $([int]((Get-Date) - $t0).TotalSeconds)s, phiên bản $($s.version), models_ready=$($s.models_ready)"
+            if ($s.version -ne $env:VERSION) { throw "Sai phiên bản" }
 
-          # 2. Mở lần hai → không tạo phiên mới
-          $p2 = Start-Process $py -ArgumentList "`"$env:APP\app.py`"", "--app", "--demo", "--no-browser" -WorkingDirectory $env:APP -PassThru
-          if (-not $p2.WaitForExit(30000)) { throw "Lần mở thứ hai không tự thoát" }
-          "2. Một phiên duy nhất: OK"
+            # 2. Mở lần hai → không tạo phiên mới
+            $p2 = Start-Process $py -ArgumentList "`"$env:APP\app.py`"", "--app", "--demo", "--no-browser" -WorkingDirectory $env:APP -PassThru
+            if (-not $p2.WaitForExit(30000)) { throw "Lần mở thứ hai không tự thoát" }
+            "2. Một phiên duy nhất: OK"
 
-          # 3. Khởi động lại (như sau khi cập nhật)
-          $port = (Get-Content "$local\instance.json" | ConvertFrom-Json).port
-          Invoke-RestMethod "http://127.0.0.1:$port/api/update/restart" -Method Post -Headers @{ Cookie = "vv_session=$tok"; "X-VoxViet" = "1" } | Out-Null
-          $s2 = Wait-State $tok $s.boot_id
-          "3. Khởi động lại: OK (boot $($s.boot_id) → $($s2.boot_id))"
+            # 3. Khởi động lại (như sau khi cập nhật)
+            $port = (Get-Content "$local\instance.json" | ConvertFrom-Json).port
+            Invoke-RestMethod "http://127.0.0.1:$port/api/update/restart" -Method Post -Headers @{ Cookie = "vv_session=$tok"; "X-VoxViet" = "1" } | Out-Null
+            $s2 = Wait-State $tok $s.boot_id
+            "3. Khởi động lại: OK (boot $($s.boot_id) → $($s2.boot_id))"
 
-          # 4. Không có cửa sổ nào → tự tắt sau thời gian chờ
-          $deadline = (Get-Date).AddSeconds(90)
-          while ((Get-Date) -lt $deadline) {
-            Start-Sleep 3
-            $alive = Get-CimInstance Win32_Process -Filter "Name='pythonw.exe'" | Where-Object { $_.CommandLine -like "*VoxVietTest*" }
-            if (-not $alive) { break }
-          }
-          if ($alive) { throw "Phần mềm không tự tắt khi không còn cửa sổ" }
-          "4. Tự tắt khi không còn cửa sổ: OK"
-          Copy-Item "$local\voxviet.log" ci-logs\ -ErrorAction SilentlyContinue
+            # 4. Không có cửa sổ nào → tự tắt sau thời gian chờ
+            $deadline = (Get-Date).AddSeconds(90)
+            while ((Get-Date) -lt $deadline) {
+              Start-Sleep 3
+              $alive = Get-CimInstance Win32_Process -Filter "Name='pythonw.exe'" | Where-Object { $_.CommandLine -like "*VoxVietTest*" }
+              if (-not $alive) { break }
+            }
+            if ($alive) { throw "Phần mềm không tự tắt khi không còn cửa sổ" }
+            "4. Tự tắt khi không còn cửa sổ: OK"
+            Copy-Item "$local\voxviet.log" ci-logs\ -ErrorAction SilentlyContinue
+          } catch { Write-Host "LỖI: $($_ | Out-String)"; throw } finally { Stop-Transcript | Out-Null }
 
       - name: Gỡ thử (giữ dữ liệu)
         id: uninstall
         if: always() && steps.install.outcome == 'success'
         run: |
-          Get-CimInstance Win32_Process -Filter "Name='pythonw.exe'" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
-          $p = Start-Process "$env:APP\unins000.exe" -Wait -PassThru -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"
-          Start-Sleep 5
-          if (Test-Path "$env:APP\.venv") { throw "Gỡ chưa xoá .venv" }
-          if (-not (Test-Path "$env:APP\data\giong_co_san.json")) { throw "Gỡ đã xoá mất dữ liệu" }
-          "Gỡ: OK (dữ liệu giữ lại)"
+          $PSNativeCommandUseErrorActionPreference = $false
+          Start-Transcript -Path "$PWD\ci-logs\uninstall-step.log" | Out-Null
+          try {
+            Get-CimInstance Win32_Process -Filter "Name='pythonw.exe'" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+            $p = Start-Process "$env:APP\unins000.exe" -Wait -PassThru -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"
+            Start-Sleep 5
+            if (Test-Path "$env:APP\.venv") { throw "Gỡ chưa xoá .venv" }
+            if (-not (Test-Path "$env:APP\data\giong_co_san.json")) { throw "Gỡ đã xoá mất dữ liệu" }
+            "Gỡ: OK (dữ liệu giữ lại)"
+          } catch { Write-Host "LỖI: $($_ | Out-String)"; throw } finally { Stop-Transcript | Out-Null }
 
       - uses: actions/upload-artifact@v4
         if: always() && steps.build.outcome == 'success'
