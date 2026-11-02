@@ -8,7 +8,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
+import socket
+import sys
 import shutil
+import subprocess
 import tempfile
 import threading
 import time
@@ -25,6 +29,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__, audio, catalog, engines, finetune, paths, recording
+from .updater import Updater, UpdateError
 from . import settings as settings_mod
 from .audio import enhance as enhance_mod
 from .engines.base import EngineUnavailable
@@ -36,6 +41,8 @@ from .text import normalize as norm
 from .voices import MAX_VOICES, PRESET_PREFIX
 
 log = logging.getLogger("voxviet.server")
+BOOT_ID = uuid.uuid4().hex[:10]  # đổi mỗi lần khởi động — giao diện dùng để biết phần mềm đã khởi động lại
+_ARGV = [os.path.abspath(sys.argv[0]), *sys.argv[1:]] if sys.argv and sys.argv[0] else []
 WEB_DIR = paths.ROOT / "web"
 AVATAR_DIR = WEB_DIR / "avatars"
 
@@ -92,6 +99,30 @@ class Jobs:
         return self._jobs.get(jid)
 
 
+def schedule_restart(delay: float = 1.0) -> None:
+    """Khởi động lại phần mềm: mở tiến trình mới (chờ cổng trống) rồi thoát tiến trình hiện tại."""
+    def go():
+        args = list(_ARGV)
+        if "--no-browser" not in args:
+            args.append("--no-browser")  # cửa sổ giao diện đang mở sẵn, chỉ cần tải lại
+        flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" and sys.executable.lower().endswith("pythonw.exe") else 0
+        subprocess.Popen([sys.executable, *args], cwd=str(paths.ROOT), creationflags=flags,
+                         env=dict(os.environ, VOXVIET_RESTARTED="1"))
+        os._exit(0)
+    threading.Timer(delay, go).start()
+
+
+def _wait_port_free(port: int, timeout: float = 30.0) -> None:
+    t = time.time()
+    while time.time() - t < timeout:
+        with socket.socket() as s:
+            try:
+                s.bind(("127.0.0.1", port))
+                return
+            except OSError:
+                time.sleep(0.3)
+
+
 def _friendly(e: Exception) -> str:
     if isinstance(e, (ValueError, EngineUnavailable, RuntimeError)):
         return str(e)
@@ -128,10 +159,31 @@ def _dialect(d: str | None) -> str | None:
 
 # ── dựng ứng dụng ─────────────────────────────────────────────────────────────
 
-def create_app(studio: Studio | None = None) -> FastAPI:
+def create_app(studio: Studio | None = None, updater: Updater | None = None,
+               restart: Callable[[], None] | None = None) -> FastAPI:
     studio = studio or Studio()
+    updater = updater or Updater()
+    restart = restart or schedule_restart
     jobs = Jobs()
     app = FastAPI(title="VoxViet Studio", docs_url=None, redoc_url=None, openapi_url=None)
+    update_cache: dict = {}
+
+    def auto_check():
+        """Tự kiểm tra bản mới tối đa mỗi ngày một lần (chạy nền, lỗi thì bỏ qua)."""
+        try:
+            if not updater.is_repo():
+                return
+            last = updater.status().get("last_check")
+            if last and time.time() - time.mktime(time.strptime(last, "%Y-%m-%d %H:%M")) < 20 * 3600:
+                cached = updater.status().get("last_result") or {}
+                update_cache.update(cached)
+                return
+            update_cache.update({k: v for k, v in updater.check().items() if k in ("current", "latest", "available")})
+        except Exception as e:  # không có mạng, chưa đăng nhập GitHub…
+            log.info("Bỏ qua tự kiểm tra cập nhật: %s", e)
+
+    if os.environ.get("VOXVIET_DEMO") != "1" and os.environ.get("VOXVIET_NO_AUTOCHECK") != "1":
+        threading.Thread(target=auto_check, daemon=True).start()
 
     @app.middleware("http")
     async def guard(request: Request, call_next):
@@ -191,6 +243,8 @@ def create_app(studio: Studio | None = None) -> FastAPI:
             "default_preset": f"{PRESET_PREFIX}{catalog.default_id()}",
             "finetune": {"ok": ft_ok, "message": ft_msg},
             "avatars": sorted(p.stem for p in AVATAR_DIR.glob("*.webp")) if AVATAR_DIR.exists() else [],
+            "boot_id": BOOT_ID,
+            "update": {k: update_cache.get(k) for k in ("available", "latest")},
         }
 
     @app.get("/api/voices")
@@ -585,6 +639,67 @@ def create_app(studio: Studio | None = None) -> FastAPI:
         except Exception as e:
             raise HTTPException(400, _friendly(e))
 
+    # ── cập nhật & đồng bộ ──
+    def upd_error(e: Exception) -> HTTPException:
+        return HTTPException(400, _friendly(e))
+
+    @app.get("/api/update/status")
+    def update_status():
+        st = updater.status()
+        st["cached"] = dict(update_cache)
+        st["boot_id"] = BOOT_ID
+        return st
+
+    @app.post("/api/update/check")
+    def update_check():
+        try:
+            info = updater.check()
+        except Exception as e:
+            raise upd_error(e)
+        update_cache.update({k: info[k] for k in ("current", "latest", "available")})
+        return info
+
+    @app.post("/api/jobs/update")
+    def job_update():
+        def run(progress, logline):
+            progress(0.1, "Đang cập nhật…")
+            res = updater.apply(log=logline)
+            update_cache.update({"available": False, "latest": res["to"]})
+            logline("Đang khởi động lại phần mềm…")
+            restart()
+            return {**res, "restarting": True}
+        return {"job": jobs.submit("update", run)}
+
+    @app.post("/api/jobs/rollback")
+    def job_rollback():
+        def run(progress, logline):
+            res = updater.rollback(log=logline)
+            logline("Đang khởi động lại phần mềm…")
+            restart()
+            return {**res, "restarting": True}
+        return {"job": jobs.submit("rollback", run)}
+
+    @app.post("/api/jobs/sync")
+    def job_sync():
+        def run(progress, logline):
+            progress(0.2, "Đang đồng bộ với GitHub…")
+            return updater.sync_data(log=logline)
+        return {"job": jobs.submit("sync", run)}
+
+    @app.post("/api/update/connect")
+    async def update_connect(request: Request):
+        d = await request.json()
+        try:
+            updater.connect(d.get("url", ""))
+        except Exception as e:
+            raise upd_error(e)
+        return updater.status()
+
+    @app.post("/api/update/restart")
+    def update_restart():
+        restart()
+        return {"restarting": True}
+
     # ── file kết quả & giao diện ──
     @app.get("/files/{rel:path}")
     def files(rel: str):
@@ -603,6 +718,8 @@ def create_app(studio: Studio | None = None) -> FastAPI:
 
 def run(port: int = 7860, open_window: bool = True) -> None:
     import uvicorn
+    if os.environ.get("VOXVIET_RESTARTED") == "1":
+        _wait_port_free(port)  # tiến trình cũ đang thoát
     app = create_app()
     url = f"http://127.0.0.1:{port}/"
     if open_window:

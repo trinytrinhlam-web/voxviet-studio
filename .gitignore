@@ -14,6 +14,9 @@ data/settings.json
 # Hồ sơ trình duyệt của cửa sổ ứng dụng
 data/.app-window/
 
+# Trạng thái riêng của từng máy (lịch sử cập nhật, lần kiểm tra cuối)
+data/.local/
+
 # Bộ dữ liệu trung gian khi fine-tune
 data/recordings/*/train.parquet
 

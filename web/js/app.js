@@ -59,7 +59,7 @@ const store = {
 };
 
 // ── điều hướng ──────────────────────────────────────────────────────────────
-const VIEWS = ["doc", "hoi-thoai", "long-tieng", "truc-tiep", "kho-giong", "phong-thu", "so-sanh", "cai-dat"];
+const VIEWS = ["doc", "hoi-thoai", "long-tieng", "truc-tiep", "kho-giong", "phong-thu", "so-sanh", "cai-dat", "cap-nhat"];
 const onShow = {};
 function route() {
   const id = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "doc";
@@ -735,6 +735,129 @@ function initSettings() {
   onShow["cai-dat"] = () => { loadLex(); system(); };
 }
 
+// ── 9. Cập nhật ─────────────────────────────────────────────────────────────
+function initUpdate() {
+  const setBadge = (on) => { $("#nav-update-badge").hidden = !on; };
+  setBadge(!!STATE.update?.available);
+  let lastInfo = null;
+
+  function stateLine(kind, text) {
+    $("#cn-state").innerHTML = `<span class="dot ${kind}"></span><span></span>`;
+    $("#cn-state span:last-child").textContent = text;
+  }
+
+  function renderNotes(info) {
+    const panel = $("#cn-notes-panel");
+    if (!info || !info.available) { panel.hidden = true; return; }
+    panel.hidden = false;
+    $("#cn-notes-title").textContent = `Có gì mới trong ${info.latest}`;
+    const notes = info.notes?.length ? info.notes : [{ version: info.latest, date: "", items: info.commits.map((c) => c.subject) }];
+    $("#cn-notes").innerHTML = notes.map((n) => `<div><h3>Phiên bản ${esc(n.version)}<span class="hint">${esc(n.date)}</span></h3>
+      <ul>${n.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ul></div>`).join("");
+  }
+
+  function renderStatus(st) {
+    $("#cn-version").textContent = st.version;
+    $("#cn-last").textContent = st.last_check ? `Kiểm tra lần cuối: ${st.last_check}` : "";
+    const avail = lastInfo ? lastInfo.available : st.cached?.available;
+    if (!st.git) stateLine("bad", "Máy chưa cài Git — cần Git để cập nhật.");
+    else if (!st.repo) stateLine("warn", "Chưa kết nối GitHub.");
+    else if (avail) stateLine("warn", `Có bản mới ${lastInfo?.latest || st.cached.latest}`);
+    else if (st.last_check) stateLine("ok", "Bạn đang dùng bản mới nhất");
+    else stateLine("", "Chưa kiểm tra");
+    $("#cn-apply").hidden = !avail;
+    if (lastInfo?.available) $("#cn-apply span").textContent = `Cập nhật lên ${lastInfo.latest}`;
+    setBadge(!!avail);
+    $("#cn-connect").hidden = !st.git || st.repo;
+    $("#cn-channel").innerHTML = st.repo
+      ? `<div class="status-line"><span class="dot ok"></span><span>GitHub · nhánh main</span></div><div class="hint" style="word-break:break-all">${esc(st.remote || "")}</div><div class="hint num">Mã bản đang chạy: ${esc(st.commit || "")}</div>`
+      : `<div class="hint">Chưa có kênh cập nhật.</div>`;
+    const dc = st.data_changes || 0;
+    $("#cn-sync-stats").innerHTML = `<span>Lần cuối: <b>${esc(st.last_sync || "chưa")}</b></span><span>Chưa gửi: <b>${dc}</b> thay đổi</span>`;
+    $("#cn-sync").disabled = !st.repo;
+    const hist = st.history || [];
+    $("#cn-history").innerHTML = hist.length ? hist.map((h) => `<div class="history-row">
+        <span class="dot ${h.ok ? "ok" : "bad"}" title="${h.ok ? "Thành công" : "Không thành công"}"></span>
+        <span>${esc(h.from)} → ${esc(h.to)}${h.note ? ` <span class="hint">· ${esc(h.note)}</span>` : ""}</span>
+        <span class="when">${esc(h.time)}</span></div>`).join("") : `<p class="hint">Chưa có lần cập nhật nào.</p>`;
+    $("#cn-rollback").disabled = !hist.some((h) => h.ok && h.from_commit);
+  }
+
+  async function refresh() {
+    try { renderStatus(await api.get("/api/update/status")); } catch (err) { stateLine("bad", err.message); }
+  }
+
+  async function check() {
+    const b = $("#cn-check");
+    b.disabled = true;
+    stateLine("", "Đang hỏi GitHub…");
+    try {
+      lastInfo = await api.post("/api/update/check");
+      renderNotes(lastInfo);
+      if (!lastInfo.available) toast(lastInfo.data_only ? "Phần mềm đã mới nhất. Có dữ liệu mới từ máy khác — bấm Đồng bộ ngay." : "Bạn đang dùng bản mới nhất.");
+    } catch (err) { toast(err.message, "err"); }
+    b.disabled = false;
+    refresh();
+  }
+
+  // Chờ phần mềm khởi động lại (boot_id đổi) rồi tải lại giao diện.
+  async function waitRestart(oldBoot) {
+    $("#cn-busy-msg").textContent = "Đang khởi động lại phần mềm…";
+    for (let i = 0; i < 120; i++) {
+      await new Promise((r) => setTimeout(r, 1000));
+      try {
+        const st = await api.get("/api/state");
+        if (st.boot_id !== oldBoot) { location.hash = "#cap-nhat"; location.reload(); return; }
+      } catch { /* máy chủ đang khởi động lại */ }
+    }
+    $("#cn-busy-msg").textContent = "Phần mềm chưa khởi động lại được. Hãy đóng cửa sổ và mở lại bằng run.bat.";
+  }
+
+  async function runWithLog(url, label) {
+    const log = $("#cn-log");
+    log.hidden = false;
+    log.textContent = "";
+    busy("cn", true, label);
+    $("#cn-check").disabled = true;
+    const oldBoot = STATE.boot_id;
+    try {
+      const r = await runJob(url, {}, (j) => { setProg("cn", j.progress); log.textContent = j.log.join("\n"); log.scrollTop = log.scrollHeight; });
+      if (r.restarting) { await waitRestart(oldBoot); return; }
+    } catch (err) {
+      log.textContent += `\n\n${err.message}`;
+      toast(err.message, "err");
+    }
+    busy("cn", false);
+    $("#cn-check").disabled = false;
+    refresh();
+  }
+
+  $("#cn-check").addEventListener("click", check);
+  $("#cn-apply").addEventListener("click", () => runWithLog("/api/jobs/update", "Đang cập nhật…"));
+  let confirmRb = false;
+  $("#cn-rollback").addEventListener("click", (e) => {
+    if (!confirmRb) { confirmRb = true; e.currentTarget.lastChild.textContent = "Bấm lần nữa để quay lại"; return; }
+    runWithLog("/api/jobs/rollback", "Đang quay lại phiên bản trước…");
+  });
+  $("#cn-sync").addEventListener("click", async () => {
+    const b = $("#cn-sync"), log = $("#cn-sync-log");
+    b.disabled = true;
+    log.hidden = false;
+    log.textContent = "Đang đồng bộ…";
+    try {
+      const r = await runJob("/api/jobs/sync", {}, (j) => { log.textContent = j.log.join("\n") || j.message; });
+      toast(`Đã đồng bộ: gửi ${r.committed}, nhận ${r.pulled} thay đổi.`);
+    } catch (err) { log.textContent += `\n${err.message}`; toast(err.message, "err"); }
+    b.disabled = false;
+    refresh();
+  });
+  $("#cn-connect").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try { renderStatus(await api.post("/api/update/connect", { url: $("#cn-url").value })); toast("Đã kết nối GitHub."); } catch (err) { toast(err.message, "err"); }
+  });
+  onShow["cap-nhat"] = refresh;
+}
+
 async function system() {
   try {
     const s = await api.get("/api/system");
@@ -765,6 +888,7 @@ async function boot() {
   initDoc(); initDialogue(); initDub(); initLive(); initLibrary(); initSettings();
   await initStudio().catch((e) => toast(e.message, "err"));
   initCompare();
+  initUpdate();
   window.addEventListener("hashchange", route);
   route();
   system();

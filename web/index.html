@@ -34,6 +34,7 @@
       <div class="nav-group">Khác</div>
       <a href="#so-sanh"><svg class="icon"><use href="/icons.svg#i-scale"/></svg><span>So sánh Google</span></a>
       <a href="#cai-dat"><svg class="icon"><use href="/icons.svg#i-settings-2"/></svg><span>Cài đặt</span></a>
+      <a href="#cap-nhat"><svg class="icon"><use href="/icons.svg#i-refresh-cw"/></svg><span>Cập nhật</span><b class="nav-badge" id="nav-update-badge" hidden>mới</b></a>
     </nav>
     <div class="rail-foot">
       <div class="status-line"><span class="dot" id="core-dot"></span><span class="txt" id="core-status">Đang kiểm tra lõi giọng…</span></div>
@@ -306,6 +307,55 @@
             <div class="field"><label for="ss-emo">Cảm xúc</label><select id="ss-emo"></select></div>
             <button class="btn primary big block" type="button" id="ss-go"><svg class="icon"><use href="/icons.svg#i-scale"/></svg>So sánh</button>
             <div id="ss-busy" hidden class="stack" style="gap:6px"><div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="ss-busy-msg">Đang tạo…</span></div><div class="progress"><i id="ss-prog"></i></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Cập nhật ────────────────────────────────────────────────────── -->
+    <section class="view" id="view-cap-nhat" hidden aria-labelledby="h-cn">
+      <div class="page-head"><div><h1 id="h-cn">Cập nhật</h1><p class="lede">Nhận bản vá và tính năng mới từ GitHub, trên máy này hoặc bất kỳ máy nào của bạn.</p></div></div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel stack" style="gap:var(--sp-4);padding:var(--sp-5)">
+            <div class="version-row">
+              <div><span class="section-label">Phiên bản đang dùng</span><div class="version-big num" id="cn-version">—</div></div>
+              <div class="version-state" id="cn-state"><span class="dot"></span><span>Đang đọc trạng thái…</span></div>
+            </div>
+            <div class="toolbar">
+              <button class="btn primary big" type="button" id="cn-apply" hidden><svg class="icon"><use href="/icons.svg#i-download"/></svg><span>Cập nhật ngay</span></button>
+              <button class="btn big" type="button" id="cn-check"><svg class="icon"><use href="/icons.svg#i-refresh-cw"/></svg>Kiểm tra cập nhật</button>
+              <span class="hint" id="cn-last"></span>
+            </div>
+            <div id="cn-busy" hidden class="stack" style="gap:6px"><div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="cn-busy-msg">Đang cập nhật…</span></div><div class="progress"><i id="cn-prog"></i></div></div>
+            <div class="log" id="cn-log" hidden></div>
+          </div>
+          <div class="panel stack" id="cn-notes-panel" hidden>
+            <h2 id="cn-notes-title">Có gì mới</h2>
+            <div id="cn-notes" class="changelog"></div>
+          </div>
+        </div>
+        <aside class="inspector">
+          <div class="panel stack">
+            <h2>Đồng bộ kho giọng</h2>
+            <p class="hint">Gửi kho giọng, bản thu, từ điển của máy này lên GitHub và lấy về thay đổi từ máy khác.</p>
+            <div class="stats" id="cn-sync-stats"></div>
+            <button class="btn" type="button" id="cn-sync"><svg class="icon"><use href="/icons.svg#i-upload"/></svg>Đồng bộ ngay</button>
+            <div class="log" id="cn-sync-log" hidden style="height:120px"></div>
+          </div>
+          <div class="panel stack">
+            <h2>Lịch sử cập nhật</h2>
+            <div id="cn-history" class="history-list"></div>
+            <button class="btn ghost" type="button" id="cn-rollback"><svg class="icon"><use href="/icons.svg#i-arrow-left"/></svg>Quay lại phiên bản trước</button>
+          </div>
+          <div class="panel stack">
+            <h2>Kênh cập nhật</h2>
+            <div class="stack" style="gap:6px;font-size:var(--fs-sm)" id="cn-channel"></div>
+            <form id="cn-connect" class="stack" hidden style="gap:var(--sp-2)">
+              <label for="cn-url" class="hint">Thư mục này chưa nối với GitHub. Dán địa chỉ repo:</label>
+              <input type="text" id="cn-url" placeholder="https://github.com/tai-khoan/voxviet-studio">
+              <button class="btn" type="submit">Kết nối GitHub</button>
+            </form>
           </div>
         </aside>
       </div>
