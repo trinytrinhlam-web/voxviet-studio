@@ -1,0 +1,19 @@
+{
+  "all": {
+    "VoxViet": "vốc việt"
+  },
+  "vi": {
+    "v.v.": "vân vân",
+    "vv.": "vân vân",
+    "k/g": "kính gửi"
+  },
+  "en": {
+    "e.g.": "for example",
+    "i.e.": "that is",
+    "etc.": "et cetera",
+    "vs.": "versus",
+    "Mr.": "mister",
+    "Mrs.": "missus",
+    "Dr.": "doctor"
+  }
+}

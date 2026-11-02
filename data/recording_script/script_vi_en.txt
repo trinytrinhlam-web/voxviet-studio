@@ -1,0 +1,183 @@
+# Kịch bản thu âm giọng — VoxViet Studio
+# Định dạng: mã|nhóm|cảm xúc|câu
+# Nhóm: vi (tiếng Việt), mix (Việt xen Anh), emo (cảm xúc), en (tiếng Anh)
+# Đọc tự nhiên như đang nói chuyện, đúng giọng vùng miền của bạn, không đọc như đọc bài.
+# Mỗi câu ~3–12 giây. Tổng cộng khoảng 25–35 phút nếu đọc hết.
+#
+# ── PHẦN 1: TIẾNG VIỆT (phủ đủ thanh điệu, vần, phụ âm) ───────────────────────
+vi001|vi|trung_tinh|Sáng nay trời trong xanh, gió nhẹ thổi qua những hàng cây ven hồ.
+vi002|vi|trung_tinh|Bà ngoại tôi năm nay đã tám mươi tuổi nhưng vẫn còn rất minh mẫn.
+vi003|vi|trung_tinh|Chiếc xe đạp cũ dựng ở góc sân đã gắn bó với tôi suốt thời học sinh.
+vi004|vi|trung_tinh|Muốn nấu phở ngon, nước dùng phải được ninh từ xương bò trong nhiều giờ.
+vi005|vi|trung_tinh|Thư viện thành phố mở cửa từ bảy giờ sáng đến chín giờ tối mỗi ngày.
+vi006|vi|trung_tinh|Những cánh đồng lúa chín vàng trải dài tít tắp đến tận chân trời.
+vi007|vi|trung_tinh|Anh ấy nghỉ phép một tuần để về quê thăm bố mẹ và họ hàng.
+vi008|vi|trung_tinh|Cô giáo dặn cả lớp phải ôn bài kỹ trước kỳ thi cuối học kỳ.
+vi009|vi|trung_tinh|Ngõ nhỏ nhà tôi lúc nào cũng rộn ràng tiếng rao của những gánh hàng rong.
+vi010|vi|trung_tinh|Quyển sách này kể về cuộc đời của một người thợ gốm ở làng Bát Tràng.
+vi011|vi|trung_tinh|Hôm qua tôi ghé chợ mua mấy bó rau muống, một ít thịt ba chỉ và chục quả trứng.
+vi012|vi|trung_tinh|Đường lên Sa Pa quanh co uốn lượn, hai bên là núi đồi trùng điệp.
+vi013|vi|trung_tinh|Khi khuya, khắp xóm chỉ còn tiếng dế kêu râm ran trong bụi cỏ.
+vi014|vi|trung_tinh|Chuyến tàu Thống Nhất chạy dọc đất nước từ Hà Nội vào Sài Gòn.
+vi015|vi|trung_tinh|Em gái tôi thích vẽ tranh, nhất là những bức tranh phong cảnh làng quê.
+vi016|vi|trung_tinh|Ông nội thường kể chuyện ngày xưa bên ấm trà nóng vào mỗi buổi tối.
+vi017|vi|trung_tinh|Cơn mưa rào bất chợt khiến mọi người vội vã tìm chỗ trú dưới mái hiên.
+vi018|vi|trung_tinh|Quán cà phê ở đầu phố có món bánh mì trứng ốp la rất ngon.
+vi019|vi|trung_tinh|Người nông dân dậy từ sớm tinh mơ để ra đồng gieo mạ.
+vi020|vi|trung_tinh|Tiếng chuông chùa ngân nga vang vọng khắp thung lũng yên bình.
+vi021|vi|trung_tinh|Nhà hàng xóm vừa nuôi thêm một chú chó nhỏ lông xù rất đáng yêu.
+vi022|vi|trung_tinh|Đọc sách mỗi ngày giúp ta mở mang kiến thức và rèn luyện sự kiên nhẫn.
+vi023|vi|trung_tinh|Chị Huyền khuyên tôi nên uống đủ nước và ngủ sớm hơn.
+vi024|vi|trung_tinh|Những chiếc thuyền thúng chòng chành trên mặt biển xanh ngắt.
+vi025|vi|trung_tinh|Vịnh Hạ Long có hàng nghìn hòn đảo lớn nhỏ với hình thù kỳ lạ.
+vi026|vi|trung_tinh|Bác bảo vệ khuyên chúng tôi khoá cửa cẩn thận trước khi đi xa.
+vi027|vi|trung_tinh|Món canh chua cá lóc là đặc sản nổi tiếng của miền Tây Nam Bộ.
+vi028|vi|trung_tinh|Ngày mai, cuộc họp sẽ bắt đầu lúc chín giờ ba mươi phút tại phòng số hai.
+vi029|vi|trung_tinh|Tổng chi phí cho chuyến đi là ba triệu năm trăm nghìn đồng mỗi người.
+vi030|vi|trung_tinh|Ngày hai mươi tháng mười một là ngày Nhà giáo Việt Nam.
+vi031|vi|trung_tinh|Năm hai nghìn không trăm hai mươi lăm, dân số cả nước đã vượt một trăm triệu người.
+vi032|vi|trung_tinh|Nhiệt độ hôm nay dao động từ hai mươi hai đến ba mươi mốt độ.
+vi033|vi|trung_tinh|Số điện thoại của tôi là không chín không tám, một hai ba, bốn năm sáu.
+vi034|vi|trung_tinh|Cậu bé nghịch ngợm trèo lên cây ổi sau vườn để hái quả.
+vi035|vi|trung_tinh|Huế mộng mơ với dòng sông Hương hiền hoà và những lăng tẩm cổ kính.
+vi036|vi|trung_tinh|Khuya rồi mà ngoài đường vẫn còn tiếng xe cộ qua lại.
+vi037|vi|trung_tinh|Thuở nhỏ, tôi hay theo mẹ ra bờ suối giặt quần áo.
+vi038|vi|trung_tinh|Gió mùa đông bắc tràn về khiến cả miền Bắc trở lạnh đột ngột.
+vi039|vi|trung_tinh|Chú Tư bán vé số dạo ở bến xe đã hơn hai mươi năm nay.
+vi040|vi|trung_tinh|Nghệ nhân tỉ mỉ khắc từng đường nét trên tấm gỗ quý.
+vi041|vi|trung_tinh|Bạn có biết đường nào đi tới bưu điện gần nhất không?
+vi042|vi|trung_tinh|Tại sao hôm nay bạn đến muộn vậy, có chuyện gì xảy ra à?
+vi043|vi|trung_tinh|Cuối tuần này cả nhà mình đi cắm trại ở ngoại ô nhé, được không?
+vi044|vi|trung_tinh|Liệu chúng ta có kịp hoàn thành dự án trước thứ sáu không nhỉ?
+vi045|vi|trung_tinh|Bao giờ thì chuyến bay tiếp theo đi Đà Nẵng cất cánh?
+vi046|vi|trung_tinh|Ai là người đã để quên chiếc ô màu xanh ở phòng khách thế?
+vi047|vi|trung_tinh|Con mèo nhà bên cứ chiều chiều lại sang sân nhà tôi nằm sưởi nắng.
+vi048|vi|trung_tinh|Những ngọn đèn lồng đủ màu sắc lung linh trên phố cổ Hội An.
+vi049|vi|trung_tinh|Trận bóng đá tối qua kết thúc với tỉ số hai một nghiêng về đội chủ nhà.
+vi050|vi|trung_tinh|Muốn thành công thì phải kiên trì, chăm chỉ và không ngừng học hỏi.
+vi051|vi|trung_tinh|Ngoài hiên, giàn hoa giấy đang nở rộ một màu hồng rực rỡ.
+vi052|vi|trung_tinh|Xưởng may tuyển thêm hai mươi công nhân cho đơn hàng cuối năm.
+vi053|vi|trung_tinh|Ông khuyên cháu đừng nghịch lửa vì rất nguy hiểm.
+vi054|vi|trung_tinh|Nước sông dâng cao sau mấy ngày mưa lớn liên tiếp.
+vi055|vi|trung_tinh|Nhờ chăm chỉ luyện tập, anh ấy đã giành huy chương vàng môn bơi lội.
+vi056|vi|trung_tinh|Quả sầu riêng có mùi rất nồng nhưng nhiều người lại mê mẩn hương vị của nó.
+vi057|vi|trung_tinh|Khuôn viên trường đại học rợp bóng cây xanh mát.
+vi058|vi|trung_tinh|Người ta thường nói, một nụ cười bằng mười thang thuốc bổ.
+vi059|vi|trung_tinh|Tôi đã đặt lịch khám răng vào sáng thứ bảy tuần sau.
+vi060|vi|trung_tinh|Tháng giêng là tháng ăn chơi, tháng hai trồng đậu, tháng ba trồng cà.
+vi061|vi|trung_tinh|Bầu trời đêm đầy sao, xa xa vọng lại tiếng sóng vỗ rì rào.
+vi062|vi|trung_tinh|Chiếc đồng hồ quả lắc treo tường đã chạy suốt ba đời nhà tôi.
+vi063|vi|trung_tinh|Mỗi sáng, chợ hoa Quảng An tấp nập người mua kẻ bán.
+vi064|vi|trung_tinh|Đội cứu hộ đã kịp thời đưa những người mắc kẹt ra khỏi vùng lũ.
+vi065|vi|trung_tinh|Bánh chưng, bánh tét là món ăn không thể thiếu trong ngày Tết cổ truyền.
+vi066|vi|trung_tinh|Hãy nhớ tắt điện, khoá ga và đóng cửa sổ trước khi ra khỏi nhà.
+vi067|vi|trung_tinh|Chiếc lá vàng cuối cùng rơi xuống, báo hiệu mùa thu sắp qua.
+vi068|vi|trung_tinh|Cửa hàng giảm giá ba mươi phần trăm cho tất cả các mặt hàng mùa hè.
+vi069|vi|trung_tinh|Cậu ấy chạy một mạch mười cây số mà không hề dừng lại nghỉ.
+vi070|vi|trung_tinh|Ở vùng cao, người dân trồng ngô và lúa nương trên những sườn đồi dốc.
+vi071|vi|trung_tinh|Tôi vẫn nhớ như in buổi chiều đầu tiên đặt chân đến thành phố này.
+vi072|vi|trung_tinh|Trưa nay nắng gắt quá, mình nghỉ một chút rồi hãy đi tiếp.
+vi073|vi|trung_tinh|Chuyện kể rằng, ngày xửa ngày xưa, có hai anh em nhà nọ sống nương tựa vào nhau.
+vi074|vi|trung_tinh|Khi bình minh ló rạng, đoàn người bắt đầu leo lên đỉnh Phan Xi Păng.
+vi075|vi|trung_tinh|Món gỏi cuốn tôm thịt chấm nước mắm chua ngọt ăn mãi không chán.
+vi076|vi|trung_tinh|Giá xăng tuần này tăng thêm năm trăm đồng mỗi lít.
+vi077|vi|trung_tinh|Nghe tiếng gà gáy, cả làng bắt đầu một ngày lao động mới.
+vi078|vi|trung_tinh|Chị ấy luôn nở nụ cười hiền hậu mỗi khi gặp người quen.
+vi079|vi|trung_tinh|Đừng vội vàng đưa ra quyết định khi đang tức giận.
+vi080|vi|trung_tinh|Trong vườn có đủ loại cây: xoài, nhãn, vải, mít và bưởi.
+vi081|vi|trung_tinh|Bộ phim tài liệu kể lại hành trình gian nan của những người lính năm xưa.
+vi082|vi|trung_tinh|Xin quý khách vui lòng thắt dây an toàn và giữ trật tự trong suốt hành trình.
+vi083|vi|trung_tinh|Sau giờ học, lũ trẻ ùa ra sân chơi nhảy dây, đá cầu.
+vi084|vi|trung_tinh|Ông bà ta có câu: uống nước nhớ nguồn, ăn quả nhớ kẻ trồng cây.
+vi085|vi|trung_tinh|Phòng làm việc của tôi ở tầng mười bảy, nhìn thẳng ra sông.
+vi086|vi|trung_tinh|Bản tin thời tiết cho biết sẽ có bão lớn đổ bộ vào cuối tuần.
+vi087|vi|trung_tinh|Nhà sư nhẹ nhàng quét lá trong sân chùa vắng lặng.
+vi088|vi|trung_tinh|Sương mù dày đặc phủ kín cả con đèo từ sáng sớm.
+vi089|vi|trung_tinh|Mẹ dặn tôi mua thêm nước mắm, đường, muối và một gói hạt tiêu.
+vi090|vi|trung_tinh|Hồ Gươm về đêm lung linh ánh đèn, du khách tản bộ thong thả quanh hồ.
+# ── PHẦN 2: TIẾNG VIỆT XEN TIẾNG ANH (đọc từ tiếng Anh như bạn vẫn nói hằng ngày) ─
+mix001|mix|trung_tinh|Sáng nay mình có một cuộc meeting online với khách hàng lúc mười giờ.
+mix002|mix|trung_tinh|Bạn nhớ gửi file báo cáo qua email trước deadline thứ sáu nhé.
+mix003|mix|trung_tinh|Công ty đang ứng dụng AI và machine learning để cải thiện sản phẩm.
+mix004|mix|trung_tinh|Mình vừa đổi sang laptop mới, cài lại Windows mất cả buổi chiều.
+mix005|mix|trung_tinh|Video này đã đạt một triệu view chỉ sau hai ngày đăng lên YouTube.
+mix006|mix|trung_tinh|Anh ấy là CEO của một startup công nghệ ở Thành phố Hồ Chí Minh.
+mix007|mix|trung_tinh|Tối nay team mình đi team building ở một quán nướng gần văn phòng.
+mix008|mix|trung_tinh|Đừng quên like, share và subscribe kênh để ủng hộ mình nhé.
+mix009|mix|trung_tinh|Ứng dụng này cho phép bạn đặt món online và thanh toán bằng QR code.
+mix010|mix|trung_tinh|Mình đang học tiếng Anh để chuẩn bị cho kỳ thi IELTS vào tháng sau.
+mix011|mix|trung_tinh|Phần mềm báo lỗi, chắc phải update lên phiên bản mới nhất mới chạy được.
+mix012|mix|trung_tinh|Chị ấy làm marketing cho một brand thời trang khá nổi tiếng.
+mix013|mix|trung_tinh|Cuối tuần này có concert của một ban nhạc indie ở sân vận động.
+mix014|mix|trung_tinh|Nhớ backup dữ liệu lên Google Drive trước khi format máy.
+mix015|mix|trung_tinh|Shop đang có chương trình sale off năm mươi phần trăm cho khách hàng thân thiết.
+mix016|mix|trung_tinh|Mình thích xem Netflix vào buổi tối sau khi làm xong việc.
+mix017|mix|trung_tinh|Hôm nay chúng ta sẽ học cách viết code Python cơ bản.
+mix018|mix|trung_tinh|Bạn có thể check in trực tuyến trên website của hãng hàng không.
+mix019|mix|trung_tinh|Món này phải ăn kèm với một ly trà sữa trân châu mới đúng vibe.
+mix020|mix|trung_tinh|Thông tin chi tiết mình đã để ở phần description bên dưới video.
+mix021|mix|trung_tinh|Người ta hay nói: practice makes perfect, cứ luyện tập rồi sẽ giỏi.
+mix022|mix|trung_tinh|Cô ấy chào mọi người bằng một câu rất dễ thương: good morning everyone!
+mix023|mix|trung_tinh|Dự án này cần một designer giỏi về UI UX và một developer front end.
+mix024|mix|trung_tinh|Mình vừa mua một chiếc smartphone mới với camera rất xịn.
+mix025|mix|trung_tinh|Khi thuyết trình, hãy nhìn vào audience và nói thật tự tin.
+# ── PHẦN 3: CẢM XÚC (thể hiện rõ cảm xúc, như đang đóng kịch) ──────────────────
+emo001|emo|vui|Trời ơi, mình đậu đại học rồi! Vui quá đi mất!
+emo002|emo|vui|Cảm ơn mọi người nhiều lắm, hôm nay là sinh nhật tuyệt vời nhất của mình!
+emo003|emo|vui|Ha ha, bạn kể chuyện hài thật đấy, mình cười đau cả bụng.
+emo004|emo|vui|Cuối cùng cũng được nghỉ Tết rồi, về nhà ăn bánh chưng thôi!
+emo005|emo|vui|Nhìn kìa, cầu vồng đẹp quá, chụp ngay một tấm ảnh nào!
+emo006|emo|buon|Con chó già của tôi đã mất sáng nay, nhà bỗng trống trải quá.
+emo007|emo|buon|Tôi đã cố gắng hết sức rồi, nhưng có lẽ như vậy vẫn là chưa đủ.
+emo008|emo|buon|Ngày bạn ấy đi, sân ga vắng lặng, chỉ còn lại mình tôi đứng đó.
+emo009|emo|buon|Mẹ ơi, con nhớ mẹ nhiều lắm, giá mà con được về nhà lúc này.
+emo010|emo|buon|Mọi thứ đã khác rồi, chẳng bao giờ còn được như ngày xưa nữa.
+emo011|emo|gian|Tôi đã nói bao nhiêu lần rồi, sao anh vẫn không chịu nghe vậy hả?
+emo012|emo|gian|Thật quá đáng! Ai cho phép các người tự ý vào nhà tôi?
+emo013|emo|gian|Đủ rồi! Tôi không muốn nghe thêm bất kỳ lời bào chữa nào nữa!
+emo014|emo|gian|Lại trễ hẹn nữa à? Lần này là lần thứ ba trong tuần rồi đấy!
+emo015|emo|gian|Đừng có đổ lỗi cho người khác, tự nhận trách nhiệm đi chứ!
+emo016|emo|ngac_nhien|Hả? Thật sao? Bạn trúng xổ số thật à?
+emo017|emo|ngac_nhien|Ôi, không thể tin được, ai đã chuẩn bị bữa tiệc bất ngờ này vậy?
+emo018|emo|ngac_nhien|Trời đất, mới có một năm mà em lớn nhanh thế này rồi sao?
+emo019|emo|ngac_nhien|Ủa, sao cửa nhà lại mở toang thế này, có ai ở trong không?
+emo020|emo|ngac_nhien|Cái gì cơ? Chuyến bay bị huỷ rồi á?
+emo021|emo|thi_tham|Suỵt, nói nhỏ thôi, em bé vừa mới ngủ đấy.
+emo022|emo|thi_tham|Lại đây, mình kể cho nghe một bí mật, đừng nói với ai nhé.
+emo023|emo|thi_tham|Khẽ thôi, hình như có ai đang đứng ngoài cửa.
+emo024|emo|thi_tham|Đêm nay trăng đẹp quá, mình cứ ngồi yên thế này một lúc nhé.
+emo025|emo|thi_tham|Nhẹ nhàng thôi, đừng để thầy giáo phát hiện ra.
+emo026|emo|ke_chuyen|Ngày xửa ngày xưa, ở một ngôi làng nhỏ ven sông, có một cô bé tên là Tấm.
+emo027|emo|ke_chuyen|Đêm ấy, gió rít từng hồi, chàng trai một mình băng qua khu rừng tối đen.
+emo028|emo|ke_chuyen|Và thế là, từ đó về sau, hai người sống hạnh phúc bên nhau mãi mãi.
+emo029|emo|ke_chuyen|Mùa xuân năm ấy, hoa đào nở sớm hơn mọi năm, như báo hiệu một điều gì đó.
+emo030|emo|ke_chuyen|Ông lão đánh cá nhìn ra biển khơi, lặng lẽ chờ đợi con sóng cuối cùng.
+emo031|emo|trung_tinh|Kính thưa quý vị, chương trình xin được phép bắt đầu.
+emo032|emo|trung_tinh|Bản tin hôm nay gồm ba nội dung chính về kinh tế, xã hội và thể thao.
+emo033|emo|trung_tinh|Vui lòng để lại lời nhắn sau tiếng bíp, chúng tôi sẽ gọi lại sớm nhất.
+# ── PHẦN 4: TIẾNG ANH (đọc bằng giọng tiếng Anh tự nhiên nhất của bạn) ──────────
+en001|en|trung_tinh|Good morning! It's a beautiful day, and I hope you're doing well.
+en002|en|trung_tinh|The quick brown fox jumps over the lazy dog near the riverbank.
+en003|en|trung_tinh|Could you please tell me how to get to the nearest train station?
+en004|en|trung_tinh|I usually drink a cup of coffee before I start working in the morning.
+en005|en|trung_tinh|Our meeting has been moved to Thursday afternoon at three thirty.
+en006|en|trung_tinh|She sells seashells by the seashore, and the shells she sells are surely seashells.
+en007|en|trung_tinh|Technology is changing the way we live, work, and communicate with each other.
+en008|en|trung_tinh|Thank you so much for your help. I really appreciate it.
+en009|en|trung_tinh|The weather forecast says it will rain heavily throughout the weekend.
+en010|en|trung_tinh|Reading books every day helps you think more clearly and creatively.
+en011|en|trung_tinh|Welcome to our channel! Today we're going to explore the beautiful city of Hanoi.
+en012|en|trung_tinh|Please remember to save your work before you close the application.
+en013|en|trung_tinh|Vietnam is famous for its delicious street food, especially pho and banh mi.
+en014|en|trung_tinh|If you have any questions, feel free to leave a comment below.
+en015|en|trung_tinh|He thought through the theory thoroughly, though it was rather tough.
+en016|en|vui|Wow, this is amazing! I can't believe we actually won the competition!
+en017|en|vui|Happy birthday! I hope all your wishes come true this year.
+en018|en|buon|I'm really sorry for your loss. Please let me know if there's anything I can do.
+en019|en|gian|This is completely unacceptable! I've been waiting for over two hours!
+en020|en|ngac_nhien|What? You're moving to Australia next week? Since when?
+en021|en|thi_tham|Shh, keep your voice down. Everyone is still sleeping.
+en022|en|ke_chuyen|Once upon a time, in a land far, far away, there lived a curious little girl.
+en023|en|trung_tinh|Ladies and gentlemen, the show is about to begin. Please take your seats.
+en024|en|trung_tinh|Our flight to Singapore will depart from gate twelve at nine fifteen.
+en025|en|trung_tinh|Learning a new language takes time, patience, and a lot of practice.

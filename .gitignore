@@ -1,0 +1,20 @@
+# Môi trường & mô hình (lớn, tự tải lại bằng install.bat)
+.venv/
+envs/
+models/
+tools/VieNeu-TTS/
+tools/*.zip
+
+# File đầu ra (tạo lại được)
+data/outputs/
+
+# Chứa API key — KHÔNG đưa lên GitHub
+data/settings.json
+
+# Bộ dữ liệu trung gian khi fine-tune
+data/recordings/*/train.parquet
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.gradio/

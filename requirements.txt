@@ -1,0 +1,11 @@
+# Thư viện chính (CPU chạy được ngay; GPU cài thêm requirements-gpu.txt sau PyTorch)
+vieneu==3.8.3
+gradio>=5.49.1,<7
+numpy
+soundfile>=0.12
+soxr
+pyloudnorm
+imageio-ffmpeg
+python-docx
+# Chỉ dùng cho tab "So sánh với Google" (cần Internet)
+gTTS
