@@ -24,6 +24,10 @@ class Settings:
     target_lufs: float = -16.0
     # Làm trong giọng (hậu kỳ): "goc" | "nhe" | "trong" | "sang"
     enhance: str = "trong"
+    # Giảm vang: "tat" | "nhe" | "vua" | "manh"
+    dereverb: str = "vua"
+    # Khử nhiễu/vang bằng AI (bộ denoiser đi kèm VieNeu) — chậm hơn một chút
+    ai_clean: bool = False
     # Khoảng nghỉ giữa các câu (giây) — nhân thêm theo "nhịp nghỉ" trong giao diện
     sentence_pause: float = 0.25
     paragraph_pause: float = 0.6

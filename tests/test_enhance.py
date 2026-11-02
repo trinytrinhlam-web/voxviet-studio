@@ -56,3 +56,43 @@ def test_remaster_last_take(tmp_path):
     b, _ = sf.read(str(r.path))
     assert len(a) == len(b)  # cùng độ dài, chỉ khác hậu kỳ
     assert not np.allclose(a, b)
+
+
+def _reverberant(seed=0):
+    rng = np.random.default_rng(seed)
+    dry = np.zeros(SR * 3)
+    gaps = np.ones(len(dry), bool)
+    for k in range(7):
+        s, n = int((0.1 + k * 0.4) * SR), int(0.15 * SR)
+        dry[s:s + n] = rng.normal(0, 0.2, n) * np.hanning(n)
+        gaps[s:s + int(0.2 * SR)] = False
+    t = np.arange(int(0.8 * SR)) / SR
+    ir = rng.normal(0, 1, len(t)) * np.exp(-6.9 * t / 0.5)
+    ir *= 0.25 / np.sqrt(np.sum(ir ** 2))
+    ir[0] = 1.0
+    return np.convolve(dry, ir)[:len(dry)], gaps
+
+
+def test_dereverb_reduces_tail_keeps_speech():
+    wet, gaps = _reverberant()
+
+    def db(x, m):
+        return 10 * np.log10(np.mean(x[m] ** 2) + 1e-15)
+
+    prev_tail = 0.0
+    for lv in ("nhe", "vua", "manh"):
+        y = E.dereverb(wet, lv, SR)
+        assert len(y) == len(wet)
+        tail = db(y, gaps) - db(wet, gaps)
+        speech = db(y, ~gaps) - db(wet, ~gaps)
+        assert tail < prev_tail - 2.0  # mức sau khử mạnh hơn mức trước
+        assert speech > -1.5  # lời nói gần như nguyên vẹn
+        prev_tail = tail
+    assert np.allclose(E.dereverb(wet, "tat", SR), wet.astype(np.float32))
+
+
+def test_remaster_with_dereverb(tmp_path):
+    st = Studio(library=VoiceLibrary(tmp_path / "v"))
+    r = st.synthesize("Một hai ba bốn năm.", "vi", "preset:high", engine_id="mock", dereverb="manh")
+    p = st.remaster("trong", "nhe", False)
+    assert "vang_nhe" in p.name and sf.info(str(p)).frames == sf.info(str(r.path)).frames

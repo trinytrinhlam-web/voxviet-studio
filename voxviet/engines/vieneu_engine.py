@@ -132,6 +132,23 @@ class VieNeuEngine(TTSEngine):
                 except Exception:
                     pass
 
+    def ai_clean(self, wav: np.ndarray, sr: int = 48_000) -> np.ndarray:
+        """Khử nhiễu/vang bằng AI: bộ denoiser (lõi Resemble Enhance, ONNX) đi kèm VieNeu.
+
+        Không cần tải thêm. Xử lý từng khúc ≤ 20 giây ở 44.1 kHz rồi đổi lại ``sr``."""
+        from .. import audio as audio_mod
+        self.load()
+        den = getattr(getattr(self._tts, "engine", None), "denoiser", None)
+        if den is None:
+            raise EngineUnavailable("Bộ khử nhiễu AI không có trong mô hình hiện tại.")
+        x = audio_mod.resample(wav, sr, 44_100)
+        step = 44_100 * 20
+        parts = []
+        with self._lock:
+            for i in range(0, len(x), step):
+                parts.append(np.asarray(den.denoise(x[i:i + step], 44_100), dtype=np.float32))
+        return audio_mod.resample(np.concatenate(parts) if parts else x, 44_100, sr)[: len(wav)]
+
     @property
     def backend(self) -> str:
         return getattr(self._tts, "backend", "?") if self._tts else "chưa nạp"

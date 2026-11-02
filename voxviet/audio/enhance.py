@@ -44,7 +44,7 @@ PRESETS: dict[str, Preset] = {p.key: p for p in (
     Preset("goc", "Gốc (không xử lý)"),
     Preset("nhe", "Nhẹ — giữ âm sắc tự nhiên", hp_hz=80, mud_hz=280, mud_db=-2.0, presence_hz=4000,
            presence_db=1.5, air_hz=9000, air_db=1.5, exciter=0.0, pre_gain_db=-1.0),
-    Preset("trong", "Trong — khuyên dùng", hp_hz=90, mud_hz=300, mud_db=-3.0, presence_hz=3500,
+    Preset("trong", "Trong — khuyên dùng", hp_hz=90, mud_hz=280, mud_db=-4.5, presence_hz=3500,
            presence_db=3.0, air_hz=7000, air_db=3.0, exciter=0.06, pre_gain_db=-2.0),
     Preset("sang", "Sáng — cho giọng rất đục/tối", hp_hz=100, mud_hz=250, mud_db=-4.0, presence_hz=3200,
            presence_db=4.0, air_hz=6500, air_db=5.0, exciter=0.12, pre_gain_db=-3.0),
@@ -158,3 +158,73 @@ def process(x: np.ndarray, preset: str | None = DEFAULT, sr: int = 48_000) -> np
     pad = int(0.05 * sr)
     y = Enhancer(preset, sr)(np.concatenate([np.zeros(pad), np.asarray(x, dtype=np.float64)]))
     return y[pad:].astype(np.float32)
+
+
+# ── Giảm vang (dereverberation) ───────────────────────────────────────────────
+#
+# Phương pháp trừ phổ vang muộn (Lebart et al., 2001): phần vang của phòng ở thời
+# điểm t ≈ năng lượng của chính tín hiệu cách đó ~50 ms, suy giảm theo hàm mũ với
+# thời gian vang T60. Ước lượng phần đó cho từng dải tần rồi trừ đi (có ngưỡng sàn
+# để tránh tiếng "lọc nước"). Không cần mô hình, chạy nhanh trên CPU.
+
+@dataclass(frozen=True)
+class DereverbLevel:
+    key: str
+    label: str
+    t60: float = 0.0  # giây — giả định độ vang của phòng
+    floor: float = 1.0  # mức giữ lại tối thiểu (0..1), càng thấp càng khử mạnh
+
+
+DEREVERB: dict[str, DereverbLevel] = {d.key: d for d in (
+    DereverbLevel("tat", "Tắt"),
+    DereverbLevel("nhe", "Nhẹ", t60=0.30, floor=0.50),
+    DereverbLevel("vua", "Vừa — khuyên dùng", t60=0.40, floor=0.32),
+    DereverbLevel("manh", "Mạnh", t60=0.60, floor=0.18),
+)}
+DEREVERB_DEFAULT = "vua"
+
+
+def dereverb_choices() -> list[tuple[str, str]]:
+    return [(d.label, d.key) for d in DEREVERB.values()]
+
+
+def dereverb(x: np.ndarray, level: str | None = DEREVERB_DEFAULT, sr: int = 48_000) -> np.ndarray:
+    lv = DEREVERB.get(level or DEREVERB_DEFAULT, DEREVERB[DEREVERB_DEFAULT])
+    x = np.asarray(x, dtype=np.float64).reshape(-1)
+    if lv.t60 <= 0 or len(x) < 2048:
+        return x.astype(np.float32)
+    n_fft, hop = 1024, 256
+    win = np.hanning(n_fft + 1)[:-1]
+    pad = n_fft
+    xp = np.pad(x, (pad, pad + n_fft))
+    n_frames = 1 + (len(xp) - n_fft) // hop
+    idx = np.arange(n_fft)[None, :] + hop * np.arange(n_frames)[:, None]
+    spec = np.fft.rfft(xp[idx] * win, axis=1)  # (T, F)
+    power = np.abs(spec) ** 2
+    # Làm mượt năng lượng theo thời gian (ước lượng ổn định hơn).
+    smooth = np.empty_like(power)
+    acc = power[0]
+    for t in range(n_frames):
+        acc = 0.6 * acc + 0.4 * power[t]
+        smooth[t] = acc
+    delay = max(1, int(round(0.05 * sr / hop)))  # ~50 ms: ranh giới vang sớm/muộn
+    decay = np.exp(-13.8155 * delay * hop / (sr * lv.t60))  # suy giảm năng lượng sau `delay`
+    late = np.zeros_like(smooth)
+    late[delay:] = decay * smooth[:-delay]
+    gain = np.sqrt(np.clip(1.0 - late / (smooth + 1e-12), lv.floor ** 2, 1.0))
+    # Làm mượt hệ số theo thời gian để tránh tiếng "lấp lánh" (musical noise).
+    g = np.empty_like(gain)
+    prev = gain[0]
+    for t in range(n_frames):
+        a = np.where(gain[t] < prev, 0.5, 0.2)  # giảm nhanh, hồi chậm (từng dải tần)
+        prev = a * gain[t] + (1 - a) * prev
+        g[t] = prev
+    frames = np.fft.irfft(spec * g, n=n_fft, axis=1) * win
+    out = np.zeros(len(xp))
+    norm = np.zeros(len(xp))
+    for t in range(n_frames):
+        s = t * hop
+        out[s:s + n_fft] += frames[t]
+        norm[s:s + n_fft] += win ** 2
+    out = out / np.maximum(norm, 1e-8)
+    return out[pad:pad + len(x)].astype(np.float32)

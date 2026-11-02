@@ -122,22 +122,26 @@ def _files(result) -> list[str]:
 # ── tab 1: đọc văn bản ───────────────────────────────────────────────────────
 
 def do_tts(text, language, engine_id, voice, emotion, speed, pause_scale, dialect, fmt, enhance, temperature,
-           progress=gr.Progress()):
+           dereverb, ai_clean, progress=gr.Progress()):
     try:
         temp = float(temperature) if temperature and float(temperature) > 0 else None
         r = studio.synthesize(text, language, voice, emotion, float(speed), _eng(engine_id), _dialect(dialect),
                               float(pause_scale), fmt, True, _progress_cb(progress), temperature=temp,
-                              enhance=enhance)
+                              enhance=enhance, dereverb=dereverb, ai_clean=bool(ai_clean))
         return str(r.path), _files(r), r.summary()
     except Exception as e:
         return None, None, _err(e)
 
 
-def do_remaster(preset):
+def do_remaster(preset, dereverb, ai_clean, progress=gr.Progress()):
     try:
-        p = studio.remaster(preset)
+        progress(0.1, desc="Đang xử lý lại…")
+        p = studio.remaster(preset, dereverb, bool(ai_clean))
         label = dict((k, v) for v, k in enhance_mod.choices()).get(preset, preset)
-        return str(p), str(p), f"🎧 Bản vừa đọc, xử lý mức **{label}** (không đọc lại nên so sánh được công bằng)."
+        dlabel = dict((k, v) for v, k in enhance_mod.dereverb_choices()).get(dereverb, dereverb)
+        ai = " + khử nhiễu AI" if ai_clean else ""
+        return str(p), str(p), (f"🎧 Bản vừa đọc · làm trong **{label}** · giảm vang **{dlabel}**{ai} "
+                                "(không đọc lại nên so sánh được công bằng).")
     except Exception as e:
         return None, None, _err(e)
 
@@ -420,10 +424,12 @@ def do_compare(text, language, voice, gemini_voice, emotion, progress=gr.Progres
 
 # ── tab 8: cài đặt ───────────────────────────────────────────────────────────
 
-def do_save_settings(device, precision, dialect, fmt, lufs, sp, pp, en_engine, key, model, gvoice, enh):
+def do_save_settings(device, precision, dialect, fmt, lufs, sp, pp, en_engine, key, model, gvoice, enh,
+                     derev, ai_clean):
     old = settings_mod.load()
     reload_model = (old.device, old.cpu_precision) != (device, precision)
     s = settings_mod.update(device=device, cpu_precision=precision, dialect=dialect, output_format=fmt, enhance=enh,
+                            dereverb=derev, ai_clean=bool(ai_clean),
                             target_lufs=float(lufs), sentence_pause=float(sp), paragraph_pause=float(pp),
                             english_engine=en_engine, gemini_api_key=(key or "").strip(),
                             gemini_model=model or "", gemini_voice=gvoice or "Kore")
@@ -527,6 +533,9 @@ def build() -> gr.Blocks:
                     t_pause = gr.Slider(0.3, 2.5, value=1.0, step=0.1, label="Nhịp nghỉ giữa câu")
                     t_dialect = gr.Radio(DIALECTS, value="auto", label="Cách đọc số (nghìn/ngàn, linh/lẻ)")
                     t_enh = gr.Dropdown(enhance_mod.choices(), value=s.enhance, label="Làm trong giọng (hậu kỳ)")
+                    with gr.Row():
+                        t_derev = gr.Dropdown(enhance_mod.dereverb_choices(), value=s.dereverb, label="Giảm vang")
+                        t_ai = gr.Checkbox(value=s.ai_clean, label="Khử nhiễu AI (chậm hơn chút)")
                     t_fmt = gr.Radio(["wav", "mp3"], value=s.output_format, label="Định dạng")
                     with gr.Accordion("Nâng cao", open=False):
                         t_temp = gr.Slider(0.0, 1.0, value=0.0, step=0.05,
@@ -536,11 +545,13 @@ def build() -> gr.Blocks:
                     t_btn = gr.Button("▶️ Đọc", variant="primary", size="lg")
                     t_audio, t_files, t_status = _out_controls()
                     with gr.Accordion("🎧 Chuốt giọng bản vừa đọc (so sánh các mức làm trong)", open=True):
-                        gr.Markdown("Nghe lại **cùng bản vừa đọc** với mức xử lý khác — không cần đọc lại. "
-                                    "Mức hợp nhất → chọn ở ô *Làm trong giọng* hoặc đặt mặc định trong Cài đặt.")
+                        gr.Markdown("Nghe lại **cùng bản vừa đọc** với cách xử lý khác — không cần đọc lại. "
+                                    "Kết hợp hay nhất → chọn ở các ô bên trên hoặc đặt mặc định trong Cài đặt.")
+                        t_rm_preset = gr.Radio(enhance_mod.choices(), value="trong", label="Làm trong")
+                        t_rm_derev = gr.Radio(enhance_mod.dereverb_choices(), value="vua", label="Giảm vang")
                         with gr.Row():
-                            t_rm_preset = gr.Radio(enhance_mod.choices(), value="goc", label="Mức")
-                            t_rm_btn = gr.Button("🎧 Nghe với mức này")
+                            t_rm_ai = gr.Checkbox(value=False, label="Khử nhiễu AI")
+                            t_rm_btn = gr.Button("🎧 Nghe với mức này", variant="primary")
                         t_rm_audio = gr.Audio(label="Bản xử lý lại", type="filepath", interactive=False)
                         t_rm_file = gr.File(label="Tải về", interactive=False)
                         t_rm_msg = gr.Markdown()
@@ -551,8 +562,8 @@ def build() -> gr.Blocks:
             t_refresh.click(lambda lang, e, v: _voice_update(lang, e, v), [t_lang, t_engine, t_voice], t_voice)
             t_norm_btn.click(do_preview_norm, [t_text, t_lang, t_voice, t_dialect], t_norm)
             t_btn.click(do_tts, [t_text, t_lang, t_engine, t_voice, t_emo, t_speed, t_pause, t_dialect, t_fmt,
-                                 t_enh, t_temp], [t_audio, t_files, t_status])
-            t_rm_btn.click(do_remaster, t_rm_preset, [t_rm_audio, t_rm_file, t_rm_msg])
+                                 t_enh, t_temp, t_derev, t_ai], [t_audio, t_files, t_status])
+            t_rm_btn.click(do_remaster, [t_rm_preset, t_rm_derev, t_rm_ai], [t_rm_audio, t_rm_file, t_rm_msg])
 
         # ── 2. Hội thoại ──
         with gr.Tab("🎭 Hội thoại"):
@@ -770,6 +781,8 @@ def build() -> gr.Blocks:
                     st_lufs = gr.Slider(-30, -10, value=s.target_lufs, step=1, label="Âm lượng chuẩn (LUFS)")
                     st_enh = gr.Radio(enhance_mod.choices(), value=s.enhance,
                                       label="Làm trong giọng mặc định (dùng cho mọi tab)")
+                    st_derev = gr.Radio(enhance_mod.dereverb_choices(), value=s.dereverb, label="Giảm vang mặc định")
+                    st_ai = gr.Checkbox(value=s.ai_clean, label="Khử nhiễu AI mặc định")
                     st_sp = gr.Slider(0.0, 1.0, value=s.sentence_pause, step=0.05, label="Nghỉ giữa câu (s)")
                     st_pp = gr.Slider(0.0, 2.0, value=s.paragraph_pause, step=0.05, label="Nghỉ giữa đoạn (s)")
                     st_en = gr.Radio([("VieNeu (mặc định, cùng giọng clone)", "vieneu"),
@@ -802,7 +815,7 @@ def build() -> gr.Blocks:
             lx_save = gr.Button("💾 Lưu từ điển")
             lx_msg = gr.Markdown()
             st_save.click(do_save_settings, [st_device, st_prec, st_dialect, st_fmt, st_lufs, st_sp, st_pp, st_en,
-                                             st_key, st_model, st_gvoice, st_enh], st_msg)
+                                             st_key, st_model, st_gvoice, st_enh, st_derev, st_ai], st_msg)
             st_models_btn.click(do_list_gemini_models, st_key, [st_model, st_gmsg])
             st_check.click(do_system_check, None, st_sys)
             st_preload.click(do_preload, None, st_sys)

@@ -107,6 +107,10 @@ Bộ nén âm của mô hình làm mất bớt âm cao, nên giọng có thể n
 | **Trong** (mặc định) | Hợp với phần lớn giọng |
 | Sáng | Giọng rất đục hoặc tối |
 
+**Giảm vang** (Tắt / Nhẹ / *Vừa* / Mạnh): ước lượng phần vang của phòng rồi trừ khỏi giọng theo từng dải tần. Thử trên tín hiệu có vang nhân tạo: phần đuôi vang giảm khoảng 4 / 7 / 11 dB, còn lời nói gần như giữ nguyên (giảm dưới 1 dB).
+**Khử nhiễu AI** (tuỳ chọn): dùng bộ khử nhiễu đi kèm VieNeu (lõi Resemble Enhance), không phải tải thêm, chạy chậm hơn một chút.
+Thứ tự xử lý mỗi câu: khử nhiễu AI → giảm vang → làm trong → cân bằng âm lượng.
+
 Sau khi đọc, mở mục **🎧 Chuốt giọng bản vừa đọc** để nghe **cùng một bản đọc** ở từng mức mà không phải đọc lại, nên so sánh được công bằng. Chọn xong mức hợp nhất thì đặt làm mặc định trong Cài đặt. Trong mục **Nâng cao**, *Độ biến hoá ngữ điệu* đặt khoảng 0.6–0.7 sẽ cho giọng ổn định và sạch hơn.
 
 ### 🎭 Hội thoại
@@ -198,6 +202,7 @@ tests/                     kiểm thử tự động (pytest)
 | Một từ tiếng Anh bị đọc kiểu Việt (vd. *con*, *to*) | Bọc từ đó trong `<en>…</en>`, hoặc thêm vào Từ điển phát âm |
 | Câu rất ngắn đọc lạ | Viết câu dài hơn một chút hoặc thêm dấu câu |
 | Cảm xúc chưa rõ | Thu mẫu riêng cho cảm xúc đó trong Kho giọng |
+| Giọng có tiếng vang | Tăng **Giảm vang** lên *Mạnh*, bật **Khử nhiễu AI** |
 | Giọng nghe đục / tối | Thử mức **Sáng** trong mục Chuốt giọng; giảm *Độ biến hoá ngữ điệu* còn 0.6–0.7; một số giọng có sẵn vốn được thu kém trong hơn, nên thử giọng khác |
 | Giọng clone chưa giống | Dùng mẫu 7–10 giây, sạch, không nhạc nền; hoặc fine-tune |
 

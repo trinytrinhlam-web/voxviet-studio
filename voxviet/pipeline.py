@@ -100,8 +100,10 @@ def _out_path(name: str, ext: str = "wav") -> Path:
 
 
 def _master(raw: Path, out: Path, spans: list[tuple[float, float]], preset: str | None,
-            target_lufs: float, sr: int = audio.SR) -> Path:
-    """Hậu kỳ: làm trong + cân bằng âm lượng TỪNG câu (theo spans), giữ nguyên khoảng lặng.
+            target_lufs: float, sr: int = audio.SR, dereverb: str | None = None,
+            clean_fn: Callable[[np.ndarray], np.ndarray] | None = None) -> Path:
+    """Hậu kỳ TỪNG câu (theo spans), giữ nguyên khoảng lặng:
+    khử nhiễu AI (tuỳ chọn) → giảm vang → làm trong (EQ) → cân bằng âm lượng.
 
     Đọc/ghi theo khối nên dùng được cho sách nói dài hàng giờ."""
     import soundfile as sf
@@ -126,7 +128,12 @@ def _master(raw: Path, out: Path, spans: list[tuple[float, float]], preset: str 
             copy(a - pos)
             seg = fin.read(b - a, dtype="float32")
             pos += b - a
+            n = len(seg)
+            if clean_fn is not None:
+                seg = clean_fn(seg)
+            seg = enhance_mod.dereverb(seg, dereverb, sr)
             seg = enhance_mod.process(seg, preset, sr)
+            seg = np.pad(seg, (0, max(0, n - len(seg))))[:n]  # giữ đúng độ dài (khớp phụ đề)
             seg = audio.loudness_normalize(seg, sr, target_lufs)
             fout.write(seg)
         copy(total - pos)
@@ -148,7 +155,7 @@ class Studio:
         paths.ensure_dirs()
         self.library = library or VoiceLibrary()
         self.lexicon = lexicon or Lexicon.load()
-        # Bản thô của lần đọc gần nhất: (đường dẫn thô, spans, đường dẫn kết quả)
+        # Bản thô của lần đọc gần nhất: (đường dẫn thô, spans, đường dẫn kết quả, engine id)
         self.last_take: tuple[Path, list[tuple[float, float]], Path] | None = None
 
     # ── giọng & engine ────────────────────────────────────────────────────────
@@ -259,13 +266,33 @@ class Studio:
         if progress:
             progress(hi, "Hoàn tất đoạn")
 
+    def _clean_fn(self, ai_clean: bool, warnings: list[str] | None = None):
+        if not ai_clean:
+            return None
+        eng = engines.get("vieneu")
+        if not eng.available()[0] or "mock" in engines.registry():
+            return None
+
+        def fn(x: np.ndarray) -> np.ndarray:
+            try:
+                return eng.ai_clean(x, audio.SR)
+            except Exception as e:  # không để hỏng cả bản đọc vì bước tuỳ chọn
+                if warnings is not None:
+                    warnings.append(f"Bỏ qua khử nhiễu AI: {e}")
+                return x
+        return fn
+
     def _finish(self, writer: _Writer, subs, warnings, t0, fmt: str | None, want_srt: bool,
-                enhance: str | None = None) -> Result:
+                enhance: str | None = None, dereverb: str | None = None,
+                ai_clean: bool | None = None) -> Result:
         writer.close()
         s = settings_mod.load()
         preset = enhance or s.enhance
+        dereverb = dereverb or s.dereverb
+        ai_clean = s.ai_clean if ai_clean is None else ai_clean
         spans = [(c.start, c.end) for c in subs]
-        path = _master(writer.path, writer.final, spans, preset, s.target_lufs)
+        path = _master(writer.path, writer.final, spans, preset, s.target_lufs, dereverb=dereverb,
+                       clean_fn=self._clean_fn(ai_clean, warnings))
         self.last_take = (writer.path, spans, writer.final)
         _cleanup_raw(writer.path.parent)
         fmt = (fmt or s.output_format or "wav").lower()
@@ -288,7 +315,8 @@ class Studio:
                    emotion: str = emotions.DEFAULT, speed: float = 1.0, engine_id: str | None = None,
                    dialect: str | None = None, pause_scale: float = 1.0, fmt: str | None = None,
                    want_srt: bool = True, progress: Progress | None = None, name: str | None = None,
-                   temperature: float | None = None, enhance: str | None = None) -> Result:
+                   temperature: float | None = None, enhance: str | None = None,
+                   dereverb: str | None = None, ai_clean: bool | None = None) -> Result:
         if not (text or "").strip():
             raise ValueError("Chưa có văn bản.")
         t0 = time.time()
@@ -302,11 +330,12 @@ class Studio:
             writer.close()
             writer.path.unlink(missing_ok=True)
             raise
-        return self._finish(writer, subs, warnings, t0, fmt, want_srt, enhance)
+        return self._finish(writer, subs, warnings, t0, fmt, want_srt, enhance, dereverb, ai_clean)
 
     def dialogue(self, script: str, cast: dict[str, dict], default: dict | None = None,
                  gap: float = 0.35, fmt: str | None = None, progress: Progress | None = None,
-                 enhance: str | None = None) -> Result:
+                 enhance: str | None = None, dereverb: str | None = None,
+                 ai_clean: bool | None = None) -> Result:
         """cast: {tên nhân vật: {"voice":..., "language": "vi"|"en", "emotion":..., "speed":..., "engine": ...}}"""
         lines = dialogue_mod.parse(script)
         if not lines:
@@ -335,12 +364,13 @@ class Studio:
             writer.close()
             writer.path.unlink(missing_ok=True)
             raise
-        return self._finish(writer, subs, warnings, t0, fmt, True, enhance)
+        return self._finish(writer, subs, warnings, t0, fmt, True, enhance, dereverb, ai_clean)
 
     def dub_srt(self, srt_text: str, language: str = "vi", voice: str | None = None,
                 emotion: str = emotions.DEFAULT, speed: float = 1.0, engine_id: str | None = None,
                 max_stretch: float = 1.35, fmt: str | None = None, progress: Progress | None = None,
-                enhance: str | None = None) -> Result:
+                enhance: str | None = None, dereverb: str | None = None,
+                ai_clean: bool | None = None) -> Result:
         """Lồng tiếng theo phụ đề: mỗi câu đặt đúng thời điểm, tự tăng tốc nếu dài hơn khung thời gian."""
         cues = srt_mod.parse(srt_text)
         if not cues:
@@ -381,7 +411,7 @@ class Studio:
             writer.close()
             writer.path.unlink(missing_ok=True)
             raise
-        return self._finish(writer, subs, warnings, t0, fmt, True, enhance)
+        return self._finish(writer, subs, warnings, t0, fmt, True, enhance, dereverb, ai_clean)
 
     def stream(self, text: str, language: str = "vi", voice: str | None = None,
                emotion: str = emotions.DEFAULT, speed: float = 1.0, engine_id: str | None = None,
@@ -415,13 +445,15 @@ class Studio:
                     yield audio.time_stretch(eng.synthesize(req), rate)
                 yield audio.silence(s.sentence_pause)
 
-    def remaster(self, preset: str) -> Path:
-        """Xử lý lại bản đọc gần nhất với mức làm trong khác (không cần đọc lại)."""
+    def remaster(self, preset: str, dereverb: str = "tat", ai_clean: bool = False) -> Path:
+        """Xử lý lại bản đọc gần nhất với mức hậu kỳ khác (không cần đọc lại)."""
         if not self.last_take or not self.last_take[0].exists():
             raise ValueError("Chưa có bản đọc nào để xử lý lại — hãy bấm Đọc trước.")
         raw, spans, final = self.last_take
-        out = final.with_name(f"{final.stem}__{preset}.wav")
-        return _master(raw, out, spans, preset, settings_mod.load().target_lufs)
+        tag = f"{preset}-vang_{dereverb}" + ("-ai" if ai_clean else "")
+        out = final.with_name(f"{final.stem}__{tag}.wav")
+        return _master(raw, out, spans, preset, settings_mod.load().target_lufs, dereverb=dereverb,
+                       clean_fn=self._clean_fn(ai_clean))
 
     def preview_voice(self, voice: str, language: str = "vi", emotion: str = emotions.DEFAULT,
                       engine_id: str | None = None) -> Result:
