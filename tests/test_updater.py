@@ -74,9 +74,12 @@ def test_check_and_apply_update(world):
     logs = []
     res = up.apply(log=logs.append, self_test=lambda: None)
     assert res == {"from": "0.5.0", "to": "0.6.0"} and up.local_version() == "0.6.0"
-    assert up.history()[0]["ok"] and up.check()["available"] is False
+    assert up.history()[0]["ok"]
+    assert up.status()["last_result"]["available"] is False  # không báo "có bản mới" sai sau khi cập nhật
+    assert up.check()["available"] is False
     # quay lại phiên bản trước
     assert up.rollback()["to"] == "0.5.0" and up.local_version() == "0.5.0"
+    assert up.status()["last_check"] is None and up.check()["available"] is True
 
 
 def test_broken_update_rolls_back_automatically(world):

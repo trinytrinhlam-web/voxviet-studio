@@ -167,20 +167,34 @@ Nghe cùng một đoạn văn bằng 3 cách: VoxViet (offline), Gemini TTS và 
 
 ---
 
-## 5. Dùng trên nhiều máy (đồng bộ qua GitHub)
+## 5. Cập nhật & dùng trên nhiều máy
 
+### Cập nhật phần mềm (trang **Cập nhật** trong phần mềm)
+- Phần mềm tự kiểm tra bản mới mỗi ngày một lần; có bản mới thì mục **Cập nhật** ở thanh bên hiện dấu **mới**.
+- Vào **Cập nhật** → xem **Có gì mới** (đọc từ `CHANGELOG.md`) → bấm **Cập nhật lên x.y.z**. Phần mềm sẽ:
+  1. ghi mốc phiên bản hiện tại;
+  2. tải bản vá từ GitHub (giữ nguyên kho giọng, bản thu, cài đặt của bạn);
+  3. tự cài thêm thư viện nếu bản vá cần;
+  4. chạy thử bản mới — **lỗi thì tự quay lại bản cũ**;
+  5. tự khởi động lại, giao diện tự tải lại.
+- **Quay lại phiên bản trước**: dùng khi bản mới chạy không như ý.
+- Cần Git và đã đăng nhập GitHub trên máy (lần đầu chạy `update.bat` sẽ hỏi đăng nhập). `update.bat` vẫn dùng được khi phần mềm không mở lên được.
+
+### Đồng bộ kho giọng giữa các máy
 Kho giọng (`data/voices/`), bản thu (`data/recordings/`, dạng FLAC) và từ điển (`data/lexicon.json`) được lưu trong repo.
-
-- **Cuối buổi làm việc:** chạy `sync_github.bat` để commit, kéo thay đổi từ máy khác và đẩy lên.
+- **Cuối buổi làm việc:** trang **Cập nhật** → **Đồng bộ ngay** (hoặc `sync_github.bat`): gửi thay đổi của máy này lên GitHub và lấy thay đổi từ máy khác.
+- Nếu GitHub đang có bản phần mềm mới, phần mềm sẽ nhắc **cập nhật trước rồi mới đồng bộ**.
 - **Sang máy mới:** `git clone` repo → `install.bat` → `run.bat`. Kho giọng và bản thu đã có sẵn.
-- **Cập nhật phần mềm:** chạy `update.bat`.
 
 Không đưa lên GitHub:
-- `models/` (mô hình lớn, `install.bat` tự tải lại);
+- `models/` (mô hình lớn, tự tải lại);
 - `data/settings.json` (chứa API key);
-- `data/outputs/`.
+- `data/outputs/`, `data/.local/` (lịch sử cập nhật riêng của từng máy).
 
 > ⚠️ Repo chứa **giọng nói của bạn**, nên để repo ở chế độ **Private**.
+
+### Ra bản vá (dành cho người phát triển)
+Sửa mã → tăng `__version__` trong `voxviet/__init__.py` → thêm mục `## x.y.z — ngày` vào `CHANGELOG.md` → đẩy lên nhánh `main`. Mọi máy sẽ thấy bản mới trong trang Cập nhật.
 
 ## 6. Cấu trúc thư mục
 
@@ -197,6 +211,7 @@ voxviet/
   pipeline.py              điều phối: đọc / hội thoại / lồng tiếng / trực tiếp
   recording.py             phòng thu
   finetune.py              fine-tune LoRA
+  updater.py               cập nhật phần mềm & đồng bộ dữ liệu qua GitHub
 data/recording_script/     kịch bản thu âm
 tools/download_models.py   tải mô hình về models/voxviet-core
 .claude/skills/thiet-ke-web skill thiết kế dùng khi chỉnh giao diện (SAN-PHAM.md, THIET-KE.md)

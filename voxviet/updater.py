@@ -193,6 +193,9 @@ class Updater:
             raise UpdateError(f"Bản cập nhật {new_v} không chạy được nên đã tự quay lại {prev_v}. Lỗi: {e}") from None
         self._add_history({"time": time.strftime("%Y-%m-%d %H:%M"), "from": prev_v, "to": new_v,
                            "from_commit": prev, "to_commit": self.git("rev-parse", "HEAD"), "ok": True})
+        st = self._state()  # kết quả kiểm tra cũ ("có bản mới") không còn đúng nữa
+        st["last_result"] = {"current": new_v, "latest": new_v, "available": False}
+        self._save_state(st)
         log(f"✅ Đã cập nhật {prev_v} → {new_v}.")
         return {"from": prev_v, "to": new_v}
 
@@ -205,6 +208,10 @@ class Updater:
         self.git("reset", "--keep", last["from_commit"])
         self._add_history({"time": time.strftime("%Y-%m-%d %H:%M"), "from": cur_v, "to": last["from"],
                            "from_commit": None, "ok": True, "note": "quay lại"})
+        st = self._state()  # để lần mở sau tự kiểm tra lại
+        st.pop("last_check", None)
+        st.pop("last_result", None)
+        self._save_state(st)
         return {"from": cur_v, "to": self.local_version()}
 
     def install_deps(self, log: Log) -> None:
