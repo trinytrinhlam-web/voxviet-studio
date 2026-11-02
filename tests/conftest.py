@@ -7,4 +7,5 @@ from pathlib import Path
 _TMP = tempfile.mkdtemp(prefix="voxviet-test-")
 os.environ["VOXVIET_DATA"] = _TMP
 os.environ["VOXVIET_DEMO"] = "1"
+os.environ["VOXVIET_ALLOWED_HOSTS"] = "testserver"  # tên máy của TestClient
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))

@@ -17,7 +17,6 @@ import json
 import os
 import re
 import shutil
-import socket
 import subprocess
 import sys
 import time
@@ -255,8 +254,8 @@ class Updater:
         committed = 0
         if self.git("diff", "--cached", "--name-only"):
             committed = len(self.git("diff", "--cached", "--name-only").splitlines())
-            host = socket.gethostname()
-            self.git("commit", "-m", f"Đồng bộ dữ liệu từ {host} {time.strftime('%Y-%m-%d %H:%M')}")
+            # Không ghi tên máy tính vào lịch sử GitHub (tránh lộ thông tin máy).
+            self.git("commit", "-m", f"Đồng bộ dữ liệu {time.strftime('%Y-%m-%d %H:%M')}")
             log(f"Đã ghi {committed} thay đổi dữ liệu trên máy này.")
         else:
             log("Máy này không có dữ liệu mới.")

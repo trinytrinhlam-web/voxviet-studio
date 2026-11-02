@@ -101,6 +101,8 @@ class GeminiEngine(TTSEngine):
     def _model(self) -> str:
         s = settings_mod.load()
         if s.gemini_model:
+            if not re.fullmatch(r"[A-Za-z0-9._-]{1,80}", s.gemini_model):
+                raise RuntimeError("Tên model Gemini không hợp lệ (xem tab Cài đặt).")
             return s.gemini_model
         models = self.list_models()
         if not models:

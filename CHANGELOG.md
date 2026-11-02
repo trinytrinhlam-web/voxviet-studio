@@ -3,6 +3,15 @@
 Mỗi phiên bản một mục `## <phiên bản> — <ngày>`, mỗi thay đổi một dòng `- …`.
 Trang **Cập nhật** trong phần mềm đọc file này để cho bạn biết bản mới có gì.
 
+## 0.6.1 — 2026-11-02
+- Bảo mật: chặn trang web lạ điều khiển phần mềm (DNS rebinding), thêm khoá phiên cho cửa sổ phần mềm
+- Bảo mật: chặn chèn mã và đọc/xoá file qua dữ liệu kho giọng đồng bộ từ máy khác
+- Bảo mật: kiểm tra mã câu ở Phòng thu, giới hạn dung lượng tải lên 200 MB, chính sách bảo mật nội dung (CSP)
+- Không ghi tên máy tính vào lịch sử GitHub khi đồng bộ; cửa sổ phần mềm không tự kết nối ra ngoài
+- Ghim phiên bản thư viện đã kiểm tra; bộ fine-tune ghim đúng bản đã rà soát
+- Thêm kiem_tra_bao_mat.bat: tự quét mã mô hình, file trọng số, thư viện lõi và quét virus
+- Báo cáo rà soát bảo mật: BAO-CAO-BAO-MAT.md
+
 ## 0.6.0 — 2026-11-02
 - Thêm trang Cập nhật: kiểm tra, xem có gì mới, cập nhật bằng một nút ngay trong phần mềm
 - Tự kiểm tra bản mới mỗi ngày và hiện dấu báo ở thanh bên

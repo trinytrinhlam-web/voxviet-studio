@@ -10,7 +10,7 @@ where git >nul 2>nul || ( echo Can cai Git: https://git-scm.com/download/win & p
 git add -A
 git diff --cached --quiet
 if errorlevel 1 (
-    git commit -m "Dong bo du lieu tu %COMPUTERNAME% %DATE% %TIME%"
+    git commit -m "Dong bo du lieu %DATE% %TIME%"
 )
 echo Lay thay doi tu GitHub...
 git pull --rebase --autostash

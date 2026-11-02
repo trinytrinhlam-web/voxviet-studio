@@ -1,15 +1,21 @@
-# Thư viện chính (CPU chạy được ngay; GPU cài thêm requirements-gpu.txt sau PyTorch)
+# Thư viện chính (CPU chạy được ngay; GPU cài thêm requirements-gpu.txt sau PyTorch).
+# Ghim đúng phiên bản đã kiểm tra để một bản phát hành độc hại/lỗi về sau không tự lọt vào khi cập nhật.
+# Lõi giọng: đã rà mã nguồn + đối chiếu mã băm với PyPI (xem BAO-CAO-BAO-MAT.md).
 vieneu==3.8.3
-fastapi>=0.115
-uvicorn>=0.30
-websockets>=12
-python-multipart
+sea-g2p==0.10.0
+# Máy chủ giao diện
+fastapi==0.162.0
+starlette==1.10.0
+uvicorn==0.54.0
+websockets==17.4
+python-multipart==0.0.33
+# Âm thanh & văn bản
 numpy
-soundfile>=0.12
-soxr
 scipy
-pyloudnorm
-imageio-ffmpeg
-python-docx
+soundfile==0.14.0
+soxr==1.1.0
+pyloudnorm==0.2.0
+imageio-ffmpeg==0.7.0
+python-docx==1.2.0
 # Chỉ dùng cho tab "So sánh với Google" (cần Internet)
-gTTS
+gTTS>=2.5,<3

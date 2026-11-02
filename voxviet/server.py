@@ -50,6 +50,37 @@ AVATAR_DIR = WEB_DIR / "avatars"
 def _avatar_url(slug: str | None) -> str | None:
     return f"/avatars/{slug}.webp" if slug and (AVATAR_DIR / f"{slug}.webp").is_file() else None
 GUARD_HEADER = "x-voxviet"
+SESSION_COOKIE = "vv_session"
+MAX_BODY = 200 * 1024 * 1024  # 200 MB — đủ cho file âm thanh dài, chặn yêu cầu làm đầy ổ đĩa
+DEFAULT_HOSTS = {"127.0.0.1", "localhost"}
+
+
+def allowed_hosts() -> set[str]:
+    extra = {h.strip() for h in os.environ.get("VOXVIET_ALLOWED_HOSTS", "").split(",") if h.strip()}
+    return DEFAULT_HOSTS | extra
+
+
+def _host_ok(host_header: str, hosts: set[str]) -> bool:
+    """Chống DNS rebinding: chỉ nhận yêu cầu gửi tới đúng 127.0.0.1/localhost (bỏ phần cổng)."""
+    host = (host_header or "").rsplit(":", 1)[0] if not (host_header or "").startswith("[") else host_header
+    return host in hosts
+
+
+def session_token() -> str:
+    """Khoá phiên ngẫu nhiên, lưu riêng trên máy (data/.local, không đồng bộ). Giữ qua các lần
+    khởi động lại để cửa sổ đang mở vẫn dùng được sau khi cập nhật."""
+    import secrets
+    f = paths.DATA / ".local" / "session_token"
+    try:
+        tok = f.read_text(encoding="utf-8").strip()
+        if len(tok) >= 32:
+            return tok
+    except OSError:
+        pass
+    tok = secrets.token_urlsafe(32)
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(tok, encoding="utf-8")
+    return tok
 
 
 # ── công việc chạy nền (một luồng: GPU chỉ chạy một việc một lúc) ─────────────
@@ -160,7 +191,15 @@ def _dialect(d: str | None) -> str | None:
 # ── dựng ứng dụng ─────────────────────────────────────────────────────────────
 
 def create_app(studio: Studio | None = None, updater: Updater | None = None,
-               restart: Callable[[], None] | None = None) -> FastAPI:
+               restart: Callable[[], None] | None = None, auth_token: str | None = None) -> FastAPI:
+    """auth_token: khoá phiên — khi có, mọi /api/ và /files/ đòi cookie đúng khoá (cửa sổ phần mềm
+    nhận cookie qua đường dẫn mở cửa sổ ?t=…). Không có (kiểm thử) → chỉ kiểm tra Host + header."""
+    import hmac
+    hosts = allowed_hosts()
+
+    def token_ok(cookie: str | None) -> bool:
+        return auth_token is None or (bool(cookie) and hmac.compare_digest(cookie, auth_token))
+
     studio = studio or Studio()
     updater = updater or Updater()
     restart = restart or schedule_restart
@@ -187,9 +226,35 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
 
     @app.middleware("http")
     async def guard(request: Request, call_next):
+        from fastapi.responses import RedirectResponse
+        if not _host_ok(request.headers.get("host", ""), hosts):
+            return JSONResponse({"detail": "Địa chỉ truy cập không hợp lệ."}, status_code=403)
+        path = request.url.path
+        # Cửa sổ phần mềm mở bằng /?t=<khoá> → ghi cookie phiên rồi chuyển về trang chính.
+        if auth_token and path == "/" and request.query_params.get("t"):
+            if not hmac.compare_digest(request.query_params["t"], auth_token):
+                return JSONResponse({"detail": "Khoá phiên không đúng."}, status_code=403)
+            resp = RedirectResponse("/", status_code=303)
+            resp.set_cookie(SESSION_COOKIE, auth_token, httponly=True, samesite="strict", path="/")
+            return resp
+        if (path.startswith("/api/") or path.startswith("/files/")) and not token_ok(request.cookies.get(SESSION_COOKIE)):
+            return JSONResponse({"detail": "Phiên không hợp lệ — hãy mở phần mềm bằng run.bat."}, status_code=401)
         if request.method not in ("GET", "HEAD", "OPTIONS") and request.headers.get(GUARD_HEADER) != "1":
             return JSONResponse({"detail": "Yêu cầu không hợp lệ."}, status_code=403)
+        try:
+            if int(request.headers.get("content-length") or 0) > MAX_BODY:
+                return JSONResponse({"detail": "File quá lớn (tối đa 200 MB)."}, status_code=413)
+        except ValueError:
+            return JSONResponse({"detail": "Yêu cầu không hợp lệ."}, status_code=400)
         response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        # Chỉ chạy mã của chính phần mềm: chặn mã chèn (inline script, onerror=…) và mọi kết nối ra ngoài.
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; "
+            "object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
         if request.url.path.startswith("/api/"):
             response.headers["Cache-Control"] = "no-store"
         return response
@@ -392,7 +457,9 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
     async def live(ws: WebSocket):
         origin = ws.headers.get("origin", "")
         host = ws.headers.get("host", "")
-        if origin and not origin.endswith("//" + host):
+        origin_host = origin.split("//", 1)[-1] if origin else host
+        if (not _host_ok(host, hosts) or not _host_ok(origin_host, hosts)
+                or not token_ok(ws.cookies.get(SESSION_COOKIE))):
             await ws.close(code=1008)
             return
         await ws.accept()
@@ -535,8 +602,16 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
                 raise HTTPException(400, str(e))
         return {"duration": round(dur, 2), "warnings": warns, "summary": s.stats_text()}
 
+    script_ids = {it.id for it in script}
+
+    def check_item(item_id: str) -> None:
+        # mã câu phải có trong kịch bản (chặn "..\\..\\" trên Windows)
+        if item_id not in script_ids:
+            raise HTTPException(404, "Không có câu này.")
+
     @app.get("/api/recording/{session}/takes/{item_id}")
     def rec_take(session: str, item_id: str):
+        check_item(item_id)
         s = recording.Session(session)
         if not s.has(item_id):
             raise HTTPException(404, "Câu này chưa thu.")
@@ -544,6 +619,7 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
 
     @app.delete("/api/recording/{session}/takes/{item_id}")
     def rec_delete(session: str, item_id: str):
+        check_item(item_id)
         s = recording.Session(session)
         s.delete_take(item_id)
         return {"summary": s.stats_text()}
@@ -562,7 +638,8 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
     async def job_finetune(request: Request):
         d = await request.json()
         s = recording.Session(d.get("session") or "giong-cua-toi")
-        run_name = (d.get("run") or s.name).strip()
+        from .voices import slugify
+        run_name = slugify(str(d.get("run") or s.name))[:60]  # chặn "../" trong tên thư mục
 
         def run(progress, logline):
             s.write_metadata()
@@ -720,10 +797,11 @@ def run(port: int = 7860, open_window: bool = True) -> None:
     import uvicorn
     if os.environ.get("VOXVIET_RESTARTED") == "1":
         _wait_port_free(port)  # tiến trình cũ đang thoát
-    app = create_app()
+    token = session_token()
+    app = create_app(auth_token=token)
     url = f"http://127.0.0.1:{port}/"
     if open_window:
-        threading.Timer(1.2, open_app_window, args=(url,)).start()
+        threading.Timer(1.2, open_app_window, args=(f"{url}?t={token}",)).start()
     print(f"\n  VoxViet Studio đang chạy: {url}\n  (đóng cửa sổ dòng lệnh này để tắt phần mềm)\n")
     uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
 
@@ -749,9 +827,13 @@ def open_app_window(url: str) -> None:
     for exe in candidates:
         if exe.is_file():
             try:
+                # Hồ sơ trình duyệt riêng cho cửa sổ phần mềm; tắt đồng bộ tài khoản, tải nền,
+                # dịch trang… để cửa sổ không tự kết nối ra ngoài.
                 subprocess.Popen([str(exe), f"--app={url}", "--window-size=1440,900",
-                                  f"--user-data-dir={profile}", "--no-first-run",
-                                  "--disable-features=Translate"])
+                                  f"--user-data-dir={profile}", "--no-first-run", "--no-default-browser-check",
+                                  "--disable-sync", "--disable-background-networking", "--disable-component-update",
+                                  "--disable-domain-reliability", "--metrics-recording-only",
+                                  "--disable-features=Translate,MediaRouter,OptimizationHints,AutofillServerCommunication"])
                 return
             except OSError:
                 continue

@@ -231,13 +231,19 @@ tests/                     kiểm thử tự động (pytest)
 | Giọng nghe đục / tối | Thử mức **Sáng** trong mục Chuốt giọng; giảm *Độ biến hoá ngữ điệu* còn 0.6–0.7; một số giọng có sẵn vốn được thu kém trong hơn, nên thử giọng khác |
 | Giọng clone chưa giống | Dùng mẫu 7–10 giây, sạch, không nhạc nền; hoặc fine-tune |
 
-## 8. Giấy phép & sử dụng có trách nhiệm
+## 8. Bảo mật
+
+- Báo cáo rà soát đầy đủ: **`BAO-CAO-BAO-MAT.md`** (mã độc trong mã nguồn lõi giọng, lỗ hổng đã sửa, kết nối ra ngoài).
+- **`kiem_tra_bao_mat.bat`**: tự quét trên máy bạn — mã đi kèm mô hình, file trọng số, đối chiếu thư viện lõi với mã băm gốc, quét virus bằng Windows Defender. Không gửi gì ra ngoài.
+- Phần mềm chỉ nghe `127.0.0.1`, có khoá phiên riêng cho cửa sổ mở bằng `run.bat`; trang web khác không điều khiển được.
+
+## 9. Giấy phép & sử dụng có trách nhiệm
 
 - Mã nguồn VoxViet Studio: MIT.
 - Thành phần bên thứ ba (VieNeu-TTS, sea-g2p, Resemble Enhance, Chatterbox, Be Vietnam Pro, Lucide…): xem `THIRD_PARTY_NOTICES.md`. Dịch vụ Google tuân theo điều khoản của Google.
 - **Chỉ clone giọng của chính bạn, hoặc của người đã đồng ý rõ ràng.** Không dùng để giả mạo hay lừa đảo.
 
-## 9. Phát triển
+## 10. Phát triển
 
 ```bash
 pip install -r requirements.txt pytest

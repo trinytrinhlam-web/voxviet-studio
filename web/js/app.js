@@ -385,7 +385,7 @@ function initLibrary() {
     lib = await api.get("/api/library");
     if (!lib.voices.some((v) => v.id === selected)) selected = lib.voices[0]?.id || null;
     $("#kg-count").textContent = `${lib.voices.length}/${lib.max}`;
-    $("#kg-mine").innerHTML = lib.voices.map((v) => `<button type="button" class="voice-opt" data-id="${v.id}" aria-selected="${v.id === selected}">${avatar(v.name, `voice:${v.id}`, v.gender, v.avatar)}<span style="min-width:0"><span class="name">${esc(v.name)}</span>${metaHTML({ kind: "mine", gender: v.gender, region: v.dialect, clips: v.clips })}</span></button>`).join("")
+    $("#kg-mine").innerHTML = lib.voices.map((v) => `<button type="button" class="voice-opt" data-id="${esc(v.id)}" aria-selected="${v.id === selected}">${avatar(v.name, `voice:${v.id}`, v.gender, v.avatar)}<span style="min-width:0"><span class="name">${esc(v.name)}</span>${metaHTML({ kind: "mine", gender: v.gender, region: v.dialect, clips: v.clips })}</span></button>`).join("")
       || `<p class="hint">Chưa có giọng nào. Tạo giọng bên dưới, rồi thêm một đoạn nói 5–10 giây.</p>`;
     $("#kg-new button[type=submit]").disabled = lib.voices.length >= lib.max;
     renderDetail();
@@ -881,7 +881,7 @@ async function boot() {
   try {
     STATE = await api.get("/api/state");
   } catch {
-    document.getElementById("main").innerHTML = `<div class="error-box" style="max-width:560px"><svg class="icon"><use href="/icons.svg#i-triangle-alert"/></svg><span>Không kết nối được máy chủ VoxViet. Hãy mở lại bằng run.bat.</span></div>`;
+    document.getElementById("main").innerHTML = `<div class="error-box" style="max-width:560px"><svg class="icon"><use href="/icons.svg#i-triangle-alert"/></svg><span>Không mở được phiên làm việc của VoxViet. Hãy đóng cửa sổ này và mở lại bằng run.bat.</span></div>`;
     return;
   }
   $("#version").textContent = `VoxViet Studio ${STATE.version}${STATE.demo ? " · chạy thử" : ""}`;

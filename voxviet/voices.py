@@ -23,6 +23,9 @@ from . import audio, paths
 from .text import emotions
 
 MAX_VOICES = 10
+SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+SAFE_CLIP = re.compile(r"^(en_)?[a-z_]{1,32}\.wav$")
+SAFE_AVATAR = re.compile(r"^[a-z0-9-]{1,48}$")
 CLIP_MIN_SEC = 3.0
 CLIP_MAX_SEC = 15.0
 PRESET_PREFIX = "preset:"
@@ -47,10 +50,13 @@ class Voice:
 
     def clip_path(self, key: str) -> Path | None:
         name = self.clips.get(key)
-        if not name:
+        # Tên file lấy từ voice.json (có thể đến từ máy khác qua GitHub) → chỉ chấp nhận tên an toàn,
+        # và đường dẫn cuối cùng phải nằm trong thư mục clips của giọng.
+        if not name or not isinstance(name, str) or not SAFE_CLIP.match(name):
             return None
-        p = self.folder / "clips" / name
-        return p if p.exists() else None
+        base = (self.folder / "clips").resolve()
+        p = (base / name).resolve()
+        return p if p.parent == base and p.is_file() else None
 
     def ref_for(self, emotion: str = emotions.DEFAULT, language: str = "vi") -> Path | None:
         """Chọn đoạn mẫu phù hợp nhất cho cảm xúc + ngôn ngữ."""
@@ -93,7 +99,14 @@ class VoiceLibrary:
                 try:
                     raw = json.loads(f.read_text(encoding="utf-8"))
                     known = Voice.__dataclass_fields__.keys()
+                    if not SAFE_ID.match(d.name):
+                        continue  # thư mục lạ (không do phần mềm tạo) → bỏ qua
                     v = Voice(**{k: val for k, val in raw.items() if k in known})
+                    v.id = d.name  # mã giọng luôn là tên thư mục, không tin trường "id" trong file
+                    v.name = str(v.name)[:60]
+                    v.clips = {str(k): str(val) for k, val in (v.clips or {}).items()} if isinstance(v.clips, dict) else {}
+                    if v.avatar and not SAFE_AVATAR.match(str(v.avatar)):
+                        v.avatar = ""
                     v._root = self.root
                     out.append(v)
                 except (OSError, ValueError, TypeError):
