@@ -810,7 +810,7 @@ function initUpdate() {
         if (st.boot_id !== oldBoot) { location.hash = "#cap-nhat"; location.reload(); return; }
       } catch { /* máy chủ đang khởi động lại */ }
     }
-    $("#cn-busy-msg").textContent = "Phần mềm chưa khởi động lại được. Hãy đóng cửa sổ và mở lại bằng run.bat.";
+    $("#cn-busy-msg").textContent = "Phần mềm chưa khởi động lại được. Hãy đóng cửa sổ và mở lại VoxViet Studio từ biểu tượng trên Desktop (hoặc run.bat).";
   }
 
   async function runWithLog(url, label) {
@@ -876,14 +876,30 @@ async function system() {
   } catch { /* máy chủ đang bận */ }
 }
 
+// Báo cho phần mềm biết cửa sổ này đang mở. Đóng hết cửa sổ → phần mềm tự tắt (chế độ ứng dụng).
+// Mất kết nối (đang khởi động lại sau cập nhật) → tự nối lại.
+function presence() {
+  let ws = null;
+  let wait = 1000;
+  const open = () => {
+    if (ws && ws.readyState <= 1) return;
+    ws = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/presence`);
+    ws.onopen = () => { wait = 1000; };
+    ws.onclose = () => { ws = null; setTimeout(open, wait); wait = Math.min(wait * 1.5, 4000); };
+  };
+  open();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) open(); });
+}
+
 // ── khởi động ───────────────────────────────────────────────────────────────
 async function boot() {
   try {
     STATE = await api.get("/api/state");
   } catch {
-    document.getElementById("main").innerHTML = `<div class="error-box" style="max-width:560px"><svg class="icon"><use href="/icons.svg#i-triangle-alert"/></svg><span>Không mở được phiên làm việc của VoxViet. Hãy đóng cửa sổ này và mở lại bằng run.bat.</span></div>`;
+    document.getElementById("main").innerHTML = `<div class="error-box" style="max-width:560px"><svg class="icon"><use href="/icons.svg#i-triangle-alert"/></svg><span>Không mở được phiên làm việc của VoxViet. Hãy đóng cửa sổ này và mở lại VoxViet Studio từ biểu tượng trên Desktop (hoặc run.bat).</span></div>`;
     return;
   }
+  presence();
   $("#version").textContent = `VoxViet Studio ${STATE.version}${STATE.demo ? " · chạy thử" : ""}`;
   initDoc(); initDialogue(); initDub(); initLive(); initLibrary(); initSettings();
   await initStudio().catch((e) => toast(e.message, "err"));

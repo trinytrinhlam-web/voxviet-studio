@@ -9,7 +9,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-import socket
 import sys
 import shutil
 import subprocess
@@ -129,6 +128,9 @@ class Jobs:
     def get(self, jid: str) -> dict | None:
         return self._jobs.get(jid)
 
+    def busy(self) -> bool:
+        return any(j["status"] in ("queued", "running") for j in list(self._jobs.values()))
+
 
 def schedule_restart(delay: float = 1.0) -> None:
     """Khởi động lại phần mềm: mở tiến trình mới (chờ cổng trống) rồi thoát tiến trình hiện tại."""
@@ -144,14 +146,10 @@ def schedule_restart(delay: float = 1.0) -> None:
 
 
 def _wait_port_free(port: int, timeout: float = 30.0) -> None:
+    from .appmode import port_free
     t = time.time()
-    while time.time() - t < timeout:
-        with socket.socket() as s:
-            try:
-                s.bind(("127.0.0.1", port))
-                return
-            except OSError:
-                time.sleep(0.3)
+    while time.time() - t < timeout and not port_free(port):
+        time.sleep(0.3)
 
 
 def _friendly(e: Exception) -> str:
@@ -191,9 +189,14 @@ def _dialect(d: str | None) -> str | None:
 # ── dựng ứng dụng ─────────────────────────────────────────────────────────────
 
 def create_app(studio: Studio | None = None, updater: Updater | None = None,
-               restart: Callable[[], None] | None = None, auth_token: str | None = None) -> FastAPI:
+               restart: Callable[[], None] | None = None, auth_token: str | None = None,
+               idle_exit: Callable[[], None] | None = None, idle_grace: float = 12.0,
+               startup_grace: float = 120.0) -> FastAPI:
     """auth_token: khoá phiên — khi có, mọi /api/ và /files/ đòi cookie đúng khoá (cửa sổ phần mềm
-    nhận cookie qua đường dẫn mở cửa sổ ?t=…). Không có (kiểm thử) → chỉ kiểm tra Host + header."""
+    nhận cookie qua đường dẫn mở cửa sổ ?t=…). Không có (kiểm thử) → chỉ kiểm tra Host + header.
+
+    idle_exit: chế độ ứng dụng — gọi hàm này khi không còn cửa sổ nào mở (sau idle_grace giây,
+    hoặc startup_grace giây nếu chưa cửa sổ nào kết nối) và không có việc đang chạy."""
     import hmac
     hosts = allowed_hosts()
 
@@ -224,6 +227,27 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
     if os.environ.get("VOXVIET_DEMO") != "1" and os.environ.get("VOXVIET_NO_AUTOCHECK") != "1":
         threading.Thread(target=auto_check, daemon=True).start()
 
+    # Cửa sổ đang mở: mỗi cửa sổ giữ một kết nối /api/presence. Hết cửa sổ → tắt phần mềm.
+    presence = {"count": 0, "since": time.time(), "ever": False}
+    app.state.presence = presence
+
+    def idle_watch():
+        while True:
+            time.sleep(1.0)
+            if presence["count"] > 0:
+                continue
+            if jobs.busy():  # cửa sổ đã đóng nhưng còn việc đang chạy → làm xong rồi mới tắt
+                presence["since"] = time.time()
+                continue
+            grace = idle_grace if presence["ever"] else startup_grace
+            if time.time() - presence["since"] >= grace:
+                log.info("Không còn cửa sổ nào mở — tắt phần mềm.")
+                idle_exit()
+                return
+
+    if idle_exit is not None:
+        threading.Thread(target=idle_watch, daemon=True, name="voxviet-idle").start()
+
     @app.middleware("http")
     async def guard(request: Request, call_next):
         from fastapi.responses import RedirectResponse
@@ -238,7 +262,7 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
             resp.set_cookie(SESSION_COOKIE, auth_token, httponly=True, samesite="strict", path="/")
             return resp
         if (path.startswith("/api/") or path.startswith("/files/")) and not token_ok(request.cookies.get(SESSION_COOKIE)):
-            return JSONResponse({"detail": "Phiên không hợp lệ — hãy mở phần mềm bằng run.bat."}, status_code=401)
+            return JSONResponse({"detail": "Phiên không hợp lệ — hãy mở lại VoxViet Studio từ biểu tượng trên Desktop."}, status_code=401)
         if request.method not in ("GET", "HEAD", "OPTIONS") and request.headers.get(GUARD_HEADER) != "1":
             return JSONResponse({"detail": "Yêu cầu không hợp lệ."}, status_code=403)
         try:
@@ -452,14 +476,34 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
             return _result_json(r)
         return {"job": jobs.submit("preview", run)}
 
-    # ── đọc trực tiếp (WebSocket, PCM float32 48 kHz) ──
-    @app.websocket("/api/live")
-    async def live(ws: WebSocket):
+    def ws_ok(ws: WebSocket) -> bool:
         origin = ws.headers.get("origin", "")
         host = ws.headers.get("host", "")
         origin_host = origin.split("//", 1)[-1] if origin else host
-        if (not _host_ok(host, hosts) or not _host_ok(origin_host, hosts)
-                or not token_ok(ws.cookies.get(SESSION_COOKIE))):
+        return (_host_ok(host, hosts) and _host_ok(origin_host, hosts)
+                and token_ok(ws.cookies.get(SESSION_COOKIE)))
+
+    @app.websocket("/api/presence")
+    async def presence_ws(ws: WebSocket):
+        if not ws_ok(ws):
+            await ws.close(code=1008)
+            return
+        await ws.accept()
+        presence["count"] += 1
+        presence["ever"] = True
+        try:
+            while True:
+                await ws.receive_text()  # giữ kết nối; cửa sổ đóng → ngắt
+        except Exception:
+            pass
+        finally:
+            presence["count"] -= 1
+            presence["since"] = time.time()
+
+    # ── đọc trực tiếp (WebSocket, PCM float32 48 kHz) ──
+    @app.websocket("/api/live")
+    async def live(ws: WebSocket):
+        if not ws_ok(ws):
             await ws.close(code=1008)
             return
         await ws.accept()
@@ -793,17 +837,48 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
     return app
 
 
-def run(port: int = 7860, open_window: bool = True) -> None:
+def run(port: int = 7860, open_window: bool = True, app_mode: bool = False) -> None:
+    """app_mode: mở từ biểu tượng (pythonw, không cửa sổ dòng lệnh) — một phiên duy nhất,
+    đóng hết cửa sổ phần mềm là tắt hẳn."""
     import uvicorn
-    if os.environ.get("VOXVIET_RESTARTED") == "1":
-        _wait_port_free(port)  # tiến trình cũ đang thoát
+    from . import appmode
     token = session_token()
-    app = create_app(auth_token=token)
+    restarted = os.environ.get("VOXVIET_RESTARTED") == "1"
+    if restarted:
+        _wait_port_free(port)  # tiến trình cũ đang thoát
+    elif app_mode:
+        running = appmode.running_port(token)
+        if running:  # đang chạy rồi → chỉ mở thêm cửa sổ
+            log.info("VoxViet đang chạy ở cổng %s — mở cửa sổ.", running)
+            if open_window:
+                open_app_window(f"http://127.0.0.1:{running}/?t={token}")
+            return
+        port = appmode.choose_port(port)
+    appmode.remember_port(port)
+    if app_mode and "--port" not in _ARGV:
+        _ARGV.extend(["--port", str(port)])  # khởi động lại sau cập nhật giữ đúng cổng
+
+    server: dict = {}
+
+    def stop():
+        srv = server.get("srv")
+        if srv is not None:
+            srv.should_exit = True
+        threading.Timer(15.0, lambda: os._exit(0)).start()  # phòng khi máy chủ không tự dừng
+
+    app = create_app(auth_token=token, idle_exit=stop if app_mode else None,
+                     startup_grace=float(os.environ.get("VOXVIET_STARTUP_GRACE", "120")))
     url = f"http://127.0.0.1:{port}/"
     if open_window:
         threading.Timer(1.2, open_app_window, args=(f"{url}?t={token}",)).start()
-    print(f"\n  VoxViet Studio đang chạy: {url}\n  (đóng cửa sổ dòng lệnh này để tắt phần mềm)\n")
-    uvicorn.run(app, host="127.0.0.1", port=port, log_level="warning")
+    if not app_mode:
+        print(f"\n  VoxViet Studio đang chạy: {url}\n  (đóng cửa sổ dòng lệnh này để tắt phần mềm)\n")
+    log.info("VoxViet Studio %s chạy ở %s", __version__, url)
+    srv = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning",
+                                        log_config=None))
+    server["srv"] = srv
+    srv.run()
+    os._exit(0)  # dừng hẳn các luồng nền (mô hình, việc đang chờ)
 
 
 def open_app_window(url: str) -> None:

@@ -16,7 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .. import audio, paths
+from .. import appmode, audio, paths
 from .. import settings as settings_mod
 from ..text import emotions
 from .base import EngineUnavailable, SynthRequest, TTSEngine
@@ -58,13 +58,13 @@ class ChatterboxEngine(TTSEngine):
             env = dict(os.environ, PYTHONIOENCODING="utf-8")
             self._proc = subprocess.Popen(
                 [str(_env_python()), str(worker)] + ([dev] if dev else []),
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None,
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=appmode.child_stderr(),
                 text=True, encoding="utf-8", bufsize=1, creationflags=flags, env=env,
             )
             while True:  # chờ dòng {"ready": true}; bỏ qua log khác
                 line = self._proc.stdout.readline()
                 if not line:
-                    raise EngineUnavailable("Chatterbox khởi động thất bại — xem cửa sổ dòng lệnh.")
+                    raise EngineUnavailable("Chatterbox khởi động thất bại — xem cửa sổ dòng lệnh hoặc data/.local/voxviet.log.")
                 try:
                     if json.loads(line).get("ready"):
                         break
