@@ -15,7 +15,7 @@ from typing import Callable, Iterator
 
 import numpy as np
 
-from . import audio, engines, paths
+from . import audio, catalog, engines, paths
 from . import settings as settings_mod
 from .audio import enhance as enhance_mod
 from .engines.base import EngineUnavailable, SynthRequest, TTSEngine
@@ -173,7 +173,7 @@ class Studio:
             eng = engines.get(engine_id)
         else:
             s = settings_mod.load()
-            eng = engines.get("vieneu")
+            eng = engines.get("core")
             if language == "en" and s.english_engine == "chatterbox":
                 cb = engines.get("chatterbox")
                 if cb.available()[0]:
@@ -202,12 +202,11 @@ class Studio:
             return ResolvedVoice(v.name, preset=v.gemini_voice or None, dialect=v.dialect, voice=v)
         if value.startswith(PRESET_PREFIX):
             pid = value[len(PRESET_PREFIX):]
-            dialect = s.dialect
-            if hasattr(eng, "preset_info"):
-                for d in eng.preset_info():
-                    if d["name"] == pid and d["region"] in ("bac", "nam"):
-                        dialect = d["region"]
-            return ResolvedVoice(pid, preset=pid, dialect=dialect)
+            pv = catalog.get(pid) if eng.id == "core" else None
+            if pv is None:
+                return ResolvedVoice(pid, preset=pid, dialect=s.dialect)
+            dialect = pv.region if pv.region in ("bac", "nam") else s.dialect
+            return ResolvedVoice(pv.name, preset=pv.id, dialect=dialect)
         return ResolvedVoice("mặc định", dialect=s.dialect)
 
     # ── lõi tổng hợp ──────────────────────────────────────────────────────────
@@ -269,7 +268,7 @@ class Studio:
     def _clean_fn(self, ai_clean: bool, warnings: list[str] | None = None):
         if not ai_clean:
             return None
-        eng = engines.get("vieneu")
+        eng = engines.get("core")
         if not eng.available()[0] or "mock" in engines.registry():
             return None
 

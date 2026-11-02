@@ -26,7 +26,7 @@ class Settings:
     enhance: str = "trong"
     # Giảm vang: "tat" | "nhe" | "vua" | "manh"
     dereverb: str = "vua"
-    # Khử nhiễu/vang bằng AI (bộ denoiser đi kèm VieNeu) — chậm hơn một chút
+    # Khử nhiễu/vang bằng AI (bộ denoiser đi kèm mô hình) — chậm hơn một chút
     ai_clean: bool = False
     # Khoảng nghỉ giữa các câu (giây) — nhân thêm theo "nhịp nghỉ" trong giao diện
     sentence_pause: float = 0.25
@@ -35,10 +35,10 @@ class Settings:
     gemini_api_key: str = ""
     gemini_model: str = ""  # để trống = tự chọn model TTS mới nhất tìm được
     gemini_voice: str = "Kore"
-    # Engine tiếng Anh: "vieneu" | "chatterbox"
-    english_engine: str = "vieneu"
-    # Đường dẫn backbone VieNeu tuỳ chỉnh (mô hình đã fine-tune). Trống = mặc định.
-    vieneu_backbone: str = ""
+    # Engine tiếng Anh: "core" | "chatterbox"
+    english_engine: str = "core"
+    # Đường dẫn mô hình lõi tuỳ chỉnh (mô hình đã fine-tune). Trống = mặc định.
+    core_backbone: str = ""
     extra: dict = field(default_factory=dict)
 
 
@@ -55,6 +55,11 @@ def load() -> Settings:
         if paths.SETTINGS.exists():
             try:
                 raw = json.loads(paths.SETTINGS.read_text(encoding="utf-8"))
+                # Chuyển đổi cài đặt của phiên bản cũ (trước khi đổi thương hiệu).
+                if "vieneu_backbone" in raw:
+                    raw.setdefault("core_backbone", raw.pop("vieneu_backbone"))
+                if raw.get("english_engine") == "vieneu":
+                    raw["english_engine"] = "core"
                 known = {f.name for f in fields(Settings)}
                 for k, v in raw.items():
                     if k in known:

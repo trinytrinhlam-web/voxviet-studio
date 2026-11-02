@@ -1,10 +1,10 @@
-"""Fine-tune (LoRA) VieNeu-TTS v3 Turbo bằng giọng của bạn — module phụ, không bắt buộc.
+"""Fine-tune (LoRA) lõi giọng VoxViet bằng giọng của bạn — module phụ, không bắt buộc.
 
 Clone tức thì (3–8 giây mẫu) đã đủ dùng hằng ngày. Fine-tune giúp giọng giống hơn
 khi bạn có 10–30 phút thu âm sạch. Cần GPU NVIDIA ~6 GB (dùng --grad-checkpoint).
 
-Quy trình dùng mã huấn luyện chính thức của VieNeu-TTS (cài bằng install_finetune.bat
-vào ``tools/VieNeu-TTS``):
+Quy trình dùng bộ huấn luyện của mã nguồn lõi (cài bằng install_finetune.bat
+vào ``tools/voxviet-trainer``):
   1. prepare_dataset.py  — mã hoá âm thanh → train.parquet
   2. train_lora.py --merge — huấn luyện + gộp → finetune/output/<tên>/merged
 """
@@ -19,7 +19,7 @@ from typing import Iterator
 
 from . import paths
 
-REPO_DIR = paths.TOOLS / "VieNeu-TTS"
+REPO_DIR = paths.TOOLS / "voxviet-trainer"
 
 
 def status() -> tuple[bool, str]:

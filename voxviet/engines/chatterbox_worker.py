@@ -1,6 +1,6 @@
 """Tiến trình phụ chạy Chatterbox (tiếng Anh) trong môi trường Python riêng.
 
-Chatterbox cần phiên bản torch/transformers khác VieNeu nên được cài vào
+Chatterbox cần phiên bản torch/transformers khác lõi giọng nên được cài vào
 ``envs/chatterbox`` (xem install_english_pro.bat) và giao tiếp qua stdin/stdout
 bằng JSON, mỗi dòng một lệnh:
 

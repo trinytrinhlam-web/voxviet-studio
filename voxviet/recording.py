@@ -1,7 +1,7 @@
 """Phòng thu: đọc kịch bản, lưu từng câu, xuất bộ dữ liệu để fine-tune.
 
 Mỗi phiên thu là một thư mục ``data/recordings/<tên phiên>/`` đúng định dạng
-fine-tune của VieNeu-TTS::
+fine-tune của bộ huấn luyện::
 
     metadata.csv      file_name|text  (mỗi dòng một câu đã thu)
     raw_audio/<mã>.flac

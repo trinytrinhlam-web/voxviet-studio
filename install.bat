@@ -56,7 +56,7 @@ if defined TORCH_INDEX (
 )
 
 REM --- 5. Tai mo hinh ---
-echo [5/5] Tai mo hinh VieNeu-TTS (lan dau ~1-3 GB)...
+echo [5/5] Tai mo hinh loi giong VoxViet (lan dau ~1-3 GB)...
 %PY% tools\download_models.py
 if errorlevel 1 ( echo Tai mo hinh that bai - chay lai download_models.bat sau. )
 

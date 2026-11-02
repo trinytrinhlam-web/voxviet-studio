@@ -6,7 +6,7 @@ Mỗi giọng là một thư mục ``data/voices/<id>/``::
     clips/<cảm xúc>.wav đoạn mẫu cho từng cảm xúc (trung_tinh.wav là bắt buộc)
     clips/en_<cảm xúc>.wav  (tuỳ chọn) mẫu nói tiếng Anh — giúp module tiếng Anh chuẩn hơn
 
-Giọng có sẵn của VieNeu (Bắc/Trung/Nam) không tính vào giới hạn 10.
+Giọng có sẵn của VoxViet (Bắc/Trung/Nam) không tính vào giới hạn 10.
 """
 
 from __future__ import annotations
@@ -161,7 +161,7 @@ class VoiceLibrary:
             warnings.append(f"Đoạn mẫu chỉ {dur:.1f}s — nên từ 5–10 giây để giống giọng hơn.")
         if dur > CLIP_MAX_SEC:
             x = x[: int(CLIP_MAX_SEC * audio.SR)]
-            warnings.append(f"Đoạn mẫu dài {dur:.0f}s, đã cắt còn {CLIP_MAX_SEC:.0f}s (VieNeu dùng tối đa ~8s).")
+            warnings.append(f"Đoạn mẫu dài {dur:.0f}s, đã cắt còn {CLIP_MAX_SEC:.0f}s (lõi giọng dùng tối đa ~8s).")
         if len(x) and float(abs(x).max()) >= 0.999:
             warnings.append("Âm thanh bị rè/vỡ (clipping) — nên thu lại nhỏ hơn một chút.")
         x = audio.loudness_normalize(x, audio.SR, -20.0)

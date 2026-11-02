@@ -1,6 +1,6 @@
 """Danh sách cảm xúc và cách mỗi engine thể hiện chúng.
 
-VieNeu v3 Turbo lấy "chất giọng/cảm xúc" từ CHÍNH đoạn giọng mẫu. Vì vậy cách
+Lõi giọng lấy "chất giọng/cảm xúc" từ CHÍNH đoạn giọng mẫu. Vì vậy cách
 hiệu quả nhất là thu mỗi cảm xúc một đoạn mẫu riêng (xem Kho giọng). Khi giọng
 không có mẫu cho cảm xúc đó, phần mềm dùng mẫu trung tính và chỉ chỉnh nhẹ tốc
 độ + độ "biến hoá" (temperature).
@@ -16,7 +16,7 @@ class Emotion:
     key: str
     label: str
     speed: float  # hệ số tốc độ riêng (để 1.0: kéo giãn thời gian làm giọng kém trong)
-    temperature: float  # VieNeu: độ biến hoá ngữ điệu
+    temperature: float  # lõi giọng: độ biến hoá ngữ điệu
     exaggeration: float  # Chatterbox: mức cường điệu cảm xúc (0.25–2.0)
     gemini_style: str  # câu chỉ dẫn phong cách cho Gemini TTS
     aliases: tuple[str, ...] = ()

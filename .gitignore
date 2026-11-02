@@ -2,7 +2,7 @@
 .venv/
 envs/
 models/
-tools/VieNeu-TTS/
+tools/voxviet-trainer/
 tools/*.zip
 
 # File đầu ra (tạo lại được)
@@ -11,6 +11,9 @@ data/outputs/
 # Chứa API key — KHÔNG đưa lên GitHub
 data/settings.json
 
+# Hồ sơ trình duyệt của cửa sổ ứng dụng
+data/.app-window/
+
 # Bộ dữ liệu trung gian khi fine-tune
 data/recordings/*/train.parquet
 
@@ -18,3 +21,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .gradio/
+
+# Chỗ làm việc của skill thiết kế (ảnh chụp, phiếu hướng)
+.thiet-ke/

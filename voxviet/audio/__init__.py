@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
-SR = 48_000  # tần số lấy mẫu chung của phần mềm (= VieNeu v3 Turbo)
+SR = 48_000  # tần số lấy mẫu chung của phần mềm (= lõi giọng)
 
 
 def to_mono(x) -> np.ndarray:
@@ -136,7 +136,9 @@ def load(path: str | Path, sr: int = SR) -> np.ndarray:
         x, file_sr = sf.read(str(path), dtype="float32")
         return resample(x, file_sr, sr)
     except Exception:
-        return decode_bytes(Path(path).read_bytes(), sr)
+        # webm/opus (thu từ trình duyệt), m4a…: ffmpeg đọc thẳng từ file (dò định dạng chắc hơn qua pipe)
+        raw = _run_ffmpeg(["-i", str(path), "-f", "f32le", "-ac", "1", "-ar", str(sr), "pipe:1"])
+        return np.frombuffer(raw, dtype=np.float32).copy()
 
 
 def time_stretch(x: np.ndarray, rate: float, sr: int = SR) -> np.ndarray:

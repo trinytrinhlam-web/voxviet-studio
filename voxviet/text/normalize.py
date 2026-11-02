@@ -3,7 +3,7 @@
 Gồm:
   * Thẻ điều khiển trong văn bản (cảm xúc, nghỉ, âm phi ngôn ngữ).
   * Chuẩn hoá tiếng Việt (số, ngày, tiền, viết tắt) qua ``sea-g2p`` — thư viện
-    mà VieNeu-TTS dùng, có nhận diện từ tiếng Anh xen kẽ để đọc chuẩn tiếng Anh.
+    mà lõi giọng dùng, có nhận diện từ tiếng Anh xen kẽ để đọc chuẩn tiếng Anh.
   * Khác biệt cách đọc số Bắc/Nam ("nghìn"/"ngàn", "linh"/"lẻ").
   * Chuẩn hoá tiếng Anh (đọc số theo tiếng Anh).
   * Chia văn bản dài thành các đoạn vừa phải.
@@ -15,7 +15,7 @@ Thẻ hỗ trợ (đặt trong ngoặc vuông)::
     [nghỉ 1.5s] [nghỉ 500ms] [nghỉ] [pause 2s]
         → chèn khoảng lặng
     [cười] [thở dài] [hắng giọng]   (hoặc [chuckle] [sigh] [clear throat])
-        → âm thanh phi ngôn ngữ, VieNeu tự xử lý
+        → âm thanh phi ngôn ngữ, lõi giọng tự xử lý
     <en>...</en>
         → ép đọc tiếng Anh một cụm từ (khi tự nhận diện bị nhầm)
 """
@@ -100,7 +100,7 @@ def _sea_normalize(text: str) -> str:
         try:
             from sea_g2p import Normalizer
             _normalizer = Normalizer(lang="vi")
-        except Exception:  # thư viện chưa cài: để VieNeu tự chuẩn hoá
+        except Exception:  # thư viện chưa cài: để lõi giọng tự chuẩn hoá
             _normalizer_failed = True
             return text
     return _normalizer.normalize(text)

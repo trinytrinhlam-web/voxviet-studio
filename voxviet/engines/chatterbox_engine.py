@@ -1,8 +1,8 @@
 """Module tiếng Anh "Pro": Chatterbox (MIT) — clone giọng + điều khiển cường độ cảm xúc.
 
 Chạy trong tiến trình riêng (``envs/chatterbox``) vì xung đột phiên bản thư viện
-với VieNeu. Cài bằng ``install_english_pro.bat``. Không bắt buộc: nếu chưa cài,
-module tiếng Anh tự dùng VieNeu.
+với lõi giọng. Cài bằng ``install_english_pro.bat``. Không bắt buộc: nếu chưa cài,
+module tiếng Anh tự dùng lõi giọng VoxViet.
 """
 
 from __future__ import annotations

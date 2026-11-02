@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1c1915">
+<title>VoxViet Studio</title>
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/BeVietnamPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="rail" aria-label="Điều hướng">
+    <a class="brand" href="#doc" aria-label="VoxViet Studio — trang đầu" style="text-decoration:none;color:inherit">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="3"  y="4" width="2.6" height="9"  rx="1.3" fill="oklch(0.815 0.135 76)" opacity=".55"/>
+        <rect x="7.4" y="4" width="2.6" height="14" rx="1.3" fill="oklch(0.815 0.135 76)" opacity=".7"/>
+        <rect x="11.8" y="4" width="2.6" height="19" rx="1.3" fill="oklch(0.815 0.135 76)" opacity=".85"/>
+        <rect x="16.2" y="4" width="2.6" height="24" rx="1.3" fill="oklch(0.815 0.135 76)"/>
+        <rect x="20.6" y="4" width="2.6" height="19" rx="1.3" fill="oklch(0.815 0.135 76)" opacity=".85"/>
+        <rect x="25"  y="4" width="2.6" height="14" rx="1.3" fill="oklch(0.815 0.135 76)" opacity=".7"/>
+      </svg>
+      <span class="brand-text"><span class="brand-name">VoxViet Studio</span><br><span class="brand-sub">Việt · Anh · offline</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#doc"><svg class="icon"><use href="/icons.svg#i-file-text"/></svg><span>Đọc văn bản</span></a>
+      <a href="#hoi-thoai"><svg class="icon"><use href="/icons.svg#i-messages-square"/></svg><span>Hội thoại</span></a>
+      <a href="#long-tieng"><svg class="icon"><use href="/icons.svg#i-clapperboard"/></svg><span>Lồng tiếng SRT</span></a>
+      <a href="#truc-tiep"><svg class="icon"><use href="/icons.svg#i-radio"/></svg><span>Trực tiếp</span></a>
+      <div class="nav-group">Giọng</div>
+      <a href="#kho-giong"><svg class="icon"><use href="/icons.svg#i-library"/></svg><span>Kho giọng</span></a>
+      <a href="#phong-thu"><svg class="icon"><use href="/icons.svg#i-mic"/></svg><span>Phòng thu</span></a>
+      <div class="nav-group">Khác</div>
+      <a href="#so-sanh"><svg class="icon"><use href="/icons.svg#i-scale"/></svg><span>So sánh Google</span></a>
+      <a href="#cai-dat"><svg class="icon"><use href="/icons.svg#i-settings-2"/></svg><span>Cài đặt</span></a>
+    </nav>
+    <div class="rail-foot">
+      <div class="status-line"><span class="dot" id="core-dot"></span><span class="txt" id="core-status">Đang kiểm tra lõi giọng…</span></div>
+      <div class="txt num" id="version">VoxViet Studio</div>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <!-- ── Đọc văn bản ─────────────────────────────────────────────────── -->
+    <section class="view" id="view-doc" aria-labelledby="h-doc">
+      <div class="page-head">
+        <div>
+          <h1 id="h-doc">Đọc văn bản</h1>
+          <p class="lede" id="doc-lede">Dán văn bản, chọn giọng, bấm Đọc. Nghe lại từng câu trên băng câu bên dưới.</p>
+        </div>
+        <div class="page-actions">
+          <label class="btn ghost" for="doc-file"><svg class="icon"><use href="/icons.svg#i-folder-open"/></svg>Mở file</label>
+          <input id="doc-file" type="file" accept=".txt,.md,.docx" class="sr-only">
+          <button class="btn ghost" id="doc-norm-btn" type="button"><svg class="icon"><use href="/icons.svg#i-scan-text"/></svg>Xem cách máy đọc</button>
+        </div>
+      </div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel" style="padding:0">
+            <label for="doc-text" class="sr-only">Văn bản cần đọc</label>
+            <textarea id="doc-text" class="editor" placeholder="Dán hoặc gõ văn bản. Từ tiếng Anh như email, meeting, CEO được đọc chuẩn tiếng Anh."></textarea>
+            <div class="toolbar" style="padding:0 var(--sp-4) var(--sp-3)">
+              <span class="section-label">Chèn:</span>
+              <div class="chips" id="doc-tags">
+                <button class="chip" type="button" data-tag="[vui] ">Vui</button>
+                <button class="chip" type="button" data-tag="[buồn] ">Buồn</button>
+                <button class="chip" type="button" data-tag="[thì thầm] ">Thì thầm</button>
+                <button class="chip" type="button" data-tag="[kể chuyện] ">Kể chuyện</button>
+                <button class="chip" type="button" data-tag="[trung tính] ">Trung tính</button>
+                <button class="chip" type="button" data-tag="[nghỉ 1s] ">Nghỉ 1 giây</button>
+                <button class="chip" type="button" data-tag="[cười] ">Tiếng cười</button>
+                <button class="chip" type="button" data-wrap="en">Ép đọc tiếng Anh</button>
+              </div>
+              <span class="grow"></span>
+              <span class="hint num" id="doc-count">0 ký tự</span>
+            </div>
+          </div>
+          <div class="panel" id="doc-norm-panel" hidden>
+            <div class="panel-head"><h2>Máy sẽ đọc như sau</h2><button class="btn ghost icon-only" type="button" id="doc-norm-close" aria-label="Đóng"><svg class="icon"><use href="/icons.svg#i-x"/></svg></button></div>
+            <div id="doc-norm-out" class="sentences" style="max-height:none"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Băng câu</h2><div class="toolbar" id="doc-downloads"></div></div>
+            <div id="doc-result" class="result"><div class="result-empty">Chưa có bản đọc. Bấm <b>Đọc</b> (hoặc Ctrl + Enter) để tạo.</div></div>
+          </div>
+          <div class="panel" id="doc-ab" hidden>
+            <div class="panel-head"><h2>Thử hậu kỳ khác trên bản này</h2><span class="hint">Không đọc lại, nên so sánh được công bằng</span></div>
+            <div class="ab">
+              <div class="ab-row">
+                <div class="field"><label for="ab-enh">Làm trong</label><select id="ab-enh"></select></div>
+                <div class="field"><label for="ab-derev">Giảm vang</label><select id="ab-derev"></select></div>
+                <label class="check"><input type="checkbox" id="ab-ai">Khử nhiễu AI</label>
+                <button class="btn" type="button" id="ab-btn"><svg class="icon"><use href="/icons.svg#i-headphones"/></svg>Nghe thử</button>
+              </div>
+              <div id="ab-result"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="inspector" aria-label="Thiết lập giọng đọc">
+          <div class="panel stack">
+            <div class="seg" role="group" aria-label="Ngôn ngữ" id="doc-lang">
+              <button type="button" data-v="vi" aria-pressed="true">Tiếng Việt</button>
+              <button type="button" data-v="en" aria-pressed="false">English</button>
+            </div>
+            <div class="field"><span class="label">Giọng</span><div id="doc-voice"></div></div>
+            <div class="field"><label for="doc-emo">Cảm xúc</label><select id="doc-emo"></select></div>
+            <div class="field"><label for="doc-speed">Tốc độ <span class="value" id="doc-speed-v">1.00×</span></label><input type="range" id="doc-speed" min="0.6" max="1.6" step="0.05" value="1"></div>
+            <div class="field"><label for="doc-pause">Nhịp nghỉ giữa câu <span class="value" id="doc-pause-v">1.0×</span></label><input type="range" id="doc-pause" min="0.3" max="2.5" step="0.1" value="1"></div>
+            <div class="field"><span class="label">Đọc số</span>
+              <div class="seg" role="group" aria-label="Cách đọc số" id="doc-dialect">
+                <button type="button" data-v="auto" aria-pressed="true">Theo giọng</button>
+                <button type="button" data-v="bac" aria-pressed="false">nghìn · linh</button>
+                <button type="button" data-v="nam" aria-pressed="false">ngàn · lẻ</button>
+              </div>
+            </div>
+            <hr class="divider">
+            <div class="field"><label for="doc-enh">Làm trong giọng</label><select id="doc-enh"></select></div>
+            <div class="field"><label for="doc-derev">Giảm vang</label><select id="doc-derev"></select></div>
+            <label class="check"><input type="checkbox" id="doc-ai">Khử nhiễu AI <span class="hint">(chậm hơn chút)</span></label>
+            <details>
+              <summary class="section-label" style="cursor:pointer;padding:4px 0">Nâng cao</summary>
+              <div class="stack" style="margin-top:var(--sp-3)">
+                <div class="field"><label for="doc-engine">Bộ máy đọc</label><select id="doc-engine"></select></div>
+                <div class="field"><label for="doc-temp">Độ biến hoá ngữ điệu <span class="value" id="doc-temp-v">tự động</span></label>
+                  <input type="range" id="doc-temp" min="0" max="1" step="0.05" value="0">
+                  <span class="hint">0.6–0.7: giọng ổn định, sạch hơn. 0.9 trở lên: biểu cảm hơn nhưng dễ lẫn tạp âm.</span></div>
+                <div class="field"><span class="label">Định dạng</span>
+                  <div class="seg" role="group" aria-label="Định dạng" id="doc-fmt">
+                    <button type="button" data-v="wav" aria-pressed="true">WAV</button>
+                    <button type="button" data-v="mp3" aria-pressed="false">MP3</button>
+                  </div>
+                </div>
+              </div>
+            </details>
+            <button class="btn primary big block" type="button" id="doc-go"><svg class="icon"><use href="/icons.svg#i-play"/></svg>Đọc <span class="kbd">Ctrl ↵</span></button>
+            <div id="doc-busy" hidden class="stack" style="gap:6px"><div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="doc-busy-msg">Đang đọc…</span></div><div class="progress"><i id="doc-prog"></i></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Hội thoại ───────────────────────────────────────────────────── -->
+    <section class="view" id="view-hoi-thoai" hidden aria-labelledby="h-ht">
+      <div class="page-head"><div><h1 id="h-ht">Hội thoại</h1><p class="lede">Mỗi dòng: <b>Tên (cảm xúc): lời thoại</b>. Dòng không có tên thuộc về người nói ở dòng trước.</p></div></div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel" style="padding:0"><label for="ht-script" class="sr-only">Kịch bản</label><textarea id="ht-script" class="editor" style="min-height:260px"></textarea></div>
+          <div class="panel"><div class="panel-head"><h2>Băng câu</h2><div class="toolbar" id="ht-downloads"></div></div><div id="ht-result" class="result"><div class="result-empty">Gán giọng cho nhân vật rồi bấm <b>Tạo hội thoại</b>.</div></div></div>
+        </div>
+        <aside class="inspector">
+          <div class="panel stack">
+            <div class="panel-head" style="margin:0"><h2>Nhân vật</h2><span class="hint num" id="ht-count"></span></div>
+            <div id="ht-cast" class="stack" style="gap:var(--sp-3)"></div>
+            <div class="field"><label for="ht-gap">Nghỉ giữa lượt thoại <span class="value" id="ht-gap-v">0.35 s</span></label><input type="range" id="ht-gap" min="0" max="1.5" step="0.05" value="0.35"></div>
+            <button class="btn primary big block" type="button" id="ht-go"><svg class="icon"><use href="/icons.svg#i-play"/></svg>Tạo hội thoại</button>
+            <div id="ht-busy" hidden class="stack" style="gap:6px"><div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="ht-busy-msg">Đang tạo…</span></div><div class="progress"><i id="ht-prog"></i></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Lồng tiếng ──────────────────────────────────────────────────── -->
+    <section class="view" id="view-long-tieng" hidden aria-labelledby="h-lt">
+      <div class="page-head"><div><h1 id="h-lt">Lồng tiếng theo phụ đề</h1><p class="lede">Mỗi câu phụ đề được đọc đúng thời điểm; câu dài hơn khung thời gian được tăng tốc vừa đủ.</p></div>
+        <div class="page-actions"><label class="btn ghost" for="lt-file"><svg class="icon"><use href="/icons.svg#i-upload"/></svg>Mở file .srt</label><input id="lt-file" type="file" accept=".srt" class="sr-only"></div></div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel" style="padding:0"><label for="lt-srt" class="sr-only">Nội dung SRT</label><textarea id="lt-srt" class="editor" style="min-height:260px;font-size:var(--fs-md)" placeholder="1&#10;00:00:01,000 --> 00:00:03,500&#10;Xin chào các bạn."></textarea></div>
+          <div class="panel"><div class="panel-head"><h2>Băng câu</h2><div class="toolbar" id="lt-downloads"></div></div><div id="lt-result" class="result"><div class="result-empty">Mở hoặc dán phụ đề rồi bấm <b>Lồng tiếng</b>. Ghép file âm thanh vào video bằng CapCut, Premiere hay DaVinci.</div></div></div>
+        </div>
+        <aside class="inspector">
+          <div class="panel stack">
+            <div class="seg" role="group" aria-label="Ngôn ngữ" id="lt-lang"><button type="button" data-v="vi" aria-pressed="true">Tiếng Việt</button><button type="button" data-v="en" aria-pressed="false">English</button></div>
+            <div class="field"><span class="label">Giọng</span><div id="lt-voice"></div></div>
+            <div class="field"><label for="lt-emo">Cảm xúc</label><select id="lt-emo"></select></div>
+            <div class="field"><label for="lt-speed">Tốc độ <span class="value" id="lt-speed-v">1.00×</span></label><input type="range" id="lt-speed" min="0.6" max="1.6" step="0.05" value="1"></div>
+            <div class="field"><label for="lt-stretch">Tăng tốc tối đa để vừa khung <span class="value" id="lt-stretch-v">1.35×</span></label><input type="range" id="lt-stretch" min="1" max="1.8" step="0.05" value="1.35"></div>
+            <button class="btn primary big block" type="button" id="lt-go"><svg class="icon"><use href="/icons.svg#i-play"/></svg>Lồng tiếng</button>
+            <div id="lt-busy" hidden class="stack" style="gap:6px"><div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="lt-busy-msg">Đang lồng tiếng…</span></div><div class="progress"><i id="lt-prog"></i></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Trực tiếp ───────────────────────────────────────────────────── -->
+    <section class="view" id="view-truc-tiep" hidden aria-labelledby="h-tt">
+      <div class="page-head"><div><h1 id="h-tt">Trực tiếp</h1><p class="lede">Gõ một câu rồi nhấn Enter: âm thanh phát ngay trong lúc đang tạo.</p></div></div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel stack">
+            <div class="live-bar"><label for="tt-text" class="sr-only">Câu nói</label><input type="text" id="tt-text" placeholder="Xin chào, tôi có thể giúp gì cho bạn?" autocomplete="off">
+              <button class="btn primary big" type="button" id="tt-go"><svg class="icon"><use href="/icons.svg#i-play"/></svg>Nói</button>
+              <button class="btn big" type="button" id="tt-stop"><svg class="icon"><use href="/icons.svg#i-square"/></svg>Dừng</button></div>
+            <div class="live-meter"><canvas id="tt-meter"></canvas></div>
+            <div class="stats" id="tt-stats"><span>Độ trễ câu đầu: <b id="tt-first">—</b></span><span>Trạng thái: <b id="tt-state">sẵn sàng</b></span></div>
+          </div>
+          <div class="panel"><div class="panel-head"><h2>Đã nói</h2><span class="hint">Bấm để nói lại</span></div><div class="history" id="tt-history"><p class="hint">Chưa có câu nào.</p></div></div>
+        </div>
+        <aside class="inspector">
+          <div class="panel stack">
+            <div class="seg" role="group" aria-label="Ngôn ngữ" id="tt-lang"><button type="button" data-v="vi" aria-pressed="true">Tiếng Việt</button><button type="button" data-v="en" aria-pressed="false">English</button></div>
+            <div class="field"><span class="label">Giọng</span><div id="tt-voice"></div></div>
+            <div class="field"><label for="tt-emo">Cảm xúc</label><select id="tt-emo"></select></div>
+            <div class="field"><label for="tt-speed">Tốc độ <span class="value" id="tt-speed-v">1.00×</span></label><input type="range" id="tt-speed" min="0.6" max="1.6" step="0.05" value="1"><span class="hint">Khác 1.00× thì mỗi câu phải tạo xong mới phát, nên trễ hơn.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Kho giọng ───────────────────────────────────────────────────── -->
+    <section class="view" id="view-kho-giong" hidden aria-labelledby="h-kg">
+      <div class="page-head"><div><h1 id="h-kg">Kho giọng</h1><p class="lede" id="kg-lede">Giọng của bạn (tối đa 10) và bộ giọng có sẵn của VoxViet.</p></div></div>
+      <div class="voices-layout">
+        <div class="stack">
+          <div class="panel stack">
+            <div class="panel-head" style="margin:0"><h2>Giọng của bạn</h2><span class="hint num" id="kg-count"></span></div>
+            <div class="mine-list" id="kg-mine"></div>
+            <hr class="divider">
+            <form class="stack" id="kg-new" style="gap:var(--sp-3)">
+              <div class="field"><label for="kg-name">Tạo giọng mới</label><input type="text" id="kg-name" placeholder="Ví dụ: Giọng của tôi" required maxlength="40"></div>
+              <div class="seg" role="group" aria-label="Vùng miền" id="kg-dialect"><button type="button" data-v="bac" aria-pressed="true">Bắc</button><button type="button" data-v="trung" aria-pressed="false">Trung</button><button type="button" data-v="nam" aria-pressed="false">Nam</button></div>
+              <button class="btn" type="submit"><svg class="icon"><use href="/icons.svg#i-plus"/></svg>Tạo giọng</button>
+            </form>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="panel" id="kg-detail"></div>
+          <div class="panel">
+            <div class="panel-head"><h2>Giọng có sẵn</h2>
+              <div class="chips" id="kg-filter"><button class="chip" type="button" data-v="" aria-pressed="true">Tất cả</button><button class="chip" type="button" data-v="bac" aria-pressed="false">Bắc</button><button class="chip" type="button" data-v="trung" aria-pressed="false">Trung</button><button class="chip" type="button" data-v="nam" aria-pressed="false">Nam</button></div></div>
+            <div class="region-list" id="kg-presets"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Phòng thu ───────────────────────────────────────────────────── -->
+    <section class="view" id="view-phong-thu" hidden aria-labelledby="h-pt">
+      <div class="page-head"><div><h1 id="h-pt">Phòng thu</h1><p class="lede" id="pt-lede">Đọc từng câu trong kịch bản. Vài câu là đủ để clone giọng; 10–30 phút để fine-tune.</p></div>
+        <div class="page-actions"><div class="field" style="min-width:220px"><label for="pt-session">Phiên thu</label><input type="text" id="pt-session" list="pt-sessions" value="giong-cua-toi" aria-label="Tên phiên thu"><datalist id="pt-sessions"></datalist></div></div></div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel stack" style="gap:var(--sp-5);padding:var(--sp-5)">
+            <div class="prompt-meta"><span class="num" id="pt-pos"></span><span id="pt-group"></span><span id="pt-emo"></span><span id="pt-done"></span></div>
+            <p class="prompt" id="pt-text">…</p>
+            <div class="stack" style="gap:var(--sp-2)"><div class="meter" id="pt-meter"><i></i></div><span class="hint" id="pt-meter-hint">Mức micro sẽ hiện ở đây khi thu.</span></div>
+            <div class="toolbar">
+              <button class="btn" type="button" id="pt-prev"><svg class="icon"><use href="/icons.svg#i-arrow-left"/></svg>Câu trước</button>
+              <button class="btn rec big" type="button" id="pt-rec"><svg class="icon"><use href="/icons.svg#i-mic"/></svg><span>Thu</span> <span class="kbd">Space</span></button>
+              <button class="btn" type="button" id="pt-next">Câu sau<svg class="icon"><use href="/icons.svg#i-arrow-right"/></svg></button>
+              <span class="grow"></span>
+              <button class="btn ghost" type="button" id="pt-play" disabled><svg class="icon"><use href="/icons.svg#i-headphones"/></svg>Nghe bản đã lưu</button>
+              <button class="btn danger" type="button" id="pt-del" disabled><svg class="icon"><use href="/icons.svg#i-trash-2"/></svg>Xoá</button>
+            </div>
+            <div id="pt-msg" class="notes"></div>
+          </div>
+          <div class="panel stack">
+            <div class="panel-head" style="margin:0"><h2>Fine-tune (nâng cao, tuỳ chọn)</h2><span class="hint" id="ft-status"></span></div>
+            <div class="grid-3">
+              <div class="field"><label for="ft-run">Tên mô hình</label><input type="text" id="ft-run" value="giong-cua-toi"></div>
+              <div class="field"><label for="ft-epochs">Số vòng học <span class="value" id="ft-epochs-v">3</span></label><input type="range" id="ft-epochs" min="1" max="10" step="1" value="3"></div>
+              <div class="field"><label for="ft-rank">Độ chi tiết (LoRA rank)</label><select id="ft-rank"><option>8</option><option selected>16</option><option>32</option></select></div>
+            </div>
+            <label class="check"><input type="checkbox" id="ft-low" checked>Tiết kiệm bộ nhớ GPU (cho card 6 GB)</label>
+            <div class="toolbar"><button class="btn" type="button" id="ft-go"><svg class="icon"><use href="/icons.svg#i-sparkles"/></svg>Bắt đầu fine-tune</button><span class="hint">Mất khoảng 30–90 phút. Không tắt cửa sổ dòng lệnh khi đang chạy.</span></div>
+            <div class="log" id="ft-log" hidden></div>
+          </div>
+        </div>
+        <aside class="inspector">
+          <div class="panel stack">
+            <h2>Tiến độ</h2>
+            <div class="group-bars" id="pt-groups"></div>
+            <p class="hint" id="pt-summary"></p>
+            <div class="field"><label for="pt-jump">Chuyển tới câu</label><select id="pt-jump"></select></div>
+            <button class="btn" type="button" id="pt-next-missing"><svg class="icon"><use href="/icons.svg#i-skip-back" style="transform:scaleX(-1);transform-origin:center"/></svg>Câu chưa thu tiếp theo</button>
+          </div>
+          <div class="panel stack">
+            <h2>Tạo giọng từ bản thu</h2>
+            <p class="hint">Tự chọn câu tốt nhất cho mỗi cảm xúc rồi đưa vào Kho giọng (clone tức thì).</p>
+            <div class="field"><label for="pt-vname">Tên giọng</label><input type="text" id="pt-vname" value="Giọng của tôi"></div>
+            <div class="seg" role="group" aria-label="Vùng miền" id="pt-dialect"><button type="button" data-v="bac" aria-pressed="true">Bắc</button><button type="button" data-v="trung" aria-pressed="false">Trung</button><button type="button" data-v="nam" aria-pressed="false">Nam</button></div>
+            <button class="btn primary" type="button" id="pt-build"><svg class="icon"><use href="/icons.svg#i-user"/></svg>Tạo / cập nhật giọng</button>
+            <div class="hint" id="pt-build-msg"></div>
+          </div>
+          <div class="panel stack"><h2>Mẹo thu</h2><p class="hint">Phòng yên tĩnh, ít tiếng vang (nhiều rèm, chăn, gối). Micro cách miệng khoảng 20 cm. Đọc tự nhiên như đang nói chuyện, giữ đều âm lượng giữa các buổi.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── So sánh ─────────────────────────────────────────────────────── -->
+    <section class="view" id="view-so-sanh" hidden aria-labelledby="h-ss">
+      <div class="page-head"><div><h1 id="h-ss">So sánh với Google</h1><p class="lede">Nghe cùng một đoạn bằng VoxViet (offline) và hai dịch vụ miễn phí của Google. Google chỉ để tham khảo và cần Internet.</p></div></div>
+      <div class="work">
+        <div class="stack">
+          <div class="panel" style="padding:0"><label for="ss-text" class="sr-only">Văn bản so sánh</label><textarea id="ss-text" class="editor" style="min-height:140px">Chào bạn! Hôm nay mình sẽ hướng dẫn cách dùng Google Drive để backup dữ liệu, chỉ mất khoảng 5 phút thôi.</textarea></div>
+          <div class="grid-3" id="ss-out"></div>
+        </div>
+        <aside class="inspector">
+          <div class="panel stack">
+            <div class="seg" role="group" aria-label="Ngôn ngữ" id="ss-lang"><button type="button" data-v="vi" aria-pressed="true">Tiếng Việt</button><button type="button" data-v="en" aria-pressed="false">English</button></div>
+            <div class="field"><span class="label">Giọng VoxViet</span><div id="ss-voice"></div></div>
+            <div class="field"><label for="ss-gvoice">Giọng Gemini</label><select id="ss-gvoice"></select></div>
+            <div class="field"><label for="ss-emo">Cảm xúc</label><select id="ss-emo"></select></div>
+            <button class="btn primary big block" type="button" id="ss-go"><svg class="icon"><use href="/icons.svg#i-scale"/></svg>So sánh</button>
+            <div id="ss-busy" hidden class="stack" style="gap:6px"><div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="ss-busy-msg">Đang tạo…</span></div><div class="progress"><i id="ss-prog"></i></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Cài đặt ─────────────────────────────────────────────────────── -->
+    <section class="view" id="view-cai-dat" hidden aria-labelledby="h-cd">
+      <div class="page-head"><div><h1 id="h-cd">Cài đặt</h1><p class="lede">Tự lưu khi bạn thay đổi.</p></div><span class="hint" id="cd-saved"></span></div>
+      <div class="grid-2" style="align-items:start">
+        <div class="stack">
+          <div class="panel stack"><h2>Máy</h2>
+            <div class="field"><span class="label">Chạy mô hình bằng</span><div class="seg" role="group" id="cd-device"><button type="button" data-v="auto">Tự động</button><button type="button" data-v="cuda">GPU</button><button type="button" data-v="cpu">CPU</button></div></div>
+            <div class="field"><span class="label">Khi chạy CPU</span><div class="seg" role="group" id="cd-prec"><button type="button" data-v="fp32">Chất lượng cao</button><button type="button" data-v="int8">Nhanh (CPU đời mới)</button></div></div>
+            <div class="toolbar"><button class="btn" type="button" id="cd-check"><svg class="icon"><use href="/icons.svg#i-refresh-cw"/></svg>Kiểm tra hệ thống</button><button class="btn ghost" type="button" id="cd-preload">Nạp lõi giọng ngay</button></div>
+            <div id="cd-sys" class="stack" style="gap:6px;font-size:var(--fs-sm)"></div>
+          </div>
+          <div class="panel stack"><h2>Âm thanh</h2>
+            <div class="grid-2" style="gap:var(--sp-3)"><div class="field"><label for="cd-enh">Làm trong mặc định</label><select id="cd-enh"></select></div><div class="field"><label for="cd-derev">Giảm vang mặc định</label><select id="cd-derev"></select></div></div>
+            <label class="check"><input type="checkbox" id="cd-ai">Bật khử nhiễu AI mặc định</label>
+            <div class="field"><label for="cd-lufs">Âm lượng chuẩn <span class="value" id="cd-lufs-v"></span></label><input type="range" id="cd-lufs" min="-30" max="-10" step="1"></div>
+            <div class="grid-2" style="gap:var(--sp-3)">
+              <div class="field"><label for="cd-sp">Nghỉ giữa câu <span class="value" id="cd-sp-v"></span></label><input type="range" id="cd-sp" min="0" max="1" step="0.05"></div>
+              <div class="field"><label for="cd-pp">Nghỉ giữa đoạn <span class="value" id="cd-pp-v"></span></label><input type="range" id="cd-pp" min="0" max="2" step="0.05"></div>
+            </div>
+            <div class="field"><span class="label">Đọc số mặc định</span><div class="seg" role="group" id="cd-dialect"><button type="button" data-v="bac">Miền Bắc</button><button type="button" data-v="nam">Miền Nam</button></div></div>
+            <div class="field"><span class="label">Định dạng mặc định</span><div class="seg" role="group" id="cd-fmt"><button type="button" data-v="wav">WAV</button><button type="button" data-v="mp3">MP3</button></div></div>
+            <div class="field"><span class="label">Bộ máy cho tiếng Anh</span><div class="seg" role="group" id="cd-en"><button type="button" data-v="core">Lõi giọng VoxViet</button><button type="button" data-v="chatterbox">Chatterbox (cài thêm)</button></div></div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="panel stack"><h2>Google (chỉ để so sánh)</h2>
+            <div class="field"><label for="cd-key">Gemini API key</label><input type="password" id="cd-key" autocomplete="off" placeholder="Dán key từ aistudio.google.com"><span class="hint" id="cd-key-hint"></span></div>
+            <div class="field"><label for="cd-gmodel">Model Gemini TTS</label><div class="toolbar"><select id="cd-gmodel" style="flex:1"><option value="">Tự chọn mới nhất</option></select><button class="btn" type="button" id="cd-gmodels">Tải danh sách</button></div></div>
+            <div class="field"><label for="cd-gvoice">Giọng Gemini mặc định</label><select id="cd-gvoice"></select></div>
+          </div>
+          <div class="panel stack"><div class="panel-head" style="margin:0"><h2>Từ điển phát âm</h2><button class="btn" type="button" id="lx-add"><svg class="icon"><use href="/icons.svg#i-plus"/></svg>Thêm từ</button></div>
+            <p class="hint">Từ máy đọc sai: ghi cách đọc theo kiểu viết ra, hoặc bọc trong &lt;en&gt;…&lt;/en&gt; để ép đọc tiếng Anh.</p>
+            <table class="table"><thead><tr><th style="width:110px">Áp dụng cho</th><th>Từ gốc</th><th>Cách đọc</th><th style="width:44px"><span class="sr-only">Xoá</span></th></tr></thead><tbody id="lx-rows"></tbody></table>
+            <div class="toolbar"><button class="btn primary" type="button" id="lx-save">Lưu từ điển</button><span class="hint" id="lx-msg"></span></div>
+          </div>
+          <div class="panel stack"><h2>Giới thiệu</h2>
+            <div class="about" id="cd-about">
+              <p><b>VoxViet Studio</b> — phần mềm chuyển văn bản thành giọng nói Việt – Anh, chạy hoàn toàn trên máy của bạn.</p>
+              <p>Lõi giọng VoxViet được xây trên mã nguồn mở: VieNeu-TTS (Apache-2.0), sea-g2p (Apache-2.0), bộ khử nhiễu của Resemble Enhance (MIT); tuỳ chọn Chatterbox (MIT). Font Be Vietnam Pro (SIL OFL), icon Lucide (ISC). Chi tiết trong <b>THIRD_PARTY_NOTICES.md</b>.</p>
+              <p>Chỉ clone giọng của chính bạn hoặc của người đã đồng ý rõ ràng.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

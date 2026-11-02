@@ -1,6 +1,9 @@
 # Thư viện chính (CPU chạy được ngay; GPU cài thêm requirements-gpu.txt sau PyTorch)
 vieneu==3.8.3
-gradio>=5.49.1,<7
+fastapi>=0.115
+uvicorn>=0.30
+websockets>=12
+python-multipart
 numpy
 soundfile>=0.12
 soxr

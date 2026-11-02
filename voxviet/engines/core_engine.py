@@ -1,15 +1,16 @@
-"""Engine chính: VieNeu-TTS v3 Turbo (Apache-2.0, chạy offline).
+"""Lõi giọng VoxViet — bộ máy đọc chính, chạy offline.
 
 * 48 kHz, song ngữ Việt–Anh, tự đọc chuẩn tiếng Anh khi xen trong câu tiếng Việt.
 * Clone giọng tức thì từ đoạn mẫu 3–8 giây.
 * GPU (PyTorch) hoặc CPU (ONNX, không cần torch).
-* Có giọng mẫu sẵn giọng Bắc / Trung / Nam.
+* Bộ giọng có sẵn của VoxViet: ``data/giong_co_san.json``.
+
+Mã nguồn bên dưới dựa trên VieNeu-TTS v3 Turbo (Apache-2.0) — xem THIRD_PARTY_NOTICES.md.
 """
 
 from __future__ import annotations
 
 import gc
-import json
 import logging
 import threading
 from pathlib import Path
@@ -17,38 +18,27 @@ from typing import Iterator
 
 import numpy as np
 
+from .. import catalog
 from .. import settings as settings_mod
 from ..text import emotions
 from .base import EngineUnavailable, SynthRequest, TTSEngine
 
-log = logging.getLogger("voxviet.vieneu")
-
-REGION_KEY = {"Bắc": "bac", "Nam": "nam", "Trung": "trung"}
+log = logging.getLogger("voxviet.core")
 
 
-def _preset_file() -> Path | None:
-    try:
-        import vieneu
-        p = Path(vieneu.__file__).parent / "assets" / "voices_v3_turbo.json"
-        return p if p.exists() else None
-    except Exception:
-        return None
-
-
-class VieNeuEngine(TTSEngine):
-    id = "vieneu"
-    label = "VieNeu-TTS v3 Turbo (offline, khuyên dùng)"
+class VoiceCoreEngine(TTSEngine):
+    id = "core"
+    label = "Lõi giọng VoxViet (offline)"
     languages = ("vi", "en")
     supports_clone = True
     supports_stream = True
     sample_rate = 48_000
-    description = "Mô hình mã nguồn mở tiếng Việt, đọc lẫn tiếng Anh, clone giọng từ 3–8 giây mẫu."
+    description = "Đọc tiếng Việt lẫn tiếng Anh, clone giọng từ 3–8 giây mẫu, chạy hoàn toàn trên máy."
 
     def __init__(self):
         self._tts = None
         self._backbone: str | None = None
         self._lock = threading.RLock()
-        self._preset_cache: list[dict] | None = None
 
     # ── trạng thái ──
     def available(self) -> tuple[bool, str]:
@@ -56,33 +46,18 @@ class VieNeuEngine(TTSEngine):
             import vieneu  # noqa: F401
             return True, ""
         except Exception as e:
-            return False, f"Chưa cài VieNeu-TTS ({e}). Chạy install.bat."
+            return False, f"Chưa cài lõi giọng ({e}). Chạy install.bat."
 
     def preset_info(self) -> list[dict]:
-        if self._preset_cache is None:
-            items = []
-            p = _preset_file()
-            if p:
-                data = json.loads(p.read_text(encoding="utf-8"))
-                for name, v in data.get("presets", {}).items():
-                    items.append({
-                        "name": name,
-                        "description": v.get("description", ""),
-                        "gender": v.get("gender", ""),
-                        "region": REGION_KEY.get(v.get("region", ""), ""),
-                        "featured": v.get("featured"),
-                    })
-                items.sort(key=lambda d: (d["featured"] is None, d["featured"] or 0))
-            self._preset_cache = items
-        return self._preset_cache
+        return [{"name": v.id, "label": v.name, "description": v.description, "gender": v.gender,
+                 "region": v.region, "style": v.style} for v in catalog.all_voices()]
 
     def presets(self, language: str = "vi") -> list[tuple[str, str]]:
-        return [(f"{d['name']} — {d['description']}" if d["description"] else d["name"], d["name"])
-                for d in self.preset_info()]
+        return [(f"{v.name} — {v.description}", v.id) for v in catalog.all_voices()]
 
     # ── nạp mô hình ──
     def load(self, backbone: str | None = None) -> None:
-        backbone = backbone or settings_mod.load().vieneu_backbone or None
+        backbone = backbone or settings_mod.load().core_backbone or None
         with self._lock:
             if self._tts is not None and self._backbone == backbone:
                 return
@@ -100,7 +75,7 @@ class VieNeuEngine(TTSEngine):
                     kwargs["model_subfolder"] = None
                 # Mô hình fine-tune không có bản ONNX → luôn chạy đường PyTorch.
                 kwargs["backend"] = "pytorch"
-            log.info("Đang nạp VieNeu-TTS v3 Turbo %s", kwargs)
+            log.info("Đang nạp lõi giọng VoxViet %s", kwargs)
             try:
                 self._tts = Vieneu(mode="v3turbo", **kwargs)
             except Exception as e:
@@ -108,7 +83,7 @@ class VieNeuEngine(TTSEngine):
                 if any(k in msg for k in ("LocalEntryNotFound", "offline", "Offline", "403", "Connect",
                                           "ProxyError", "resolve", "HfHubHTTPError", "Max retries")):
                     raise EngineUnavailable(
-                        "Chưa có mô hình VieNeu trên máy (hoặc không tải được). Chạy download_models.bat "
+                        "Chưa có mô hình lõi giọng trên máy (hoặc không tải được). Chạy download_models.bat "
                         "một lần khi có Internet, sau đó phần mềm chạy offline.") from e
                 if "CUDA out of memory" in msg or "OutOfMemory" in msg:
                     raise EngineUnavailable("GPU hết bộ nhớ. Đóng bớt ứng dụng dùng GPU hoặc chọn CPU "
@@ -133,7 +108,7 @@ class VieNeuEngine(TTSEngine):
                     pass
 
     def ai_clean(self, wav: np.ndarray, sr: int = 48_000) -> np.ndarray:
-        """Khử nhiễu/vang bằng AI: bộ denoiser (lõi Resemble Enhance, ONNX) đi kèm VieNeu.
+        """Khử nhiễu/vang bằng AI: bộ denoiser (lõi Resemble Enhance, ONNX) đi kèm mô hình.
 
         Không cần tải thêm. Xử lý từng khúc ≤ 20 giây ở 44.1 kHz rồi đổi lại ``sr``."""
         from .. import audio as audio_mod
@@ -165,7 +140,8 @@ class VieNeuEngine(TTSEngine):
         if req.ref_audio:
             kw["ref_audio"] = str(req.ref_audio)
         elif req.preset:
-            kw["voice"] = req.preset
+            pv = catalog.get(req.preset)
+            kw["voice"] = pv.base if pv else req.preset
         return kw
 
     def synthesize(self, req: SynthRequest) -> np.ndarray:

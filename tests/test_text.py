@@ -13,7 +13,7 @@ def test_parse_inline_tags():
                      ("pause", "vui"), ("text", "buon")]
     assert segs[2].seconds == pytest.approx(1.5)
     assert segs[4].seconds == pytest.approx(0.3)
-    assert "[cười]" in segs[3].text  # thẻ phi ngôn ngữ giữ nguyên cho VieNeu
+    assert "[cười]" in segs[3].text  # thẻ phi ngôn ngữ giữ nguyên cho lõi giọng
 
 
 def test_unknown_bracket_kept():

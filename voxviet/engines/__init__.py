@@ -8,7 +8,7 @@ from .base import EngineUnavailable, SynthRequest, TTSEngine
 from .chatterbox_engine import ChatterboxEngine
 from .google_engines import GeminiEngine, GTTSEngine
 from .mock_engine import MockEngine
-from .vieneu_engine import VieNeuEngine
+from .core_engine import VoiceCoreEngine
 
 __all__ = ["EngineUnavailable", "SynthRequest", "TTSEngine", "registry", "get"]
 
@@ -18,7 +18,7 @@ _REGISTRY: dict[str, TTSEngine] | None = None
 def registry() -> dict[str, TTSEngine]:
     global _REGISTRY
     if _REGISTRY is None:
-        engines: list[TTSEngine] = [VieNeuEngine(), ChatterboxEngine(), GeminiEngine(), GTTSEngine()]
+        engines: list[TTSEngine] = [VoiceCoreEngine(), ChatterboxEngine(), GeminiEngine(), GTTSEngine()]
         if os.environ.get("VOXVIET_DEMO") == "1":
             engines.insert(0, MockEngine())
         _REGISTRY = {e.id: e for e in engines}

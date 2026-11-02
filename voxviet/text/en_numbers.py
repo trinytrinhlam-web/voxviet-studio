@@ -1,6 +1,6 @@
 """Đọc số cho văn bản tiếng Anh (không cần thư viện ngoài).
 
-Cần thiết vì bộ chuẩn hoá của VieNeu đọc mọi chữ số theo tiếng Việt; với module
+Cần thiết vì bộ chuẩn hoá của lõi giọng đọc mọi chữ số theo tiếng Việt; với module
 tiếng Anh, ta đổi số sang chữ tiếng Anh TRƯỚC khi đưa vào mô hình.
 """
 

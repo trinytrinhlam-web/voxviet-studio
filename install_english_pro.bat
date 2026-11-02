@@ -2,7 +2,7 @@
 REM ============================================================
 REM  (Tuy chon) Module tieng Anh Pro - Chatterbox (MIT)
 REM  Cai vao moi truong rieng envs\chatterbox vi can phien ban
-REM  PyTorch khac voi VieNeu. Can Internet, ~4 GB.
+REM  PyTorch khac voi loi giong. Can Internet, ~4 GB.
 REM ============================================================
 setlocal
 cd /d "%~dp0"
@@ -25,6 +25,7 @@ if errorlevel 1 ( echo LOI cai Chatterbox. & pause & exit /b 1 )
 
 echo Tai mo hinh Chatterbox...
 set "HF_HOME=%~dp0models\hf"
+set "HF_HUB_CACHE=%~dp0models\voxviet-core"
 %PY% -c "from chatterbox.tts import ChatterboxTTS; ChatterboxTTS.from_pretrained(device='cpu'); print('OK')"
 if errorlevel 1 ( echo LOI tai mo hinh. & pause & exit /b 1 )
 
