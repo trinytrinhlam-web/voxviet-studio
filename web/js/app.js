@@ -876,6 +876,54 @@ async function system() {
   } catch { /* máy chủ đang bận */ }
 }
 
+// ── màn hình chào lần đầu: tải mô hình lõi giọng ──────────────────────────────
+function initWelcome() {
+  const box = $("#welcome");
+  const show = () => { box.hidden = false; $("#wc-go").focus(); };
+  if (!STATE.models_ready && !STATE.demo) show();
+  $("#cd-models").hidden = STATE.models_ready || STATE.demo;
+  $("#cd-models").addEventListener("click", show);
+  $("#wc-later").addEventListener("click", () => { box.hidden = true; });
+
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  $("#wc-go").addEventListener("click", async () => {
+    const t0 = Date.now();
+    const tick = setInterval(() => { $("#wc-time").textContent = fmt((Date.now() - t0) / 1000); }, 1000);
+    $("#wc-actions").hidden = true;
+    $("#wc-err").hidden = true;
+    $("#wc-busy").hidden = false;
+    $("#wc-log-box").hidden = false;
+    $("#wc-mark").classList.add("live");
+    const oldBoot = STATE.boot_id;
+    try {
+      await runJob("/api/jobs/download-models", {}, (j) => {
+        if (j.message) $("#wc-msg").textContent = j.message;
+        const log = $("#wc-log");
+        log.textContent = j.log.join("\n");
+        log.scrollTop = log.scrollHeight;
+      });
+      $("#wc-msg").textContent = "Tải xong — đang mở lại phần mềm…";
+      for (let i = 0; i < 180; i++) {
+        await new Promise((r) => setTimeout(r, 1000));
+        try {
+          const st = await api.get("/api/state");
+          if (st.boot_id !== oldBoot) { location.reload(); return; }
+        } catch { /* đang khởi động lại */ }
+      }
+      throw new Error("Phần mềm chưa mở lại được. Hãy đóng cửa sổ và mở lại VoxViet Studio.");
+    } catch (err) {
+      errorBox($("#wc-err"), err.message);
+      $("#wc-err").hidden = false;
+      $("#wc-busy").hidden = true;
+      $("#wc-actions").hidden = false;
+      $("#wc-go span").textContent = "Thử lại";
+      $("#wc-mark").classList.remove("live");
+    } finally {
+      clearInterval(tick);
+    }
+  });
+}
+
 // Báo cho phần mềm biết cửa sổ này đang mở. Đóng hết cửa sổ → phần mềm tự tắt (chế độ ứng dụng).
 // Mất kết nối (đang khởi động lại sau cập nhật) → tự nối lại.
 function presence() {
@@ -905,6 +953,7 @@ async function boot() {
   await initStudio().catch((e) => toast(e.message, "err"));
   initCompare();
   initUpdate();
+  initWelcome();
   window.addEventListener("hashchange", route);
   route();
   system();

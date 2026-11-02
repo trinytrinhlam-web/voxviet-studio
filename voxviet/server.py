@@ -27,7 +27,7 @@ from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, Web
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import __version__, audio, catalog, engines, finetune, paths, recording
+from . import __version__, audio, bootstrap, catalog, engines, finetune, paths, recording
 from .updater import Updater, UpdateError
 from . import settings as settings_mod
 from .audio import enhance as enhance_mod
@@ -150,6 +150,59 @@ def _wait_port_free(port: int, timeout: float = 30.0) -> None:
     t = time.time()
     while time.time() - t < timeout and not port_free(port):
         time.sleep(0.3)
+
+
+def _dir_size(d: Path) -> int:
+    total = 0
+    for root, _dirs, files in os.walk(d):
+        for f in files:
+            try:
+                total += os.path.getsize(os.path.join(root, f))
+            except OSError:
+                pass
+    return total
+
+
+def download_cmd() -> list[str]:
+    return [sys.executable, str(paths.ROOT / "tools" / "download_models.py")]
+
+
+def download_models(progress: Callable[[float, str], None], logline: Callable[[str], None],
+                    restart: Callable[[], None]) -> dict:
+    """Chạy tools/download_models.py trong tiến trình riêng; báo dung lượng đã tải. Xong → khởi động
+    lại để phần mềm chuyển sang chạy offline với mô hình mới."""
+    models = bootstrap.MODELS
+    models.mkdir(parents=True, exist_ok=True)
+    start = _dir_size(models)
+    flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+    # Tắt thanh tiến độ của thư viện tải (rối nhật ký) — giao diện tự báo dung lượng đã tải.
+    env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUNBUFFERED="1", HF_HUB_DISABLE_PROGRESS_BARS="1")
+    env.pop("HF_HUB_OFFLINE", None)
+    env.pop("TRANSFORMERS_OFFLINE", None)
+    proc = subprocess.Popen(download_cmd(), cwd=str(paths.ROOT), stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace",
+                            creationflags=flags, env=env)
+    done = threading.Event()
+
+    def watch():
+        while not done.wait(1.5):
+            mb = max(0, _dir_size(models) - start) / 1e6
+            size = f"{mb / 1000:.2f} GB" if mb >= 1000 else f"{mb:.0f} MB"
+            progress(0.0, f"Đã tải {size}…")
+
+    threading.Thread(target=watch, daemon=True).start()
+    try:
+        for line in proc.stdout:
+            if line.strip():
+                logline(line.rstrip())
+        code = proc.wait()
+    finally:
+        done.set()
+    if code != 0 or not bootstrap.READY_MARK.exists():
+        raise RuntimeError("Tải mô hình chưa xong — kiểm tra Internet rồi bấm Thử lại (phần đã tải được giữ lại).")
+    logline("Đã tải xong. Đang khởi động lại phần mềm…")
+    restart()
+    return {"restarting": True}
 
 
 def _friendly(e: Exception) -> str:
@@ -333,6 +386,7 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
             "finetune": {"ok": ft_ok, "message": ft_msg},
             "avatars": sorted(p.stem for p in AVATAR_DIR.glob("*.webp")) if AVATAR_DIR.exists() else [],
             "boot_id": BOOT_ID,
+            "models_ready": bootstrap.READY_MARK.exists(),
             "update": {k: update_cache.get(k) for k in ("available", "latest")},
         }
 
@@ -779,6 +833,13 @@ def create_app(studio: Studio | None = None, updater: Updater | None = None,
             raise upd_error(e)
         update_cache.update({k: info[k] for k in ("current", "latest", "available")})
         return info
+
+    # ── tải mô hình lần đầu (màn hình chào) ──
+    @app.post("/api/jobs/download-models")
+    def job_download_models():
+        def run(progress, logline):
+            return download_models(progress, logline, restart)
+        return {"job": jobs.submit("download-models", run)}
 
     @app.post("/api/jobs/update")
     def job_update():

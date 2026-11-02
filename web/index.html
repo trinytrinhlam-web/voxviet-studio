@@ -371,6 +371,7 @@
             <div class="field"><span class="label">Khi chạy CPU</span><div class="seg" role="group" id="cd-prec"><button type="button" data-v="fp32">Chất lượng cao</button><button type="button" data-v="int8">Nhanh (CPU đời mới)</button></div></div>
             <div class="toolbar"><button class="btn" type="button" id="cd-check"><svg class="icon"><use href="/icons.svg#i-refresh-cw"/></svg>Kiểm tra hệ thống</button><button class="btn ghost" type="button" id="cd-preload">Nạp lõi giọng ngay</button></div>
             <div id="cd-sys" class="stack" style="gap:6px;font-size:var(--fs-sm)"></div>
+            <button class="btn" type="button" id="cd-models" hidden><svg class="icon"><use href="/icons.svg#i-download"/></svg>Tải lõi giọng</button>
           </div>
           <div class="panel stack"><h2>Âm thanh</h2>
             <div class="grid-2" style="gap:var(--sp-3)"><div class="field"><label for="cd-enh">Làm trong mặc định</label><select id="cd-enh"></select></div><div class="field"><label for="cd-derev">Giảm vang mặc định</label><select id="cd-derev"></select></div></div>
@@ -407,6 +408,35 @@
       </div>
     </section>
   </main>
+</div>
+<!-- ── Màn hình chào lần đầu: tải mô hình lõi giọng ───────────────────── -->
+<div class="welcome" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="wc-title">
+  <div class="welcome-card">
+    <svg class="welcome-mark" id="wc-mark" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="3"  y="4" width="2.6" height="9"  rx="1.3" opacity=".55"/>
+      <rect x="7.4" y="4" width="2.6" height="14" rx="1.3" opacity=".7"/>
+      <rect x="11.8" y="4" width="2.6" height="19" rx="1.3" opacity=".85"/>
+      <rect x="16.2" y="4" width="2.6" height="24" rx="1.3"/>
+      <rect x="20.6" y="4" width="2.6" height="19" rx="1.3" opacity=".85"/>
+      <rect x="25"  y="4" width="2.6" height="14" rx="1.3" opacity=".7"/>
+    </svg>
+    <h1 id="wc-title">Còn một bước nữa là đọc được</h1>
+    <p class="welcome-lede">Lần đầu mở, VoxViet cần tải lõi giọng về máy — khoảng 1–3 GB tuỳ máy có GPU hay không. Chỉ tải một lần, sau đó phần mềm chạy hoàn toàn offline và văn bản của bạn không rời khỏi máy.</p>
+    <ul class="welcome-facts">
+      <li><svg class="icon icon-sm"><use href="/icons.svg#i-check"/></svg>Mất mạng giữa chừng? Bấm Thử lại — phần đã tải được giữ nguyên.</li>
+      <li><svg class="icon icon-sm"><use href="/icons.svg#i-check"/></svg>Tải xong, phần mềm tự mở lại — không cần làm gì thêm.</li>
+    </ul>
+    <div id="wc-err" hidden></div>
+    <div class="toolbar" id="wc-actions">
+      <button class="btn primary big" type="button" id="wc-go"><svg class="icon"><use href="/icons.svg#i-download"/></svg><span>Tải lõi giọng</span></button>
+      <button class="btn ghost" type="button" id="wc-later">Để sau</button>
+    </div>
+    <div class="stack" id="wc-busy" hidden style="gap:var(--sp-2)">
+      <div class="busy-line"><svg class="icon icon-sm spin"><use href="/icons.svg#i-loader-circle"/></svg><span id="wc-msg" class="num">Đang chuẩn bị…</span><span class="hint num" id="wc-time"></span></div>
+      <div class="progress indeterminate"><i></i></div>
+    </div>
+    <details class="welcome-log" id="wc-log-box" hidden><summary>Xem chi tiết</summary><div class="log" id="wc-log"></div></details>
+  </div>
 </div>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 <script type="module" src="/js/app.js"></script>

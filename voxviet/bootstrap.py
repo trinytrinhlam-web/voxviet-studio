@@ -34,6 +34,7 @@ def setup_env(online: bool = False) -> None:
     os.environ.setdefault("GRADIO_ANALYTICS_ENABLED", "False")
     if online:
         os.environ.pop("HF_HUB_OFFLINE", None)
+        os.environ.pop("TRANSFORMERS_OFFLINE", None)
     elif READY_MARK.exists():
         # Đã tải mô hình → chạy hoàn toàn offline, không gọi mạng.
         os.environ.setdefault("HF_HUB_OFFLINE", "1")

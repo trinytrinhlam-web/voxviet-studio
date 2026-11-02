@@ -1,3 +1,4 @@
+import sys
 import time
 
 import numpy as np
@@ -143,3 +144,48 @@ def test_live_over_real_uvicorn(tmp_path):
     finally:
         server.should_exit = True
         th.join(timeout=5)
+
+
+def _fake_download(monkeypatch, tmp_path, ok: bool):
+    """Thay tools/download_models.py bằng script giả: ghi file vào thư mục mô hình tạm."""
+    from voxviet import bootstrap, server
+    models = tmp_path / "models"
+    monkeypatch.setattr(bootstrap, "MODELS", models)
+    monkeypatch.setattr(bootstrap, "READY_MARK", models / ".models_ready")
+    script = tmp_path / "fake_dl.py"
+    script.write_text(
+        "import sys, pathlib, time\n"
+        f"m = pathlib.Path({str(models)!r}); (m / 'voxviet-core').mkdir(parents=True, exist_ok=True)\n"
+        "(m / 'voxviet-core' / 'w.bin').write_bytes(b'0' * 3_000_000)\n"
+        "print('Đang tải lõi giọng…'); time.sleep(2)\n"
+        + ("(m / '.models_ready').write_text('ok')\nprint('Hoàn tất')\n" if ok else "sys.exit(1)\n"),
+        encoding="utf-8")
+    monkeypatch.setattr(server, "download_cmd", lambda: [sys.executable, str(script)])
+
+
+def test_download_models_job(tmp_path, monkeypatch):
+    _fake_download(monkeypatch, tmp_path, ok=True)
+    restarted = []
+    c = TestClient(create_app(Studio(library=VoiceLibrary(tmp_path / "v")), restart=lambda: restarted.append(1)))
+    assert c.get("/api/state").json()["models_ready"] is False
+    jid = c.post("/api/jobs/download-models", headers=H).json()["job"]
+    seen_size = False
+    t = time.time()
+    while time.time() - t < 30:
+        j = c.get(f"/api/jobs/{jid}").json()
+        seen_size |= "MB" in (j["message"] or "")
+        if j["status"] in ("done", "error"):
+            break
+        time.sleep(0.2)
+    assert j["status"] == "done", j
+    assert j["result"]["restarting"] and restarted == [1]
+    assert seen_size and "Hoàn tất" in "\n".join(j["log"])
+    assert c.get("/api/state").json()["models_ready"] is True
+
+
+def test_download_models_failure(tmp_path, monkeypatch):
+    _fake_download(monkeypatch, tmp_path, ok=False)
+    restarted = []
+    c = TestClient(create_app(Studio(library=VoiceLibrary(tmp_path / "v")), restart=lambda: restarted.append(1)))
+    j = _wait(c, c.post("/api/jobs/download-models", headers=H).json()["job"])
+    assert j["status"] == "error" and "Thử lại" in j["error"] and not restarted
