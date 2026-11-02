@@ -51,7 +51,12 @@ Vì sao chọn VieNeu-TTS v3 Turbo làm lõi:
 
 ## 3. Cài đặt (một lần)
 
-1. Tải mã nguồn: `git clone <địa chỉ repo GitHub của bạn>` (hoặc tải ZIP rồi giải nén vào thư mục **không có dấu**, ví dụ `D:\VoxViet`).
+1. Tải mã nguồn vào thư mục dự án (đường dẫn **không có dấu**), ví dụ `E:\VoiceTriny`:
+   ```bat
+   cd /d E:\
+   git clone https://github.com/trinytrinhlam-web/voxviet-studio.git VoiceTriny
+   ```
+   (Nếu `E:\VoiceTriny` đã có file: tải ZIP từ GitHub rồi giải nén vào đó.)
 2. Nhấp đúp **`install.bat`**. Script tự làm các việc sau:
    - cài `uv` và Python 3.12 riêng cho phần mềm (không ảnh hưởng Python khác trên máy);
    - phát hiện card NVIDIA rồi cài PyTorch bản CUDA phù hợp;
