@@ -40,6 +40,7 @@ git log -1 --format="  %%h  %%s"
 echo Cap nhat thu vien...
 uv pip install --python .venv\Scripts\python.exe -r requirements.txt
 if exist ".venv\Lib\site-packages\torch" uv pip install --python .venv\Scripts\python.exe -r requirements-gpu.txt
+uv pip install --python .venv\Scripts\python.exe --no-deps -r requirements-core.txt
 
 echo.
 echo  ===== XONG - mo lai run.bat, roi nhan Ctrl+F5 tren trinh duyet =====

@@ -215,17 +215,19 @@ class Updater:
 
     def install_deps(self, log: Log) -> None:
         uv = shutil.which("uv") or str(Path.home() / ".local" / "bin" / ("uv.exe" if os.name == "nt" else "uv"))
-        reqs = ["requirements.txt"]
+        # (file, extra) — lõi giọng cài --no-deps để không kéo theo gradio/pillow.
+        reqs: list[tuple[str, list[str]]] = [("requirements.txt", [])]
         try:
             import torch  # noqa: F401
-            reqs.append("requirements-gpu.txt")
+            reqs.append(("requirements-gpu.txt", []))
         except Exception:
             pass
-        for req in reqs:
+        reqs.append(("requirements-core.txt", ["--no-deps"]))
+        for req, extra in reqs:
             if not (self.root / req).exists():
                 continue
-            cmd = ([uv, "pip", "install", "--python", self.python, "-r", req] if Path(uv).exists()
-                   else [self.python, "-m", "pip", "install", "-r", req])
+            cmd = ([uv, "pip", "install", "--python", self.python, *extra, "-r", req] if Path(uv).exists()
+                   else [self.python, "-m", "pip", "install", *extra, "-r", req])
             flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
             p = subprocess.run(cmd, cwd=str(self.root), capture_output=True, text=True, encoding="utf-8",
                                errors="replace", creationflags=flags, timeout=1800)

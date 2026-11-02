@@ -1,8 +1,16 @@
 # Thư viện chính (CPU chạy được ngay; GPU cài thêm requirements-gpu.txt sau PyTorch).
 # Ghim đúng phiên bản đã kiểm tra để một bản phát hành độc hại/lỗi về sau không tự lọt vào khi cập nhật.
-# Lõi giọng: đã rà mã nguồn + đối chiếu mã băm với PyPI (xem BAO-CAO-BAO-MAT.md).
-vieneu==3.8.3
+#
+# Lõi giọng (gói `vieneu`) được cài RIÊNG bằng requirements-core.txt với --no-deps, vì nó khai báo
+# cần gradio (kéo theo pillow có lỗ hổng) dù phần lõi không dùng tới. Các thư viện lõi thực sự cần
+# được liệt kê dưới đây. Xem BAO-CAO-BAO-MAT.md.
 sea-g2p==0.10.0
+onnxruntime>=1.20,<2
+kaldi-native-fbank>=1.20,<2
+tokenizers>=0.20
+huggingface_hub
+PyYAML>=6,<7
+librosa>=0.11,<2
 # Máy chủ giao diện
 fastapi==0.162.0
 starlette==1.10.0

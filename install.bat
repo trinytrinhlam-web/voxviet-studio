@@ -54,6 +54,9 @@ if defined TORCH_INDEX (
     uv pip install --python %PY% -r requirements-gpu.txt
     if errorlevel 1 ( echo LOI cai thu vien GPU. & pause & exit /b 1 )
 )
+REM Loi giong cai rieng, khong kem thu vien phu (bo gradio/pillow khong dung toi)
+uv pip install --python %PY% --no-deps -r requirements-core.txt
+if errorlevel 1 ( echo LOI cai loi giong. & pause & exit /b 1 )
 
 REM --- 5. Tai mo hinh ---
 echo [5/5] Tai mo hinh loi giong VoxViet (lan dau ~1-3 GB)...
