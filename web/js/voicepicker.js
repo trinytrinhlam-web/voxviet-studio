@@ -1,5 +1,6 @@
 // Ô chọn giọng: giọng của bạn + giọng có sẵn theo vùng. Ảnh đại diện theo giới tính, nhãn phong cách có icon.
 import { api, esc } from "./api.js";
+import { pixelAvatarSVG } from "./pixelavatar.js";
 
 const REGION = { bac: "miền Bắc", trung: "miền Trung", nam: "miền Nam" };
 // Giới tính: chấp nhận cả mã cũ (male/female) lẫn mã của catalog (nam/nu).
@@ -25,15 +26,14 @@ export function hueOf(key) {
 
 const icon = (name, cls = "icon icon-xs") => `<svg class="${cls}" aria-hidden="true"><use href="/icons.svg#i-${name}"/></svg>`;
 
-// Ảnh đại diện: giọng nam tông xanh, giọng nữ tông hồng (mỗi giọng một sắc riêng trong dải),
-// góc dưới có huy hiệu giới tính. Không rõ giới tính: màu theo tên.
+// Ảnh đại diện: nhân vật hoạt hình pixel (bé trai / bé gái), cố định theo từng giọng.
+// Nền tròn: bé trai tông xanh, bé gái tông hồng (mỗi giọng một sắc riêng trong dải).
+// Không rõ giới tính (nhân vật hội thoại…): tự chọn theo tên.
 export function avatar(label, key, gender = "") {
-  const words = (label || "?").trim().split(/\s+/);
-  const letter = (words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0][0]).toUpperCase();
-  const sx = SEX[sexOf(gender)];
-  const hue = sx ? sx.band[0] + (hueOf(key) % (sx.band[1] - sx.band[0])) : hueOf(key);
-  const badge = sx ? `<span class="sex-badge ${sexOf(gender)}">${icon(sx.icon, "icon")}</span>` : "";
-  return `<span class="avatar${sx ? ` av-${sexOf(gender)}` : ""}" style="--h:${(hue % 360).toFixed(0)}" aria-hidden="true">${esc(letter)}${badge}</span>`;
+  const { svg, sex } = pixelAvatarSVG(key || label || "?", sexOf(gender));
+  const band = SEX[sex].band;
+  const hue = band[0] + (hueOf(key || label || "?") % (band[1] - band[0]));
+  return `<span class="avatar px av-${sex}" style="--h:${(hue % 360).toFixed(0)}" aria-hidden="true">${svg}</span>`;
 }
 
 // Dòng mô tả: [icon giới tính] miền … [nhãn phong cách]. Có chữ ẩn cho trình đọc màn hình.
