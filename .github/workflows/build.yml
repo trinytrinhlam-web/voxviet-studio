@@ -18,6 +18,8 @@ concurrency:
 
 env:
   POWERSHELL_TELEMETRY_OPTOUT: "1"
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: utf-8
   UV_VERSION: "0.9.5"
   UV_SHA256: "515dc53d7553f1357d0abc1f70acd921fbb9e30230b1d9a08737236daa6ee920"
   APP: C:\VoxVietTest
@@ -86,7 +88,7 @@ jobs:
             if (-not $lnk) { throw "Thiếu biểu tượng trên Desktop" }
             & "$env:APP\.venv\Scripts\python.exe" -c "import importlib.util as u, sys; sys.exit(0 if u.find_spec('gradio') else 1)"
             if ($LASTEXITCODE -eq 0) { throw "gradio không được có trong bản cài" }
-            & "$env:APP\.venv\Scripts\python.exe" -c "import vieneu, sea_g2p; print('lõi giọng OK')"
+            & "$env:APP\.venv\Scripts\python.exe" -c "import vieneu, sea_g2p; print('lõi giọng OK')" 2>&1 | Out-Host
             if ($LASTEXITCODE -ne 0) { throw "Không nạp được lõi giọng" }
           } catch { Write-Host "LỖI: $($_ | Out-String)"; throw } finally { Stop-Transcript | Out-Null }
 
