@@ -83,7 +83,7 @@ Tuỳ chọn (cả hai cách):
 
 ### Đóng gói trình cài (người phát triển)
 
-Mỗi lần đẩy lên `main`, GitHub Actions (`.github/workflows/build.yml`) chạy trên Windows thật: kiểm thử → build trình cài bằng Inno Setup (`installer/voxviet.iss`) → cài thử ngầm → mở thử (một phiên, khởi động lại, tự tắt) → gỡ thử. Kết quả ghi lên nhánh `ci-status`. Đẩy tag `v<phiên bản>` để phát hành Release kèm file cài.
+Mỗi lần đẩy lên `main`, GitHub Actions (`.github/workflows/build.yml`) chạy trên Windows thật: kiểm thử → build trình cài bằng Inno Setup (`installer/voxviet.iss`) → cài thử ngầm → mở thử (một phiên, khởi động lại, tự tắt) → gỡ thử. Kết quả ghi lên nhánh `ci-status`. Khi mọi bước qua và số phiên bản trong `voxviet/__init__.py` chưa có Release, Actions tự phát hành Release `v<phiên bản>` kèm file cài.
 
 ## 4. Hướng dẫn sử dụng
 
