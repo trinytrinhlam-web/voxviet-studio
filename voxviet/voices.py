@@ -123,6 +123,7 @@ class VoiceLibrary:
         vid, i = base, 2
         while (self.root / vid).exists():
             vid, i = f"{base}-{i}", i + 1
+        gender = {"male": "nam", "female": "nu"}.get(gender, gender)
         v = Voice(id=vid, name=name, dialect=dialect, gender=gender, description=description)
         v._root = self.root
         self._save(v)
@@ -132,6 +133,8 @@ class VoiceLibrary:
         v = self.get(voice_id)
         if v is None:
             raise ValueError("Không tìm thấy giọng.")
+        if "gender" in changes:
+            changes["gender"] = {"male": "nam", "female": "nu"}.get(changes["gender"], changes["gender"])
         for k, val in changes.items():
             if k in ("name", "dialect", "gender", "description", "backbone", "gemini_voice") and val is not None:
                 setattr(v, k, val)

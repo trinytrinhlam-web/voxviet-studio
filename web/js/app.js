@@ -2,7 +2,7 @@
 import { api, esc, runJob, toast } from "./api.js";
 import { Recorder } from "./recorder.js";
 import { Tape } from "./tape.js";
-import { avatar, VoicePicker, voiceMeta } from "./voicepicker.js";
+import { avatar, metaHTML, VoicePicker } from "./voicepicker.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -368,15 +368,15 @@ function initLibrary() {
   let selected = null;
   let recorder = null, recKey = null;
   const dialect = seg("kg-dialect");
+  const gender = seg("kg-gender");
   const player = new Audio();
   const SLOT_KEYS = [...STATE.emotions.map((e) => ({ key: e.key, label: e.label, en: false })), { key: "trung_tinh", label: "Tiếng Anh · trung tính", en: true }];
-  const REGION = { bac: "Bắc", trung: "Trung", nam: "Nam" };
 
   async function load() {
     lib = await api.get("/api/library");
     if (!lib.voices.some((v) => v.id === selected)) selected = lib.voices[0]?.id || null;
     $("#kg-count").textContent = `${lib.voices.length}/${lib.max}`;
-    $("#kg-mine").innerHTML = lib.voices.map((v) => `<button type="button" class="voice-opt" data-id="${v.id}" aria-selected="${v.id === selected}">${avatar(v.name, `voice:${v.id}`)}<span><span class="name">${esc(v.name)}</span><br><span class="meta">miền ${REGION[v.dialect] || ""} · ${v.clips.length ? `${v.clips.length} mẫu` : "chưa có mẫu"}</span></span></button>`).join("")
+    $("#kg-mine").innerHTML = lib.voices.map((v) => `<button type="button" class="voice-opt" data-id="${v.id}" aria-selected="${v.id === selected}">${avatar(v.name, `voice:${v.id}`, v.gender)}<span style="min-width:0"><span class="name">${esc(v.name)}</span>${metaHTML({ kind: "mine", gender: v.gender, region: v.dialect, clips: v.clips })}</span></button>`).join("")
       || `<p class="hint">Chưa có giọng nào. Tạo giọng bên dưới, rồi thêm một đoạn nói 5–10 giây.</p>`;
     $("#kg-new button[type=submit]").disabled = lib.voices.length >= lib.max;
     renderDetail();
@@ -391,7 +391,10 @@ function initLibrary() {
     }
     const has = (k, en) => v.clips.find((c) => c.key === (en ? `en_${k}` : k));
     box.innerHTML = `
-      <div class="panel-head"><div class="cast-name">${avatar(v.name, `voice:${v.id}`)}<h2>${esc(v.name)}</h2></div>
+      <div class="panel-head"><div class="cast-name">${avatar(v.name, `voice:${v.id}`, v.gender)}<div><h2>${esc(v.name)}</h2>${metaHTML({ gender: v.gender, region: v.dialect })}</div>
+          <div class="seg" role="group" aria-label="Giới tính của giọng" id="kg-vgender" style="margin-left:var(--sp-3)">
+            <button type="button" data-v="nam" aria-pressed="${v.gender === "nam" || v.gender === "male"}"><svg class="icon icon-xs sex nam" aria-hidden="true"><use href="/icons.svg#i-mars"/></svg> Nam</button>
+            <button type="button" data-v="nu" aria-pressed="${v.gender === "nu" || v.gender === "female"}"><svg class="icon icon-xs sex nu" aria-hidden="true"><use href="/icons.svg#i-venus"/></svg> Nữ</button></div></div>
         <div class="toolbar"><button class="btn" type="button" id="kg-preview"><svg class="icon"><use href="/icons.svg#i-headphones"/></svg>Nghe thử</button>
         <button class="btn danger" type="button" id="kg-delete"><svg class="icon"><use href="/icons.svg#i-trash-2"/></svg>Xoá giọng</button></div></div>
       <div class="stack">
@@ -412,6 +415,7 @@ function initLibrary() {
         <details><summary class="section-label" style="cursor:pointer">Mô hình fine-tune của giọng này</summary>
           <div class="toolbar" style="margin-top:8px"><input type="text" id="kg-backbone" value="${esc(v.backbone)}" placeholder="Đường dẫn thư mục merged sau khi fine-tune" style="flex:1"><button class="btn" type="button" id="kg-backbone-save">Lưu</button></div></details>
       </div>`;
+    seg("kg-vgender", async (g) => { await api.patch(`/api/library/${v.id}`, { gender: g }); load(); });
     let confirm = false;
     $("#kg-delete").addEventListener("click", async (e) => {
       if (!confirm) { confirm = true; e.currentTarget.lastChild.textContent = "Bấm lần nữa để xoá"; return; }
@@ -476,7 +480,7 @@ function initLibrary() {
   $("#kg-new").addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
-      const v = await api.post("/api/library", { name: $("#kg-name").value, dialect: dialect.value });
+      const v = await api.post("/api/library", { name: $("#kg-name").value, dialect: dialect.value, gender: gender.value });
       selected = v.id;
       $("#kg-name").value = "";
       toast(`Đã tạo giọng ${v.name}. Thêm đoạn mẫu trung tính để dùng.`);
@@ -489,7 +493,7 @@ function initLibrary() {
   async function presets() {
     const { voices } = await api.get("/api/voices?language=vi&engine=auto");
     const list = voices.filter((v) => v.kind === "preset" && (!filter || v.region === filter));
-    $("#kg-presets").innerHTML = list.map((v) => `<div class="preset-row">${avatar(v.label, v.value)}<span><span class="name">${esc(v.label)}</span><br><span class="meta">${esc(voiceMeta(v))}</span></span>
+    $("#kg-presets").innerHTML = list.map((v) => `<div class="preset-row">${avatar(v.label, v.value, v.gender)}<span><span class="name">${esc(v.label)}</span>${metaHTML(v)}</span>
       <button class="btn ghost icon-only" type="button" data-v="${esc(v.value)}" aria-label="Nghe thử ${esc(v.label)}"><svg class="icon"><use href="/icons.svg#i-play"/></svg></button></div>`).join("");
   }
   $("#kg-filter").addEventListener("click", (e) => {
