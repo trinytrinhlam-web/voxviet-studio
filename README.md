@@ -91,6 +91,24 @@ Xin chào các bạn! [vui] Hôm nay mình có tin cực vui. [nghỉ 1s]
 | `[cười]` `[thở dài]` `[hắng giọng]` | Âm thanh tự nhiên (thử nghiệm) |
 | `<en>…</en>` | Ép đọc tiếng Anh khi tự nhận diện bị nhầm |
 
+### ✨ Làm trong giọng (hậu kỳ)
+Bộ nén âm của mô hình làm mất bớt âm cao, nên giọng có thể nghe hơi **đục** hoặc **tối**. Mỗi câu đọc ra được xử lý lần lượt qua các bước:
+- cắt tiếng ù dưới khoảng 90 Hz;
+- giảm dải gây đục quanh 300 Hz;
+- tăng độ rõ chữ quanh 3,5 kHz;
+- tăng độ sáng từ khoảng 7 kHz trở lên;
+- tạo lại một ít âm cao bị mất (exciter);
+- giới hạn đỉnh mềm để không bị rè.
+
+| Mức | Khi nào dùng |
+|---|---|
+| Gốc | Không xử lý gì |
+| Nhẹ | Giọng vốn đã khá trong, chỉ chỉnh rất ít |
+| **Trong** (mặc định) | Hợp với phần lớn giọng |
+| Sáng | Giọng rất đục hoặc tối |
+
+Sau khi đọc, mở mục **🎧 Chuốt giọng bản vừa đọc** để nghe **cùng một bản đọc** ở từng mức mà không phải đọc lại, nên so sánh được công bằng. Chọn xong mức hợp nhất thì đặt làm mặc định trong Cài đặt. Trong mục **Nâng cao**, *Độ biến hoá ngữ điệu* đặt khoảng 0.6–0.7 sẽ cho giọng ổn định và sạch hơn.
+
 ### 🎭 Hội thoại
 Mỗi dòng có dạng `Tên (cảm xúc): lời thoại`. Bấm **Tìm nhân vật**, gán giọng, ngôn ngữ và cảm xúc cho từng người, rồi bấm **Tạo hội thoại**. Dòng không ghi tên được tính cho người nói ở dòng trước.
 
@@ -180,6 +198,7 @@ tests/                     kiểm thử tự động (pytest)
 | Một từ tiếng Anh bị đọc kiểu Việt (vd. *con*, *to*) | Bọc từ đó trong `<en>…</en>`, hoặc thêm vào Từ điển phát âm |
 | Câu rất ngắn đọc lạ | Viết câu dài hơn một chút hoặc thêm dấu câu |
 | Cảm xúc chưa rõ | Thu mẫu riêng cho cảm xúc đó trong Kho giọng |
+| Giọng nghe đục / tối | Thử mức **Sáng** trong mục Chuốt giọng; giảm *Độ biến hoá ngữ điệu* còn 0.6–0.7; một số giọng có sẵn vốn được thu kém trong hơn, nên thử giọng khác |
 | Giọng clone chưa giống | Dùng mẫu 7–10 giây, sạch, không nhạc nền; hoặc fine-tune |
 
 ## 8. Giấy phép & sử dụng có trách nhiệm

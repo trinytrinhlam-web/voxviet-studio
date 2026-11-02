@@ -4,6 +4,7 @@ gradio>=5.49.1,<7
 numpy
 soundfile>=0.12
 soxr
+scipy
 pyloudnorm
 imageio-ffmpeg
 python-docx

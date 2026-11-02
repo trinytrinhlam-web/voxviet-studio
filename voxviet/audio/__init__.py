@@ -141,7 +141,7 @@ def load(path: str | Path, sr: int = SR) -> np.ndarray:
 
 def time_stretch(x: np.ndarray, rate: float, sr: int = SR) -> np.ndarray:
     """Đổi tốc độ nói, giữ nguyên cao độ. rate > 1 = nhanh hơn."""
-    if abs(rate - 1.0) < 0.01 or len(x) == 0:
+    if abs(rate - 1.0) < 0.03 or len(x) == 0:  # thay đổi quá nhỏ: không xử lý (tránh giảm chất lượng)
         return x
     rate = float(np.clip(rate, 0.5, 2.0))
     try:

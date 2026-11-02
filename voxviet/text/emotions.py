@@ -15,7 +15,7 @@ from dataclasses import dataclass
 class Emotion:
     key: str
     label: str
-    speed: float  # hệ số tốc độ cộng thêm
+    speed: float  # hệ số tốc độ riêng (để 1.0: kéo giãn thời gian làm giọng kém trong)
     temperature: float  # VieNeu: độ biến hoá ngữ điệu
     exaggeration: float  # Chatterbox: mức cường điệu cảm xúc (0.25–2.0)
     gemini_style: str  # câu chỉ dẫn phong cách cho Gemini TTS
@@ -26,12 +26,12 @@ EMOTIONS: dict[str, Emotion] = {
     e.key: e
     for e in (
         Emotion("trung_tinh", "Trung tính", 1.00, 0.80, 0.50, "", ("trung tính", "trung tinh", "neutral", "bình thường")),
-        Emotion("vui", "Vui vẻ", 1.05, 0.90, 0.75, "Say cheerfully, with a warm smile", ("vui", "vui vẻ", "happy")),
-        Emotion("buon", "Buồn", 0.92, 0.75, 0.40, "Say sadly, slowly, with a heavy heart", ("buồn", "buon", "sad")),
-        Emotion("gian", "Giận dữ", 1.04, 0.95, 0.90, "Say angrily, with frustration", ("giận", "giận dữ", "gian", "angry")),
-        Emotion("ngac_nhien", "Ngạc nhiên", 1.03, 0.90, 0.80, "Say with surprise and amazement", ("ngạc nhiên", "ngac nhien", "surprised")),
-        Emotion("thi_tham", "Thì thầm", 0.95, 0.70, 0.35, "Whisper softly", ("thì thầm", "thi tham", "whisper")),
-        Emotion("ke_chuyen", "Kể chuyện", 0.97, 0.80, 0.55, "Narrate like an audiobook storyteller, calm and engaging", ("kể chuyện", "ke chuyen", "narrator")),
+        Emotion("vui", "Vui vẻ", 1.00, 0.90, 0.75, "Say cheerfully, with a warm smile", ("vui", "vui vẻ", "happy")),
+        Emotion("buon", "Buồn", 1.00, 0.75, 0.40, "Say sadly, slowly, with a heavy heart", ("buồn", "buon", "sad")),
+        Emotion("gian", "Giận dữ", 1.00, 0.95, 0.90, "Say angrily, with frustration", ("giận", "giận dữ", "gian", "angry")),
+        Emotion("ngac_nhien", "Ngạc nhiên", 1.00, 0.90, 0.80, "Say with surprise and amazement", ("ngạc nhiên", "ngac nhien", "surprised")),
+        Emotion("thi_tham", "Thì thầm", 1.00, 0.70, 0.35, "Whisper softly", ("thì thầm", "thi tham", "whisper")),
+        Emotion("ke_chuyen", "Kể chuyện", 1.00, 0.80, 0.55, "Narrate like an audiobook storyteller, calm and engaging", ("kể chuyện", "ke chuyen", "narrator")),
     )
 }
 

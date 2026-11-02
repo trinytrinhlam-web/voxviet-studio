@@ -22,6 +22,8 @@ class Settings:
     output_format: str = "wav"
     # Chuẩn hoá âm lượng (LUFS). 0 = tắt.
     target_lufs: float = -16.0
+    # Làm trong giọng (hậu kỳ): "goc" | "nhe" | "trong" | "sang"
+    enhance: str = "trong"
     # Khoảng nghỉ giữa các câu (giây) — nhân thêm theo "nhịp nghỉ" trong giao diện
     sentence_pause: float = 0.25
     paragraph_pause: float = 0.6
