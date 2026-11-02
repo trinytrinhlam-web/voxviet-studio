@@ -3,6 +3,13 @@
 Mỗi phiên bản một mục `## <phiên bản> — <ngày>`, mỗi thay đổi một dòng `- …`.
 Trang **Cập nhật** trong phần mềm đọc file này để cho bạn biết bản mới có gì.
 
+## 0.7.0 — 2026-11-02
+- Trình cài đặt .exe: cài vào E:\VoxViet Studio, biểu tượng trên Desktop và menu Start, tự chuyển kho giọng + mô hình từ bản cũ
+- Mở như phần mềm thường: không còn cửa sổ dòng lệnh, chỉ một phiên, đóng cửa sổ là tắt hẳn
+- Màn hình chào lần đầu: tải lõi giọng có báo dung lượng ngay trong cửa sổ, tải xong tự mở lại
+- Bỏ gradio và pillow khỏi bản cài (không dùng tới, nhiều lỗ hổng đã công bố)
+- Biểu tượng VoxViet cho phần mềm
+
 ## 0.6.2 — 2026-11-02
 - Sửa lỗi quét virus 0x80508023 trong kiem_tra_bao_mat.bat; thêm cách quét dự phòng bằng PowerShell
 

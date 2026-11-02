@@ -57,23 +57,33 @@ Vì sao chọn mã nguồn này làm lõi:
 
 ## 3. Cài đặt (một lần)
 
-1. Tải mã nguồn vào thư mục dự án (đường dẫn **không có dấu**), ví dụ `E:\VoiceTriny`:
-   ```bat
-   cd /d E:\
-   git clone https://github.com/trinytrinhlam-web/voxviet-studio.git VoiceTriny
-   ```
-   (Nếu `E:\VoiceTriny` đã có file: tải ZIP từ GitHub rồi giải nén vào đó.)
-2. Nhấp đúp **`install.bat`**. Script tự làm các việc sau:
-   - cài `uv` và Python 3.12 riêng cho phần mềm (không ảnh hưởng Python khác trên máy);
-   - phát hiện card NVIDIA rồi cài PyTorch bản CUDA phù hợp;
-   - cài thư viện, tải mô hình lõi giọng về `models/voxviet-core` và đọc thử một câu.
-3. Nhấp đúp **`run.bat`**. Phần mềm mở trong **cửa sổ riêng** (Edge ở chế độ ứng dụng, không có thanh địa chỉ). Nếu máy không có Edge/Chrome thì mở trong trình duyệt mặc định tại `http://127.0.0.1:7860`.
+### Cách 1 — Trình cài đặt (khuyên dùng)
 
-Tuỳ chọn:
+1. Mở repo trên GitHub → **Releases** → tải `VoxVietStudio-Setup-<phiên bản>.exe`
+   (hoặc **Actions → Windows installer → bản chạy mới nhất → Artifacts**).
+2. Chạy file cài. Windows có thể hiện "Windows protected your PC" vì file chưa ký số → **More info → Run anyway**.
+3. Thư mục cài mặc định: **`E:\VoxViet Studio`** (máy không có ổ E: → `%LOCALAPPDATA%\Programs\VoxViet Studio`). Không cần quyền quản trị.
+4. Nếu máy có bản cũ ở `E:\VoiceTriny\voxviet-studio`, trình cài hỏi **chuyển dữ liệu**: chép kho giọng, bản thu, từ điển, cài đặt và **chuyển** thư mục mô hình sang (không phải tải lại). Mã nguồn bản cũ giữ nguyên — xoá khi bản mới chạy tốt.
+5. Cửa sổ PowerShell hiện ra để cài Python riêng, PyTorch cho card NVIDIA, thư viện và **nối GitHub** (có thể hiện cửa sổ đăng nhập GitHub — đăng nhập để nhận cập nhật và đồng bộ kho giọng). Mất 10–30 phút tuỳ mạng.
+6. Mở **VoxViet Studio** từ Desktop hoặc menu Start. Lần đầu, **màn hình chào** tải lõi giọng (1–3 GB) rồi tự mở lại.
+
+Phần mềm chạy như ứng dụng thường: không có cửa sổ dòng lệnh; mở lại biểu tượng khi đang chạy thì chỉ hiện thêm cửa sổ; **đóng cửa sổ là tắt hẳn** (nếu đang đọc dở thì đọc xong mới tắt). Nhật ký: `data\.local\voxviet.log`.
+
+Cài thư viện bị lỗi giữa chừng → menu Start → **VoxViet Studio - sửa bản cài** (chạy lại các bước, phần đã cài được giữ). Gỡ cài đặt: **Settings → Apps → VoxViet Studio**; trình gỡ hỏi có xoá kho giọng và mô hình hay không (mặc định giữ lại).
+
+### Cách 2 — Từ mã nguồn (cho người phát triển)
+
+1. `git clone https://github.com/trinytrinhlam-web/voxviet-studio.git` vào thư mục **không có dấu**.
+2. Nhấp đúp **`install.bat`**: cài `uv` + Python 3.12 riêng, PyTorch CUDA phù hợp, thư viện, tải mô hình về `models/voxviet-core`.
+3. Nhấp đúp **`run.bat`** (có cửa sổ dòng lệnh để xem nhật ký). Muốn chạy thử khi chưa có mô hình: `run.bat --demo`.
+
+Tuỳ chọn (cả hai cách):
 - `install_english_pro.bat`: cài Chatterbox cho module English. Sau đó vào **Cài đặt → Bộ máy cho module English → Chatterbox**.
 - `install_finetune.bat`: cài bộ fine-tune giọng (cần GPU).
 
-Muốn chạy thử giao diện khi chưa có mô hình: `run.bat --demo` (âm thanh là tiếng "bíp" giả lập).
+### Đóng gói trình cài (người phát triển)
+
+Mỗi lần đẩy lên `main`, GitHub Actions (`.github/workflows/build.yml`) chạy trên Windows thật: kiểm thử → build trình cài bằng Inno Setup (`installer/voxviet.iss`) → cài thử ngầm → mở thử (một phiên, khởi động lại, tự tắt) → gỡ thử. Kết quả ghi lên nhánh `ci-status`. Đẩy tag `v<phiên bản>` để phát hành Release kèm file cài.
 
 ## 4. Hướng dẫn sử dụng
 

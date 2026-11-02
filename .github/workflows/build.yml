@@ -1,0 +1,189 @@
+# Build trình cài VoxViet Studio trên Windows thật: kiểm thử → đóng gói → cài thử ngầm → mở thử
+# (một phiên, khởi động lại, tự tắt) → gỡ thử. Kết quả đẩy lên nhánh ci-status; tag v* → phát hành Release.
+name: Windows installer
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths-ignore: ["data/voices/**", "data/recordings/**", "data/lexicon*.json"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.9.5"
+  UV_SHA256: "515dc53d7553f1357d0abc1f70acd921fbb9e30230b1d9a08737236daa6ee920"
+  APP: C:\VoxVietTest
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: uv (ghim phiên bản + kiểm tra mã băm)
+        id: uv
+        run: |
+          New-Item -ItemType Directory -Force ci-logs, installer\bin | Out-Null
+          Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$env:UV_VERSION/uv-x86_64-pc-windows-msvc.zip" -OutFile "$env:RUNNER_TEMP\uv.zip"
+          $h = (Get-FileHash "$env:RUNNER_TEMP\uv.zip" -Algorithm SHA256).Hash.ToLower()
+          if ($h -ne $env:UV_SHA256) { throw "Sai mã băm uv: $h" }
+          Expand-Archive "$env:RUNNER_TEMP\uv.zip" -DestinationPath "$env:RUNNER_TEMP\uv" -Force
+          Copy-Item "$env:RUNNER_TEMP\uv\uv.exe" installer\bin\uv.exe
+          $ver = (Select-String -Path voxviet\__init__.py -Pattern '__version__ = "(.+)"').Matches[0].Groups[1].Value
+          "VERSION=$ver" >> $env:GITHUB_ENV
+
+      - name: Kiểm thử trên Windows
+        id: tests
+        run: |
+          $uv = "installer\bin\uv.exe"; $venv = "$env:RUNNER_TEMP\venv"
+          & $uv venv $venv --python 3.12
+          & $uv pip install --python "$venv\Scripts\python.exe" -r requirements.txt pytest
+          & $uv pip install --python "$venv\Scripts\python.exe" --no-deps -r requirements-core.txt
+          & "$venv\Scripts\python.exe" -m pytest -q -p no:cacheprovider 2>&1 | Tee-Object ci-logs\pytest.txt
+          exit $LASTEXITCODE
+
+      - name: Đóng gói trình cài
+        id: build
+        if: always() && steps.uv.outcome == 'success'
+        run: |
+          try {
+            Invoke-WebRequest "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/Vietnamese.isl" -OutFile installer\Vietnamese.isl
+          } catch { Write-Host "Không tải được bản dịch tiếng Việt — dùng tiếng Anh" }
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          & $iscc /Qp "/DAppVersion=$env:VERSION" installer\voxviet.iss 2>&1 | Tee-Object ci-logs\iscc.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem installer\Output | Format-Table Name, Length | Out-String | Tee-Object -Append ci-logs\iscc.txt
+
+      - name: Cài thử ngầm (không GPU, không GitHub)
+        id: install
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          $exe = (Get-ChildItem installer\Output\*.exe)[0].FullName
+          $p = Start-Process $exe -Wait -PassThru -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$env:APP", "/SKIPGIT=1", "/CPUONLY=1", "/TASKS=desktopicon", "/LOG=$PWD\ci-logs\install.log"
+          Copy-Item "$env:APP\data\.local\setup.log" ci-logs\ -ErrorAction SilentlyContinue
+          Write-Host "Mã thoát trình cài: $($p.ExitCode)"
+          if ($p.ExitCode -ne 0) { exit 1 }
+          foreach ($f in ".venv\Scripts\pythonw.exe", "runtime\uv.exe", "web\voxviet.ico", "app.py", "data\giong_co_san.json") {
+            if (-not (Test-Path "$env:APP\$f")) { throw "Thiếu $f" }
+          }
+          $lnk = Get-ChildItem "$env:USERPROFILE\Desktop\VoxViet Studio.lnk", "$env:PUBLIC\Desktop\VoxViet Studio.lnk" -ErrorAction SilentlyContinue
+          if (-not $lnk) { throw "Thiếu biểu tượng trên Desktop" }
+          & "$env:APP\.venv\Scripts\python.exe" -c "import gradio" 2>$null
+          if ($LASTEXITCODE -eq 0) { throw "gradio không được có trong bản cài" }
+          & "$env:APP\.venv\Scripts\python.exe" -c "import vieneu, sea_g2p; print('lõi giọng OK')"
+          if ($LASTEXITCODE -ne 0) { throw "Không nạp được lõi giọng" }
+
+      - name: Mở thử (chế độ ứng dụng, giả lập mô hình)
+        id: smoke
+        if: always() && steps.install.outcome == 'success'
+        run: |
+          $env:VOXVIET_STARTUP_GRACE = "45"; $env:VOXVIET_NO_AUTOCHECK = "1"
+          $py = "$env:APP\.venv\Scripts\pythonw.exe"
+          $local = "$env:APP\data\.local"
+          function State($port, $tok) {
+            Invoke-RestMethod "http://127.0.0.1:$port/api/state" -Headers @{ Cookie = "vv_session=$tok" } -TimeoutSec 5
+          }
+          function Wait-State($tok, $old) {
+            for ($i = 0; $i -lt 60; $i++) {
+              Start-Sleep 1
+              try {
+                $port = (Get-Content "$local\instance.json" | ConvertFrom-Json).port
+                $s = State $port $tok
+                if ($s.boot_id -ne $old) { return $s }
+              } catch {}
+            }
+            throw "Phần mềm không phản hồi"
+          }
+          $t0 = Get-Date
+          Start-Process $py -ArgumentList "`"$env:APP\app.py`"", "--app", "--demo", "--no-browser" -WorkingDirectory $env:APP
+          for ($i = 0; $i -lt 30 -and -not (Test-Path "$local\session_token"); $i++) { Start-Sleep 1 }
+          $tok = (Get-Content "$local\session_token").Trim()
+          $s = Wait-State $tok ""
+          "1. Khởi động: $([int]((Get-Date) - $t0).TotalSeconds)s, phiên bản $($s.version), models_ready=$($s.models_ready)"
+          if ($s.version -ne $env:VERSION) { throw "Sai phiên bản" }
+
+          # 2. Mở lần hai → không tạo phiên mới
+          $p2 = Start-Process $py -ArgumentList "`"$env:APP\app.py`"", "--app", "--demo", "--no-browser" -WorkingDirectory $env:APP -PassThru
+          if (-not $p2.WaitForExit(30000)) { throw "Lần mở thứ hai không tự thoát" }
+          "2. Một phiên duy nhất: OK"
+
+          # 3. Khởi động lại (như sau khi cập nhật)
+          $port = (Get-Content "$local\instance.json" | ConvertFrom-Json).port
+          Invoke-RestMethod "http://127.0.0.1:$port/api/update/restart" -Method Post -Headers @{ Cookie = "vv_session=$tok"; "X-VoxViet" = "1" } | Out-Null
+          $s2 = Wait-State $tok $s.boot_id
+          "3. Khởi động lại: OK (boot $($s.boot_id) → $($s2.boot_id))"
+
+          # 4. Không có cửa sổ nào → tự tắt sau thời gian chờ
+          $deadline = (Get-Date).AddSeconds(90)
+          while ((Get-Date) -lt $deadline) {
+            Start-Sleep 3
+            $alive = Get-CimInstance Win32_Process -Filter "Name='pythonw.exe'" | Where-Object { $_.CommandLine -like "*VoxVietTest*" }
+            if (-not $alive) { break }
+          }
+          if ($alive) { throw "Phần mềm không tự tắt khi không còn cửa sổ" }
+          "4. Tự tắt khi không còn cửa sổ: OK"
+          Copy-Item "$local\voxviet.log" ci-logs\ -ErrorAction SilentlyContinue
+
+      - name: Gỡ thử (giữ dữ liệu)
+        id: uninstall
+        if: always() && steps.install.outcome == 'success'
+        run: |
+          Get-CimInstance Win32_Process -Filter "Name='pythonw.exe'" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+          $p = Start-Process "$env:APP\unins000.exe" -Wait -PassThru -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"
+          Start-Sleep 5
+          if (Test-Path "$env:APP\.venv") { throw "Gỡ chưa xoá .venv" }
+          if (-not (Test-Path "$env:APP\data\giong_co_san.json")) { throw "Gỡ đã xoá mất dữ liệu" }
+          "Gỡ: OK (dữ liệu giữ lại)"
+
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.build.outcome == 'success'
+        with:
+          name: VoxVietStudio-Setup-${{ env.VERSION }}
+          path: installer/Output/*.exe
+
+      - name: Phát hành Release
+        if: startsWith(github.ref, 'refs/tags/v') && steps.smoke.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $notes = (Get-Content CHANGELOG.md -Raw -Encoding utf8) -split "(?m)^## " | Where-Object { $_ -like "$env:VERSION*" } | Select-Object -First 1
+          Set-Content "$env:RUNNER_TEMP\notes.md" ("## " + $notes) -Encoding utf8
+          gh release create $env:GITHUB_REF_NAME (Get-ChildItem installer\Output\*.exe).FullName --title "VoxViet Studio $env:VERSION" --notes-file "$env:RUNNER_TEMP\notes.md"
+
+      - name: Ghi kết quả lên nhánh ci-status
+        if: always()
+        run: |
+          $out = "$env:RUNNER_TEMP\ci-status"
+          New-Item -ItemType Directory -Force $out | Out-Null
+          Copy-Item ci-logs\* $out -ErrorAction SilentlyContinue
+          @"
+          commit: $env:GITHUB_SHA
+          ref: $env:GITHUB_REF_NAME
+          version: $env:VERSION
+          run: $env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID
+          uv: ${{ steps.uv.outcome }}
+          tests: ${{ steps.tests.outcome }}
+          build: ${{ steps.build.outcome }}
+          install: ${{ steps.install.outcome }}
+          smoke: ${{ steps.smoke.outcome }}
+          uninstall: ${{ steps.uninstall.outcome }}
+          "@ | Set-Content "$out\summary.txt" -Encoding utf8
+          Set-Location $out
+          git init -q -b ci-status
+          git -c user.name="voxviet-ci" -c user.email="ci@voxviet.local" add -A
+          git -c user.name="voxviet-ci" -c user.email="ci@voxviet.local" commit -qm "CI $env:GITHUB_SHA"
+          git push -f "https://x-access-token:$env:GH_TOKEN@github.com/$env:GITHUB_REPOSITORY.git" ci-status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

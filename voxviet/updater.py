@@ -57,7 +57,7 @@ def parse_changelog(text: str) -> list[dict]:
 class Updater:
     root: Path = field(default_factory=lambda: paths.ROOT)
     state_file: Path = field(default_factory=lambda: paths.DATA / ".local" / "update.json")
-    python: str = field(default_factory=lambda: sys.executable)
+    python: str = field(default_factory=lambda: _console_python(sys.executable))
 
     # ── tiện ích git ──────────────────────────────────────────────────────────
     def git(self, *args: str, check: bool = True, timeout: int = 120) -> str:
@@ -214,7 +214,7 @@ class Updater:
         return {"from": cur_v, "to": self.local_version()}
 
     def install_deps(self, log: Log) -> None:
-        uv = shutil.which("uv") or str(Path.home() / ".local" / "bin" / ("uv.exe" if os.name == "nt" else "uv"))
+        uv, uv_env = _find_uv(self.root)
         # (file, extra) — lõi giọng cài --no-deps để không kéo theo gradio/pillow.
         reqs: list[tuple[str, list[str]]] = [("requirements.txt", [])]
         try:
@@ -230,7 +230,7 @@ class Updater:
                    else [self.python, "-m", "pip", "install", *extra, "-r", req])
             flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
             p = subprocess.run(cmd, cwd=str(self.root), capture_output=True, text=True, encoding="utf-8",
-                               errors="replace", creationflags=flags, timeout=1800)
+                               errors="replace", creationflags=flags, timeout=1800, env={**os.environ, **uv_env})
             for ln in (p.stdout + p.stderr).strip().splitlines()[-8:]:
                 log("  " + ln)
             if p.returncode != 0:
@@ -289,6 +289,25 @@ class Updater:
         self.git("fetch", "origin", BRANCH, timeout=300)
         self.git("checkout", "-q", "-f", "-B", BRANCH, f"origin/{BRANCH}")
         self.git("branch", "-q", f"--set-upstream-to=origin/{BRANCH}", BRANCH, check=False)
+
+
+def _console_python(exe: str) -> str:
+    """pythonw.exe (mở từ biểu tượng) → python.exe cùng thư mục cho các lệnh chạy nền."""
+    p = Path(exe)
+    if p.name.lower() == "pythonw.exe" and p.with_name("python.exe").exists():
+        return str(p.with_name("python.exe"))
+    return exe
+
+
+def _find_uv(root: Path) -> tuple[str, dict]:
+    """uv đi kèm bản cài (runtime/uv.exe) hoặc uv cài bằng install.bat."""
+    runtime = root / "runtime"
+    bundled = runtime / ("uv.exe" if os.name == "nt" else "uv")
+    if bundled.exists():
+        return str(bundled), {"UV_CACHE_DIR": str(runtime / "cache"),
+                              "UV_PYTHON_INSTALL_DIR": str(runtime / "python")}
+    exe = shutil.which("uv") or str(Path.home() / ".local" / "bin" / ("uv.exe" if os.name == "nt" else "uv"))
+    return exe, {}
 
 
 def _hide_token(url: str) -> str:

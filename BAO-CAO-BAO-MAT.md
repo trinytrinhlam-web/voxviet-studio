@@ -45,7 +45,7 @@ Kiểm tra tự động: `bandit` (không lỗi mức cao; mọi lệnh con dùn
 |---|---|---|---|---|
 | torch | 2.8.0 | 8 | Không trực tiếp: lỗi treo/hỏng bộ nhớ với dữ liệu tấn công ở vài hàm cụ thể; lỗi `weights_only` chỉ khi nạp file `.pth` độc hại (lõi giọng nạp `.safetensors`) | Không nâng được — lõi giọng ghim `torch==2.8.0` cho GPU |
 | transformers | 4.57.6 | 7 | Chỉ khi nạp **mô hình độc hại** (config/checkpoint/tokenizer bị cài bẫy) | Không nâng được — lõi giọng ghim; mô hình chỉ từ 2 nguồn cố định, chạy offline; `kiem_tra_bao_mat.bat` giám sát |
-| pillow | 12.3.0 | 39 | Không: chỉ do gradio kéo theo (lõi giọng khai báo cần gradio), VoxViet không nạp gradio/pillow | Bỏ gradio & pillow khỏi bản đóng gói |
+| pillow | 12.3.0 | 39 | Không: chỉ do gradio kéo theo (lõi giọng khai báo cần gradio), VoxViet không nạp gradio/pillow | **Đã bỏ từ 0.7.0**: lõi giọng cài `--no-deps` (`requirements-core.txt`), thư viện thật sự cần liệt kê trong `requirements.txt` |
 | Các thư viện khác | — | 0 | — | Đã **ghim phiên bản** thư viện trực tiếp trong `requirements.txt` |
 
 Nguyên tắc: **chỉ đặt "Mô hình fine-tune" của giọng là thư mục do chính bạn huấn luyện** — nạp mô hình lạ là con đường duy nhất để các lỗ hổng trên gây hại.

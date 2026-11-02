@@ -6,7 +6,7 @@ REM  Hay TAT cua so run.bat truoc khi chay file nay.
 REM ============================================================
 setlocal
 cd /d "%~dp0"
-set "PATH=%USERPROFILE%\.local\bin;%PATH%"
+set "PATH=%~dp0runtime;%USERPROFILE%\.local\bin;%PATH%"
 set "REPO=https://github.com/trinytrinhlam-web/voxviet-studio.git"
 where git >nul 2>nul || ( echo Can cai Git: https://git-scm.com/download/win & pause & exit /b 1 )
 

@@ -22,6 +22,7 @@ def main() -> None:
     ap.add_argument("--demo", action="store_true", help="bật engine giả lập (chạy thử khi chưa có mô hình)")
     args = ap.parse_args()
     appmode.setup_logging(to_file=args.app)
+    appmode.hold_mutex()
     try:
         bootstrap.setup_env(args.online)
         if args.demo:

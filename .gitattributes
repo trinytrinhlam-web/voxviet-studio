@@ -4,3 +4,7 @@
 *.wav binary
 *.flac binary
 *.mp3 binary
+*.ps1 text eol=crlf
+*.iss text eol=crlf
+*.ico binary
+*.webp binary

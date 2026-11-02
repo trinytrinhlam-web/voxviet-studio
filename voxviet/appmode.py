@@ -105,6 +105,20 @@ def remember_port(port: int) -> None:
     _instance_file().write_text(json.dumps({"port": port, "pid": os.getpid()}), encoding="utf-8")
 
 
+_MUTEX = None
+
+
+def hold_mutex() -> None:
+    """Windows: đánh dấu "VoxViet đang chạy" để trình cài/gỡ nhắc đóng phần mềm trước (AppMutex)."""
+    global _MUTEX
+    if os.name == "nt" and _MUTEX is None:
+        try:
+            import ctypes
+            _MUTEX = ctypes.windll.kernel32.CreateMutexW(None, False, "VoxVietStudio.Running")
+        except Exception:
+            pass
+
+
 def message_box(text: str, title: str = "VoxViet Studio") -> None:
     if os.name == "nt":
         try:
