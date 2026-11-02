@@ -535,7 +535,7 @@ def build() -> gr.Blocks:
                                                 "hơn nhưng dễ lẫn tạp âm.")
                     t_btn = gr.Button("▶️ Đọc", variant="primary", size="lg")
                     t_audio, t_files, t_status = _out_controls()
-                    with gr.Accordion("🎧 Chuốt giọng bản vừa đọc (so sánh các mức làm trong)", open=False):
+                    with gr.Accordion("🎧 Chuốt giọng bản vừa đọc (so sánh các mức làm trong)", open=True):
                         gr.Markdown("Nghe lại **cùng bản vừa đọc** với mức xử lý khác — không cần đọc lại. "
                                     "Mức hợp nhất → chọn ở ô *Làm trong giọng* hoặc đặt mặc định trong Cài đặt.")
                         with gr.Row():
