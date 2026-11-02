@@ -27,6 +27,7 @@ class PresetVoice:
     hidden: bool = False
     enhance: str | None = None
     dereverb: str | None = None
+    avatar: str = ""
 
     @property
     def description(self) -> str:
@@ -39,7 +40,7 @@ def _load() -> tuple[str, tuple[PresetVoice, ...]]:
     voices = tuple(
         PresetVoice(id=v["id"], name=v["ten"], base=v["nen"], region=v.get("vung", ""),
                     gender=v.get("gioi", ""), style=v.get("phong_cach", ""), hidden=bool(v.get("an")),
-                    enhance=v.get("lam_trong"), dereverb=v.get("giam_vang"))
+                    enhance=v.get("lam_trong"), dereverb=v.get("giam_vang"), avatar=v.get("anh", ""))
         for v in raw.get("giong", [])
     )
     return raw.get("mac_dinh", voices[0].id if voices else ""), voices

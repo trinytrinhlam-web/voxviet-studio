@@ -11,6 +11,7 @@ VoxViet Studio (giấy phép MIT, xem `LICENSE`) được xây trên các thành
 | [Chatterbox](https://github.com/resemble-ai/chatterbox) (tuỳ chọn) | Module tiếng Anh Pro | Resemble AI | MIT |
 | [Be Vietnam Pro](https://github.com/bettergui/BeVietnamPro) | Font giao diện (`web/fonts/`) | The Be Vietnam Pro Project Authors | SIL OFL 1.1 (`web/fonts/OFL.txt`) |
 | [Lucide](https://lucide.dev) | Icon giao diện | Lucide Contributors | ISC |
+| [Fluent Emoji 3D](https://github.com/microsoft/fluentui-emoji) | Ảnh đại diện 3D của các giọng (`web/avatars/`, thu nhỏ 160px, WebP) | Microsoft Corporation | MIT (`web/avatars/LICENSE-fluentui-emoji.txt`) |
 | [FastAPI](https://fastapi.tiangolo.com), [Uvicorn](https://www.uvicorn.org) | Máy chủ cục bộ của giao diện | — | MIT / BSD-3 |
 
 Các dịch vụ Google (Gemini TTS, gTTS) chỉ được gọi khi bạn dùng tab "So sánh với Google", theo điều khoản của Google.

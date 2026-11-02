@@ -37,6 +37,11 @@ from .voices import MAX_VOICES, PRESET_PREFIX
 
 log = logging.getLogger("voxviet.server")
 WEB_DIR = paths.ROOT / "web"
+AVATAR_DIR = WEB_DIR / "avatars"
+
+
+def _avatar_url(slug: str | None) -> str | None:
+    return f"/avatars/{slug}.webp" if slug and (AVATAR_DIR / f"{slug}.webp").is_file() else None
 GUARD_HEADER = "x-voxviet"
 
 
@@ -148,12 +153,13 @@ def create_app(studio: Studio | None = None) -> FastAPI:
         if eng.supports_clone:
             for v in studio.library.list():
                 out.append({"value": f"{VOICE_PREFIX}{v.id}", "label": v.name, "kind": "mine",
-                            "region": v.dialect, "gender": v.gender, "clips": sorted(v.clips)})
+                            "region": v.dialect, "gender": v.gender, "clips": sorted(v.clips),
+                            "avatar": _avatar_url(v.avatar)})
         if eng.id in ("core", "mock"):  # mock = chế độ chạy thử, hiện đúng bộ giọng thật
             for v in catalog.all_voices():
                 out.append({"value": f"{PRESET_PREFIX}{v.id}", "label": v.name, "kind": "preset",
                             "region": v.region, "gender": v.gender, "style": v.style,
-                            "description": v.description})
+                            "description": v.description, "avatar": _avatar_url(v.avatar)})
         else:
             for label, pid in eng.presets(language):
                 out.append({"value": f"{PRESET_PREFIX}{pid}", "label": label, "kind": "preset"})
@@ -184,6 +190,7 @@ def create_app(studio: Studio | None = None) -> FastAPI:
             "gemini_voices": GEMINI_VOICES, "max_voices": MAX_VOICES,
             "default_preset": f"{PRESET_PREFIX}{catalog.default_id()}",
             "finetune": {"ok": ft_ok, "message": ft_msg},
+            "avatars": sorted(p.stem for p in AVATAR_DIR.glob("*.webp")) if AVATAR_DIR.exists() else [],
         }
 
     @app.get("/api/voices")
@@ -375,7 +382,7 @@ def create_app(studio: Studio | None = None) -> FastAPI:
     # ── kho giọng ──
     def voice_json(v) -> dict:
         return {"id": v.id, "name": v.name, "dialect": v.dialect, "gender": v.gender, "backbone": v.backbone,
-                "gemini_voice": v.gemini_voice,
+                "gemini_voice": v.gemini_voice, "avatar": _avatar_url(v.avatar), "avatar_id": v.avatar,
                 "clips": [{"key": k, "url": f"/api/library/{v.id}/clips/{k}"} for k in sorted(v.clips)]}
 
     @app.get("/api/library")
@@ -398,8 +405,10 @@ def create_app(studio: Studio | None = None) -> FastAPI:
         if backbone and not Path(backbone).exists():
             raise HTTPException(400, "Thư mục mô hình không tồn tại.")
         try:
+            if "avatar" in d and d["avatar"] and not _avatar_url(d["avatar"]):
+                raise ValueError("Không có ảnh đại diện này.")
             v = studio.library.update(vid, **{k: d.get(k) for k in ("name", "dialect", "gender", "backbone",
-                                                                     "gemini_voice") if k in d})
+                                                                     "gemini_voice", "avatar") if k in d})
         except ValueError as e:
             raise HTTPException(404, str(e))
         return voice_json(v)

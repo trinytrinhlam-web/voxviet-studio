@@ -38,6 +38,7 @@ class Voice:
     clips: dict[str, str] = field(default_factory=dict)  # khoá cảm xúc → tên file
     backbone: str = ""  # thư mục mô hình fine-tune (tuỳ chọn)
     gemini_voice: str = ""  # giọng Gemini tương ứng khi so sánh
+    avatar: str = ""  # ảnh đại diện (tên file trong web/avatars, không đuôi)
     created: float = field(default_factory=time.time)
 
     @property
@@ -136,7 +137,7 @@ class VoiceLibrary:
         if "gender" in changes:
             changes["gender"] = {"male": "nam", "female": "nu"}.get(changes["gender"], changes["gender"])
         for k, val in changes.items():
-            if k in ("name", "dialect", "gender", "description", "backbone", "gemini_voice") and val is not None:
+            if k in ("name", "dialect", "gender", "description", "backbone", "gemini_voice", "avatar") and val is not None:
                 setattr(v, k, val)
         self._save(v)
         return v

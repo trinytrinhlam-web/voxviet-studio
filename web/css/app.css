@@ -183,8 +183,19 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
   font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.02em; color: oklch(0.22 0.03 var(--h, 70));
   background: oklch(0.80 0.08 var(--h, 70)); }
 .avatar.av-nam, .avatar.av-nu { background: oklch(0.79 0.105 var(--h)); }
-.avatar.px { width: 40px; height: 40px; overflow: hidden; background: oklch(0.80 0.085 var(--h)); }
-.avatar.px svg { width: 100%; height: 100%; display: block; image-rendering: pixelated; transform: translateY(1px); }
+/* ảnh đại diện 3D: nền tròn nhạt theo giới tính, nhân vật nổi lên trên */
+.avatar.img { width: 42px; height: 42px; overflow: visible; background: oklch(0.32 0.03 var(--h, 70)); }
+.avatar.img.av-nam { --h: 240; }
+.avatar.img.av-nu { --h: 355; }
+.avatar.img img { width: 118%; height: 118%; object-fit: contain; margin-top: -9%; display: block; pointer-events: none;
+  filter: drop-shadow(0 2px 3px oklch(0 0 0 / 0.35)); }
+.avatar-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.avatar-pick { width: 52px; height: 52px; border-radius: 50%; border: 2px solid transparent; background: var(--bg); padding: 4px; cursor: pointer;
+  transition: border-color var(--t-hover) var(--ease-out), transform var(--t-press) var(--ease-out); }
+.avatar-pick img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.avatar-pick:hover { border-color: var(--line-strong); }
+.avatar-pick:active { transform: scale(0.95); }
+.avatar-pick[aria-checked="true"] { border-color: var(--accent); }
 .sex-badge { position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; border-radius: 50%;
   display: grid; place-items: center; background: var(--rail); box-shadow: 0 0 0 2px var(--surface); }
 .sex-badge .icon { width: 11px; height: 11px; stroke-width: 2.6; }

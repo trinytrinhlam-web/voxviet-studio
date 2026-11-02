@@ -2,7 +2,7 @@
 import { api, esc, runJob, toast } from "./api.js";
 import { Recorder } from "./recorder.js";
 import { Tape } from "./tape.js";
-import { avatar, metaHTML, VoicePicker } from "./voicepicker.js";
+import { AVATAR_POOL, avatar, avatarUrl, metaHTML, VoicePicker } from "./voicepicker.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -195,6 +195,11 @@ function initDialogue() {
     return (mine.length ? `<optgroup label="Giọng của bạn">${mine.map(opt).join("")}</optgroup>` : "") + `<optgroup label="Giọng có sẵn">${pre.map(opt).join("")}</optgroup>`;
   };
 
+  const castAvatar = (name, value) => {
+    const v = voices.find((x) => x.value === value);
+    return avatar(name, v ? v.value : name, v?.gender, v?.avatar);
+  };
+
   async function parse() {
     store.set("ht-script", script.value);
     let r;
@@ -206,7 +211,7 @@ function initDialogue() {
       const c = cast[name] || { voice: presets[(i * 5) % Math.max(1, presets.length)]?.value, language: "vi", emotion: "trung_tinh", speed: 1 };
       cast[name] = c;
       return `<div class="stack" style="gap:6px" data-name="${esc(name)}">
-        <div class="cast-name">${avatar(name, name)}<span>${esc(name)}</span></div>
+        <div class="cast-name" data-av>${castAvatar(name, c.voice)}<span>${esc(name)}</span></div>
         <select data-k="voice" aria-label="Giọng của ${esc(name)}">${voiceOptions(c.voice)}</select>
         <div class="grid-2" style="gap:6px">
           <select data-k="emotion" aria-label="Cảm xúc của ${esc(name)}">${STATE.emotions.map((e) => `<option value="${e.key}" ${e.key === c.emotion ? "selected" : ""}>${esc(e.label)}</option>`).join("")}</select>
@@ -219,6 +224,10 @@ function initDialogue() {
     if (!row) return;
     cast[row.dataset.name][e.target.dataset.k] = e.target.value;
     store.set("ht-cast", cast);
+    if (e.target.dataset.k === "voice") {
+      const head = $("[data-av]", row);
+      head.querySelector(".avatar").outerHTML = castAvatar(row.dataset.name, e.target.value);
+    }
   });
   let t = 0;
   script.addEventListener("input", () => { clearTimeout(t); t = setTimeout(parse, 400); });
@@ -376,10 +385,19 @@ function initLibrary() {
     lib = await api.get("/api/library");
     if (!lib.voices.some((v) => v.id === selected)) selected = lib.voices[0]?.id || null;
     $("#kg-count").textContent = `${lib.voices.length}/${lib.max}`;
-    $("#kg-mine").innerHTML = lib.voices.map((v) => `<button type="button" class="voice-opt" data-id="${v.id}" aria-selected="${v.id === selected}">${avatar(v.name, `voice:${v.id}`, v.gender)}<span style="min-width:0"><span class="name">${esc(v.name)}</span>${metaHTML({ kind: "mine", gender: v.gender, region: v.dialect, clips: v.clips })}</span></button>`).join("")
+    $("#kg-mine").innerHTML = lib.voices.map((v) => `<button type="button" class="voice-opt" data-id="${v.id}" aria-selected="${v.id === selected}">${avatar(v.name, `voice:${v.id}`, v.gender, v.avatar)}<span style="min-width:0"><span class="name">${esc(v.name)}</span>${metaHTML({ kind: "mine", gender: v.gender, region: v.dialect, clips: v.clips })}</span></button>`).join("")
       || `<p class="hint">Chưa có giọng nào. Tạo giọng bên dưới, rồi thêm một đoạn nói 5–10 giây.</p>`;
     $("#kg-new button[type=submit]").disabled = lib.voices.length >= lib.max;
     renderDetail();
+  }
+
+  // Dải chọn nhân vật: ưu tiên nhân vật cùng giới tính, rồi đến nhân vật còn lại.
+  function avatarChoices(v) {
+    const sex = v.gender === "nu" || v.gender === "female" ? "nu" : v.gender === "nam" || v.gender === "male" ? "nam" : "";
+    const first = sex ? AVATAR_POOL[sex] : [...AVATAR_POOL.nam, ...AVATAR_POOL.nu];
+    const rest = sex ? AVATAR_POOL[sex === "nam" ? "nu" : "nam"] : [];
+    return [...first, ...rest].map((a) => `<button type="button" class="avatar-pick" data-a="${a}" role="radio" aria-checked="${v.avatar_id === a}" aria-label="Nhân vật ${a}">
+      <img src="${avatarUrl(a)}" alt="" loading="lazy"></button>`).join("");
   }
 
   function renderDetail() {
@@ -391,7 +409,7 @@ function initLibrary() {
     }
     const has = (k, en) => v.clips.find((c) => c.key === (en ? `en_${k}` : k));
     box.innerHTML = `
-      <div class="panel-head"><div class="cast-name">${avatar(v.name, `voice:${v.id}`, v.gender)}<div><h2>${esc(v.name)}</h2>${metaHTML({ gender: v.gender, region: v.dialect })}</div>
+      <div class="panel-head"><div class="cast-name">${avatar(v.name, `voice:${v.id}`, v.gender, v.avatar)}<div><h2>${esc(v.name)}</h2>${metaHTML({ gender: v.gender, region: v.dialect })}</div>
           <div class="seg" role="group" aria-label="Giới tính của giọng" id="kg-vgender" style="margin-left:var(--sp-3)">
             <button type="button" data-v="nam" aria-pressed="${v.gender === "nam" || v.gender === "male"}"><svg class="icon icon-xs sex nam" aria-hidden="true"><use href="/icons.svg#i-mars"/></svg> Nam</button>
             <button type="button" data-v="nu" aria-pressed="${v.gender === "nu" || v.gender === "female"}"><svg class="icon icon-xs sex nu" aria-hidden="true"><use href="/icons.svg#i-venus"/></svg> Nữ</button></div></div>
@@ -411,11 +429,19 @@ function initLibrary() {
               ${c ? `<button class="btn danger" type="button" data-act="del" aria-label="Xoá mẫu ${esc(s.label)}"><svg class="icon icon-sm"><use href="/icons.svg#i-trash-2"/></svg></button>` : ""}
             </div></div>`;
         }).join("")}</div>
+        <div class="field"><span class="label">Nhân vật đại diện</span>
+          <div class="avatar-grid" role="radiogroup" aria-label="Chọn nhân vật đại diện">${avatarChoices(v)}</div></div>
         <div id="kg-prev-out"></div>
         <details><summary class="section-label" style="cursor:pointer">Mô hình fine-tune của giọng này</summary>
           <div class="toolbar" style="margin-top:8px"><input type="text" id="kg-backbone" value="${esc(v.backbone)}" placeholder="Đường dẫn thư mục merged sau khi fine-tune" style="flex:1"><button class="btn" type="button" id="kg-backbone-save">Lưu</button></div></details>
       </div>`;
     seg("kg-vgender", async (g) => { await api.patch(`/api/library/${v.id}`, { gender: g }); load(); });
+    $(".avatar-grid", box).addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-a]");
+      if (!b) return;
+      await api.patch(`/api/library/${v.id}`, { avatar: b.dataset.a });
+      load();
+    });
     let confirm = false;
     $("#kg-delete").addEventListener("click", async (e) => {
       if (!confirm) { confirm = true; e.currentTarget.lastChild.textContent = "Bấm lần nữa để xoá"; return; }
@@ -493,7 +519,7 @@ function initLibrary() {
   async function presets() {
     const { voices } = await api.get("/api/voices?language=vi&engine=auto");
     const list = voices.filter((v) => v.kind === "preset" && (!filter || v.region === filter));
-    $("#kg-presets").innerHTML = list.map((v) => `<div class="preset-row">${avatar(v.label, v.value, v.gender)}<span><span class="name">${esc(v.label)}</span>${metaHTML(v)}</span>
+    $("#kg-presets").innerHTML = list.map((v) => `<div class="preset-row">${avatar(v.label, v.value, v.gender, v.avatar)}<span><span class="name">${esc(v.label)}</span>${metaHTML(v)}</span>
       <button class="btn ghost icon-only" type="button" data-v="${esc(v.value)}" aria-label="Nghe thử ${esc(v.label)}"><svg class="icon"><use href="/icons.svg#i-play"/></svg></button></div>`).join("");
   }
   $("#kg-filter").addEventListener("click", (e) => {
