@@ -26,6 +26,7 @@ $env:UV_PYTHON_INSTALL_DIR = Join-Path $Runtime "python"
 $env:UV_CACHE_DIR = Join-Path $Runtime "cache"
 $env:UV_PYTHON_PREFERENCE = "only-managed"   # không dùng Python có sẵn trên máy → bản cài độc lập
 $env:UV_NO_PROGRESS = "1"
+$env:PYTHONUTF8 = "1"; $env:PYTHONIOENCODING = "utf-8"   # in tiếng Việt qua đường ống (mặc định cp1252 → lỗi)
 $Warnings = New-Object System.Collections.Generic.List[string]
 
 function Step($n, $text) { Write-Host ""; Write-Host "[$n/7] $text" -ForegroundColor Yellow }
