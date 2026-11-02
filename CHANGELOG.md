@@ -3,6 +3,10 @@
 Mỗi phiên bản một mục `## <phiên bản> — <ngày>`, mỗi thay đổi một dòng `- …`.
 Trang **Cập nhật** trong phần mềm đọc file này để cho bạn biết bản mới có gì.
 
+## 0.7.1 — 2026-11-02
+- Thêm HUONG-DAN-CHO-AI.md: hướng dẫn để công cụ AI khác soạn văn bản đúng định dạng cho VoxViet
+- Thêm tools/voxviet_cli.py: gửi văn bản, kịch bản hội thoại, phụ đề vào phần mềm bằng một lệnh, nhận đường dẫn file âm thanh
+
 ## 0.7.0 — 2026-11-02
 - Trình cài đặt .exe: cài vào E:\VoxViet Studio, biểu tượng trên Desktop và menu Start, tự chuyển kho giọng + mô hình từ bản cũ
 - Mở như phần mềm thường: không còn cửa sổ dòng lệnh, chỉ một phiên, đóng cửa sổ là tắt hẳn

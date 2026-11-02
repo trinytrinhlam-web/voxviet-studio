@@ -87,6 +87,8 @@ Mỗi lần đẩy lên `main`, GitHub Actions (`.github/workflows/build.yml`) c
 
 ## 4. Hướng dẫn sử dụng
 
+> Dùng ChatGPT/Claude/Gemini… để soạn văn bản hoặc tự gửi văn bản vào phần mềm: đưa cho AI file **[HUONG-DAN-CHO-AI.md](HUONG-DAN-CHO-AI.md)** (định dạng văn bản, thẻ, mã giọng, công cụ dòng lệnh `tools/voxviet_cli.py`).
+
 ### 📖 Đọc văn bản
 Chọn ngôn ngữ (Tiếng Việt / English), **Giọng**, **Cảm xúc**, **Tốc độ**, rồi bấm **Đọc** (hoặc **Ctrl + Enter**). Kết quả hiện trên **băng câu**: dạng sóng chia theo từng câu; bấm một câu trong danh sách để nghe đúng câu đó. File lưu ở `data/outputs/`, kèm phụ đề `.srt` (nút tải ở góc băng câu).
 
