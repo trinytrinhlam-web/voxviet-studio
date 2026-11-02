@@ -3,6 +3,9 @@
 Mỗi phiên bản một mục `## <phiên bản> — <ngày>`, mỗi thay đổi một dòng `- …`.
 Trang **Cập nhật** trong phần mềm đọc file này để cho bạn biết bản mới có gì.
 
+## 0.6.2 — 2026-11-02
+- Sửa lỗi quét virus 0x80508023 trong kiem_tra_bao_mat.bat; thêm cách quét dự phòng bằng PowerShell
+
 ## 0.6.1 — 2026-11-02
 - Bảo mật: chặn trang web lạ điều khiển phần mềm (DNS rebinding), thêm khoá phiên cho cửa sổ phần mềm
 - Bảo mật: chặn chèn mã và đọc/xoá file qua dữ liệu kho giọng đồng bộ từ máy khác
