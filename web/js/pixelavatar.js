@@ -46,9 +46,9 @@ const GIRL = [
 const SKIN = [["#f7d7bd", "#e9b996"], ["#efc29f", "#d9a17a"], ["#dca37c", "#c08360"], ["#b98060", "#9a6447"]];
 const HAIR = ["#2a201b", "#47302a", "#6e4428", "#1f2638", "#b07a35", "#7d3b33"];
 const BOY_SHIRT = [["#4f7fdc", "#3a63b3"], ["#3ea37b", "#2c8060"], ["#2f8fab", "#236f86"], ["#6c70d8", "#5155b0"], ["#e08a3c", "#b86c28"]];
-const GIRL_SHIRT = [["#e06a9b", "#bd4f7d"], ["#c98ad8", "#a56ab5"], ["#f08b5e", "#cc6c42"], ["#5bb8a6", "#439686"], ["#e45f7c", "#c04661"]];
+const GIRL_SHIRT = [["#e06a9b", "#bd4f7d"], ["#f2c14e", "#cf9f2f"], ["#7cc8f0", "#55a4cf"], ["#5bb8a6", "#439686"], ["#e45f7c", "#c04661"]];
 const BOY_ACC = ["#e2483d", "#3b7be0", "#2fa36d"];
-const GIRL_ACC = ["#ff5f8f", "#ffd34d", "#8f7cff", "#ff8a3d"];
+const GIRL_ACC = ["#ff5f8f", "#ffd34d", "#4fc3a1", "#ff8a3d"];
 const FIXED = { E: "#1c1b25", M: "#b4444f", B: "#f39aa9", G: "#20222c" };
 
 function hash(str) {
