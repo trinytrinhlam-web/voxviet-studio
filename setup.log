@@ -1,0 +1,45 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261102082122
+Username: runnervmdaln5\runneradmin
+RunAs User: runnervmdaln5\runneradmin
+Configuration Name: 
+Machine: runnervmdaln5 (Microsoft Windows NT 10.0.26100.0)
+Host Application: powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\VoxVietTest\installer\setup.ps1 -SkipGit -CpuOnly -NoPause
+Process ID: 3720
+PSVersion: 5.1.26100.33648
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.33648
+BuildVersion: 10.0.26100.33648
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+===== VoxViet Studio — cài đặt vào C:\VoxVietTest =====
+
+[1/7] Kết nối GitHub
+  Bỏ qua (theo yêu cầu).
+
+[2/7] Python 3.12 riêng cho VoxViet
+  Python 3.12.12
+
+[3/7] Card đồ hoạ
+  Chạy bằng CPU (theo yêu cầu).
+
+[4/7] Thư viện
+
+[5/7] Chuyển dữ liệu từ bản cũ
+  Không có — bỏ qua.
+
+[6/7] Dọn file tạm
+
+[7/7] Kiểm tra
+VoxViet Studio 0.7.1 sẵn sàng
+  Mô hình lõi giọng: sẽ tải ở lần mở đầu (màn hình chào).
+
+===== XONG =====
+**********************
+Windows PowerShell transcript end
+End time: 20261102082150
+**********************

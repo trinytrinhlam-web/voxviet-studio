@@ -1,0 +1,626 @@
+﻿2026-11-02 08:21:16.988   Log opened. (Time zone: UTC+00:00)
+2026-11-02 08:21:16.988   Setup version: Inno Setup version 6.7.1
+2026-11-02 08:21:16.988   Original Setup EXE: D:\a\voxviet-studio\voxviet-studio\installer\Output\VoxVietStudio-Setup-0.7.1.exe
+2026-11-02 08:21:16.988   Setup command line: /SL5="$201EA,14428815,852992,D:\a\voxviet-studio\voxviet-studio\installer\Output\VoxVietStudio-Setup-0.7.1.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=C:\VoxVietTest /SKIPGIT=1 /CPUONLY=1 /TASKS=desktopicon /LOG=D:\a\voxviet-studio\voxviet-studio\ci-logs\install.log
+2026-11-02 08:21:16.988   Windows version: 10.0.26100
+2026-11-02 08:21:16.988   Windows architecture: x64 (64-bit)
+2026-11-02 08:21:16.988   Machine types supported by system: x86 x64
+2026-11-02 08:21:16.988   User privileges: Administrative
+2026-11-02 08:21:16.992   Administrative install mode: No
+2026-11-02 08:21:16.992   Install mode root key: HKEY_CURRENT_USER
+2026-11-02 08:21:16.992   64-bit install mode: Yes
+2026-11-02 08:21:16.992   RedirectionGuard status for current process: Enabled in enforcing mode
+2026-11-02 08:21:16.994   Created protected temporary directory: C:\Users\RUNNER~1\AppData\Local\Temp\is-F174AMYR4U.tmp
+2026-11-02 08:21:17.473   Starting the installation process.
+2026-11-02 08:21:17.474   Creating directory: C:\VoxVietTest
+2026-11-02 08:21:17.474   Directory for uninstall files: C:\VoxVietTest
+2026-11-02 08:21:17.474   Creating new uninstall log: C:\VoxVietTest\unins000.dat
+2026-11-02 08:21:17.550   -- File entry --
+2026-11-02 08:21:17.550   Dest filename: C:\VoxVietTest\unins000.exe
+2026-11-02 08:21:17.550   Non-default bitness: 32-bit
+2026-11-02 08:21:17.653   Time stamp of our file: 2026-11-02 08:21:16.609
+2026-11-02 08:21:17.653   Installing the file.
+2026-11-02 08:21:17.680   Successfully installed the file.
+2026-11-02 08:21:17.680   -- File entry --
+2026-11-02 08:21:17.680   Dest filename: C:\VoxVietTest\.gitattributes
+2026-11-02 08:21:17.680   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.680   Installing the file.
+2026-11-02 08:21:17.682   Successfully installed the file.
+2026-11-02 08:21:17.682   -- File entry --
+2026-11-02 08:21:17.682   Dest filename: C:\VoxVietTest\.gitignore
+2026-11-02 08:21:17.682   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.682   Installing the file.
+2026-11-02 08:21:17.684   Successfully installed the file.
+2026-11-02 08:21:17.684   -- File entry --
+2026-11-02 08:21:17.684   Dest filename: C:\VoxVietTest\app.py
+2026-11-02 08:21:17.684   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.684   Installing the file.
+2026-11-02 08:21:17.684   Successfully installed the file.
+2026-11-02 08:21:17.684   -- File entry --
+2026-11-02 08:21:17.684   Dest filename: C:\VoxVietTest\BAO-CAO-BAO-MAT.md
+2026-11-02 08:21:17.684   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.684   Installing the file.
+2026-11-02 08:21:17.686   Successfully installed the file.
+2026-11-02 08:21:17.686   -- File entry --
+2026-11-02 08:21:17.686   Dest filename: C:\VoxVietTest\CHANGELOG.md
+2026-11-02 08:21:17.686   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.686   Installing the file.
+2026-11-02 08:21:17.686   Successfully installed the file.
+2026-11-02 08:21:17.686   -- File entry --
+2026-11-02 08:21:17.686   Dest filename: C:\VoxVietTest\download_models.bat
+2026-11-02 08:21:17.686   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.686   Installing the file.
+2026-11-02 08:21:17.688   Successfully installed the file.
+2026-11-02 08:21:17.688   -- File entry --
+2026-11-02 08:21:17.688   Dest filename: C:\VoxVietTest\HUONG-DAN-CHO-AI.md
+2026-11-02 08:21:17.688   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.688   Installing the file.
+2026-11-02 08:21:17.688   Successfully installed the file.
+2026-11-02 08:21:17.688   -- File entry --
+2026-11-02 08:21:17.688   Dest filename: C:\VoxVietTest\install.bat
+2026-11-02 08:21:17.688   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.688   Installing the file.
+2026-11-02 08:21:17.690   Successfully installed the file.
+2026-11-02 08:21:17.690   -- File entry --
+2026-11-02 08:21:17.690   Dest filename: C:\VoxVietTest\install_english_pro.bat
+2026-11-02 08:21:17.690   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.690   Installing the file.
+2026-11-02 08:21:17.690   Successfully installed the file.
+2026-11-02 08:21:17.690   -- File entry --
+2026-11-02 08:21:17.690   Dest filename: C:\VoxVietTest\install_finetune.bat
+2026-11-02 08:21:17.690   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.690   Installing the file.
+2026-11-02 08:21:17.692   Successfully installed the file.
+2026-11-02 08:21:17.692   -- File entry --
+2026-11-02 08:21:17.692   Dest filename: C:\VoxVietTest\kiem_tra_bao_mat.bat
+2026-11-02 08:21:17.692   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.692   Installing the file.
+2026-11-02 08:21:17.693   Successfully installed the file.
+2026-11-02 08:21:17.693   -- File entry --
+2026-11-02 08:21:17.693   Dest filename: C:\VoxVietTest\LICENSE
+2026-11-02 08:21:17.693   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.693   Installing the file.
+2026-11-02 08:21:17.693   Successfully installed the file.
+2026-11-02 08:21:17.693   -- File entry --
+2026-11-02 08:21:17.693   Dest filename: C:\VoxVietTest\README.md
+2026-11-02 08:21:17.693   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.693   Installing the file.
+2026-11-02 08:21:17.695   Successfully installed the file.
+2026-11-02 08:21:17.695   -- File entry --
+2026-11-02 08:21:17.695   Dest filename: C:\VoxVietTest\requirements-core.txt
+2026-11-02 08:21:17.695   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.695   Installing the file.
+2026-11-02 08:21:17.695   Successfully installed the file.
+2026-11-02 08:21:17.696   -- File entry --
+2026-11-02 08:21:17.696   Dest filename: C:\VoxVietTest\requirements-gpu.txt
+2026-11-02 08:21:17.696   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.696   Installing the file.
+2026-11-02 08:21:17.696   Successfully installed the file.
+2026-11-02 08:21:17.696   -- File entry --
+2026-11-02 08:21:17.696   Dest filename: C:\VoxVietTest\requirements.txt
+2026-11-02 08:21:17.696   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.696   Installing the file.
+2026-11-02 08:21:17.696   Successfully installed the file.
+2026-11-02 08:21:17.696   -- File entry --
+2026-11-02 08:21:17.696   Dest filename: C:\VoxVietTest\run.bat
+2026-11-02 08:21:17.696   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.696   Installing the file.
+2026-11-02 08:21:17.698   Successfully installed the file.
+2026-11-02 08:21:17.698   -- File entry --
+2026-11-02 08:21:17.698   Dest filename: C:\VoxVietTest\SAN-PHAM.md
+2026-11-02 08:21:17.698   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.698   Installing the file.
+2026-11-02 08:21:17.699   Successfully installed the file.
+2026-11-02 08:21:17.699   -- File entry --
+2026-11-02 08:21:17.699   Dest filename: C:\VoxVietTest\sync_github.bat
+2026-11-02 08:21:17.699   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.699   Installing the file.
+2026-11-02 08:21:17.699   Successfully installed the file.
+2026-11-02 08:21:17.699   -- File entry --
+2026-11-02 08:21:17.699   Dest filename: C:\VoxVietTest\THIET-KE.md
+2026-11-02 08:21:17.699   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.699   Installing the file.
+2026-11-02 08:21:17.702   Successfully installed the file.
+2026-11-02 08:21:17.702   -- File entry --
+2026-11-02 08:21:17.702   Dest filename: C:\VoxVietTest\THIRD_PARTY_NOTICES.md
+2026-11-02 08:21:17.702   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.702   Installing the file.
+2026-11-02 08:21:17.703   Successfully installed the file.
+2026-11-02 08:21:17.703   -- File entry --
+2026-11-02 08:21:17.703   Dest filename: C:\VoxVietTest\update.bat
+2026-11-02 08:21:17.703   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.703   Installing the file.
+2026-11-02 08:21:17.704   Successfully installed the file.
+2026-11-02 08:21:17.704   -- File entry --
+2026-11-02 08:21:17.704   Dest filename: C:\VoxVietTest\tools\download_models.py
+2026-11-02 08:21:17.704   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.704   Installing the file.
+2026-11-02 08:21:17.704   Creating directory: C:\VoxVietTest\tools
+2026-11-02 08:21:17.705   Successfully installed the file.
+2026-11-02 08:21:17.705   -- File entry --
+2026-11-02 08:21:17.705   Dest filename: C:\VoxVietTest\tools\kiem_tra_bao_mat.py
+2026-11-02 08:21:17.705   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.705   Installing the file.
+2026-11-02 08:21:17.705   Successfully installed the file.
+2026-11-02 08:21:17.705   -- File entry --
+2026-11-02 08:21:17.706   Dest filename: C:\VoxVietTest\tools\voxviet_cli.py
+2026-11-02 08:21:17.706   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.706   Installing the file.
+2026-11-02 08:21:17.710   Successfully installed the file.
+2026-11-02 08:21:17.710   -- File entry --
+2026-11-02 08:21:17.710   Dest filename: C:\VoxVietTest\voxviet\appmode.py
+2026-11-02 08:21:17.711   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.711   Installing the file.
+2026-11-02 08:21:17.711   Creating directory: C:\VoxVietTest\voxviet
+2026-11-02 08:21:17.712   Successfully installed the file.
+2026-11-02 08:21:17.712   -- File entry --
+2026-11-02 08:21:17.712   Dest filename: C:\VoxVietTest\voxviet\bootstrap.py
+2026-11-02 08:21:17.712   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.712   Installing the file.
+2026-11-02 08:21:17.712   Successfully installed the file.
+2026-11-02 08:21:17.712   -- File entry --
+2026-11-02 08:21:17.712   Dest filename: C:\VoxVietTest\voxviet\catalog.py
+2026-11-02 08:21:17.712   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.712   Installing the file.
+2026-11-02 08:21:17.714   Successfully installed the file.
+2026-11-02 08:21:17.714   -- File entry --
+2026-11-02 08:21:17.714   Dest filename: C:\VoxVietTest\voxviet\finetune.py
+2026-11-02 08:21:17.714   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.714   Installing the file.
+2026-11-02 08:21:17.714   Successfully installed the file.
+2026-11-02 08:21:17.714   -- File entry --
+2026-11-02 08:21:17.714   Dest filename: C:\VoxVietTest\voxviet\paths.py
+2026-11-02 08:21:17.714   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.714   Installing the file.
+2026-11-02 08:21:17.763   Successfully installed the file.
+2026-11-02 08:21:17.765   -- File entry --
+2026-11-02 08:21:17.765   Dest filename: C:\VoxVietTest\voxviet\pipeline.py
+2026-11-02 08:21:17.765   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.765   Installing the file.
+2026-11-02 08:21:17.765   Successfully installed the file.
+2026-11-02 08:21:17.765   -- File entry --
+2026-11-02 08:21:17.765   Dest filename: C:\VoxVietTest\voxviet\recording.py
+2026-11-02 08:21:17.765   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.765   Installing the file.
+2026-11-02 08:21:17.767   Successfully installed the file.
+2026-11-02 08:21:17.767   -- File entry --
+2026-11-02 08:21:17.767   Dest filename: C:\VoxVietTest\voxviet\server.py
+2026-11-02 08:21:17.767   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.767   Installing the file.
+2026-11-02 08:21:17.769   Successfully installed the file.
+2026-11-02 08:21:17.769   -- File entry --
+2026-11-02 08:21:17.769   Dest filename: C:\VoxVietTest\voxviet\settings.py
+2026-11-02 08:21:17.769   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.769   Installing the file.
+2026-11-02 08:21:17.769   Successfully installed the file.
+2026-11-02 08:21:17.769   -- File entry --
+2026-11-02 08:21:17.769   Dest filename: C:\VoxVietTest\voxviet\updater.py
+2026-11-02 08:21:17.769   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.769   Installing the file.
+2026-11-02 08:21:17.771   Successfully installed the file.
+2026-11-02 08:21:17.771   -- File entry --
+2026-11-02 08:21:17.771   Dest filename: C:\VoxVietTest\voxviet\voices.py
+2026-11-02 08:21:17.771   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.771   Installing the file.
+2026-11-02 08:21:17.771   Successfully installed the file.
+2026-11-02 08:21:17.771   -- File entry --
+2026-11-02 08:21:17.771   Dest filename: C:\VoxVietTest\voxviet\__init__.py
+2026-11-02 08:21:17.771   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.771   Installing the file.
+2026-11-02 08:21:17.773   Successfully installed the file.
+2026-11-02 08:21:17.773   -- File entry --
+2026-11-02 08:21:17.773   Dest filename: C:\VoxVietTest\voxviet\audio\enhance.py
+2026-11-02 08:21:17.773   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.773   Installing the file.
+2026-11-02 08:21:17.773   Creating directory: C:\VoxVietTest\voxviet\audio
+2026-11-02 08:21:17.773   Successfully installed the file.
+2026-11-02 08:21:17.773   -- File entry --
+2026-11-02 08:21:17.773   Dest filename: C:\VoxVietTest\voxviet\audio\__init__.py
+2026-11-02 08:21:17.773   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.773   Installing the file.
+2026-11-02 08:21:17.775   Successfully installed the file.
+2026-11-02 08:21:17.775   -- File entry --
+2026-11-02 08:21:17.775   Dest filename: C:\VoxVietTest\voxviet\engines\base.py
+2026-11-02 08:21:17.775   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.775   Installing the file.
+2026-11-02 08:21:17.775   Creating directory: C:\VoxVietTest\voxviet\engines
+2026-11-02 08:21:17.775   Successfully installed the file.
+2026-11-02 08:21:17.775   -- File entry --
+2026-11-02 08:21:17.775   Dest filename: C:\VoxVietTest\voxviet\engines\chatterbox_engine.py
+2026-11-02 08:21:17.775   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.775   Installing the file.
+2026-11-02 08:21:17.777   Successfully installed the file.
+2026-11-02 08:21:17.777   -- File entry --
+2026-11-02 08:21:17.777   Dest filename: C:\VoxVietTest\voxviet\engines\chatterbox_worker.py
+2026-11-02 08:21:17.777   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.777   Installing the file.
+2026-11-02 08:21:17.777   Successfully installed the file.
+2026-11-02 08:21:17.777   -- File entry --
+2026-11-02 08:21:17.777   Dest filename: C:\VoxVietTest\voxviet\engines\core_engine.py
+2026-11-02 08:21:17.777   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.777   Installing the file.
+2026-11-02 08:21:17.781   Successfully installed the file.
+2026-11-02 08:21:17.781   -- File entry --
+2026-11-02 08:21:17.781   Dest filename: C:\VoxVietTest\voxviet\engines\google_engines.py
+2026-11-02 08:21:17.781   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.781   Installing the file.
+2026-11-02 08:21:17.781   Successfully installed the file.
+2026-11-02 08:21:17.781   -- File entry --
+2026-11-02 08:21:17.781   Dest filename: C:\VoxVietTest\voxviet\engines\mock_engine.py
+2026-11-02 08:21:17.781   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.781   Installing the file.
+2026-11-02 08:21:17.781   Successfully installed the file.
+2026-11-02 08:21:17.783   -- File entry --
+2026-11-02 08:21:17.783   Dest filename: C:\VoxVietTest\voxviet\engines\__init__.py
+2026-11-02 08:21:17.783   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.783   Installing the file.
+2026-11-02 08:21:17.783   Successfully installed the file.
+2026-11-02 08:21:17.783   -- File entry --
+2026-11-02 08:21:17.783   Dest filename: C:\VoxVietTest\voxviet\text\dialogue.py
+2026-11-02 08:21:17.783   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.783   Installing the file.
+2026-11-02 08:21:17.783   Creating directory: C:\VoxVietTest\voxviet\text
+2026-11-02 08:21:17.783   Successfully installed the file.
+2026-11-02 08:21:17.783   -- File entry --
+2026-11-02 08:21:17.783   Dest filename: C:\VoxVietTest\voxviet\text\emotions.py
+2026-11-02 08:21:17.783   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.783   Installing the file.
+2026-11-02 08:21:17.785   Successfully installed the file.
+2026-11-02 08:21:17.785   -- File entry --
+2026-11-02 08:21:17.785   Dest filename: C:\VoxVietTest\voxviet\text\en_numbers.py
+2026-11-02 08:21:17.785   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.785   Installing the file.
+2026-11-02 08:21:17.785   Successfully installed the file.
+2026-11-02 08:21:17.785   -- File entry --
+2026-11-02 08:21:17.785   Dest filename: C:\VoxVietTest\voxviet\text\lexicon.py
+2026-11-02 08:21:17.785   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.785   Installing the file.
+2026-11-02 08:21:17.787   Successfully installed the file.
+2026-11-02 08:21:17.787   -- File entry --
+2026-11-02 08:21:17.787   Dest filename: C:\VoxVietTest\voxviet\text\normalize.py
+2026-11-02 08:21:17.787   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.787   Installing the file.
+2026-11-02 08:21:17.790   Successfully installed the file.
+2026-11-02 08:21:17.790   -- File entry --
+2026-11-02 08:21:17.790   Dest filename: C:\VoxVietTest\voxviet\text\srt.py
+2026-11-02 08:21:17.790   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.790   Installing the file.
+2026-11-02 08:21:17.791   Successfully installed the file.
+2026-11-02 08:21:17.791   -- File entry --
+2026-11-02 08:21:17.791   Dest filename: C:\VoxVietTest\voxviet\text\__init__.py
+2026-11-02 08:21:17.791   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.791   Installing the file.
+2026-11-02 08:21:17.791   Successfully installed the file.
+2026-11-02 08:21:17.791   -- File entry --
+2026-11-02 08:21:17.791   Dest filename: C:\VoxVietTest\web\icons.svg
+2026-11-02 08:21:17.791   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.791   Installing the file.
+2026-11-02 08:21:17.791   Creating directory: C:\VoxVietTest\web
+2026-11-02 08:21:17.791   Successfully installed the file.
+2026-11-02 08:21:17.791   -- File entry --
+2026-11-02 08:21:17.791   Dest filename: C:\VoxVietTest\web\index.html
+2026-11-02 08:21:17.793   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.793   Installing the file.
+2026-11-02 08:21:17.793   Successfully installed the file.
+2026-11-02 08:21:17.793   -- File entry --
+2026-11-02 08:21:17.793   Dest filename: C:\VoxVietTest\web\logo.svg
+2026-11-02 08:21:17.793   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.793   Installing the file.
+2026-11-02 08:21:17.795   Successfully installed the file.
+2026-11-02 08:21:17.795   -- File entry --
+2026-11-02 08:21:17.795   Dest filename: C:\VoxVietTest\web\LUCIDE-LICENSE.txt
+2026-11-02 08:21:17.795   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.795   Installing the file.
+2026-11-02 08:21:17.795   Successfully installed the file.
+2026-11-02 08:21:17.795   -- File entry --
+2026-11-02 08:21:17.795   Dest filename: C:\VoxVietTest\web\voxviet.ico
+2026-11-02 08:21:17.795   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.795   Installing the file.
+2026-11-02 08:21:17.801   Successfully installed the file.
+2026-11-02 08:21:17.801   -- File entry --
+2026-11-02 08:21:17.801   Dest filename: C:\VoxVietTest\web\avatars\boy-light.webp
+2026-11-02 08:21:17.801   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.801   Installing the file.
+2026-11-02 08:21:17.801   Creating directory: C:\VoxVietTest\web\avatars
+2026-11-02 08:21:17.803   Successfully installed the file.
+2026-11-02 08:21:17.803   -- File entry --
+2026-11-02 08:21:17.803   Dest filename: C:\VoxVietTest\web\avatars\boy-medlight.webp
+2026-11-02 08:21:17.803   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.803   Installing the file.
+2026-11-02 08:21:17.803   Successfully installed the file.
+2026-11-02 08:21:17.803   -- File entry --
+2026-11-02 08:21:17.803   Dest filename: C:\VoxVietTest\web\avatars\child-light.webp
+2026-11-02 08:21:17.803   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.803   Installing the file.
+2026-11-02 08:21:17.807   Successfully installed the file.
+2026-11-02 08:21:17.807   -- File entry --
+2026-11-02 08:21:17.807   Dest filename: C:\VoxVietTest\web\avatars\girl-light.webp
+2026-11-02 08:21:17.807   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.807   Installing the file.
+2026-11-02 08:21:17.807   Successfully installed the file.
+2026-11-02 08:21:17.807   -- File entry --
+2026-11-02 08:21:17.807   Dest filename: C:\VoxVietTest\web\avatars\girl-medlight.webp
+2026-11-02 08:21:17.807   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.807   Installing the file.
+2026-11-02 08:21:17.809   Successfully installed the file.
+2026-11-02 08:21:17.809   -- File entry --
+2026-11-02 08:21:17.809   Dest filename: C:\VoxVietTest\web\avatars\LICENSE-fluentui-emoji.txt
+2026-11-02 08:21:17.809   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.809   Installing the file.
+2026-11-02 08:21:17.809   Successfully installed the file.
+2026-11-02 08:21:17.809   -- File entry --
+2026-11-02 08:21:17.809   Dest filename: C:\VoxVietTest\web\avatars\man-artist-medlight.webp
+2026-11-02 08:21:17.809   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.809   Installing the file.
+2026-11-02 08:21:17.811   Successfully installed the file.
+2026-11-02 08:21:17.811   -- File entry --
+2026-11-02 08:21:17.811   Dest filename: C:\VoxVietTest\web\avatars\man-beard-medlight.webp
+2026-11-02 08:21:17.811   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.811   Installing the file.
+2026-11-02 08:21:17.812   Successfully installed the file.
+2026-11-02 08:21:17.812   -- File entry --
+2026-11-02 08:21:17.812   Dest filename: C:\VoxVietTest\web\avatars\man-cook-light.webp
+2026-11-02 08:21:17.813   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.813   Installing the file.
+2026-11-02 08:21:17.813   Successfully installed the file.
+2026-11-02 08:21:17.813   -- File entry --
+2026-11-02 08:21:17.813   Dest filename: C:\VoxVietTest\web\avatars\man-curly-light.webp
+2026-11-02 08:21:17.813   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.813   Installing the file.
+2026-11-02 08:21:17.815   Successfully installed the file.
+2026-11-02 08:21:17.815   -- File entry --
+2026-11-02 08:21:17.815   Dest filename: C:\VoxVietTest\web\avatars\man-light.webp
+2026-11-02 08:21:17.815   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.815   Installing the file.
+2026-11-02 08:21:17.815   Successfully installed the file.
+2026-11-02 08:21:17.815   -- File entry --
+2026-11-02 08:21:17.815   Dest filename: C:\VoxVietTest\web\avatars\man-office-light.webp
+2026-11-02 08:21:17.815   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.815   Installing the file.
+2026-11-02 08:21:17.816   Successfully installed the file.
+2026-11-02 08:21:17.816   -- File entry --
+2026-11-02 08:21:17.816   Dest filename: C:\VoxVietTest\web\avatars\man-ok-medium.webp
+2026-11-02 08:21:17.817   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.817   Installing the file.
+2026-11-02 08:21:17.817   Successfully installed the file.
+2026-11-02 08:21:17.817   -- File entry --
+2026-11-02 08:21:17.817   Dest filename: C:\VoxVietTest\web\avatars\man-raising-light.webp
+2026-11-02 08:21:17.817   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.817   Installing the file.
+2026-11-02 08:21:17.819   Successfully installed the file.
+2026-11-02 08:21:17.819   -- File entry --
+2026-11-02 08:21:17.819   Dest filename: C:\VoxVietTest\web\avatars\man-singer-light.webp
+2026-11-02 08:21:17.819   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.819   Installing the file.
+2026-11-02 08:21:17.819   Successfully installed the file.
+2026-11-02 08:21:17.819   -- File entry --
+2026-11-02 08:21:17.819   Dest filename: C:\VoxVietTest\web\avatars\man-student-medium.webp
+2026-11-02 08:21:17.819   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.819   Installing the file.
+2026-11-02 08:21:17.819   Successfully installed the file.
+2026-11-02 08:21:17.819   -- File entry --
+2026-11-02 08:21:17.819   Dest filename: C:\VoxVietTest\web\avatars\man-teacher-light.webp
+2026-11-02 08:21:17.819   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.819   Installing the file.
+2026-11-02 08:21:17.821   Successfully installed the file.
+2026-11-02 08:21:17.821   -- File entry --
+2026-11-02 08:21:17.821   Dest filename: C:\VoxVietTest\web\avatars\man-tech-medlight.webp
+2026-11-02 08:21:17.821   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.821   Installing the file.
+2026-11-02 08:21:17.823   Successfully installed the file.
+2026-11-02 08:21:17.823   -- File entry --
+2026-11-02 08:21:17.823   Dest filename: C:\VoxVietTest\web\avatars\man-tipping-medlight.webp
+2026-11-02 08:21:17.823   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.823   Installing the file.
+2026-11-02 08:21:17.825   Successfully installed the file.
+2026-11-02 08:21:17.825   -- File entry --
+2026-11-02 08:21:17.825   Dest filename: C:\VoxVietTest\web\avatars\man-tuxedo-medlight.webp
+2026-11-02 08:21:17.825   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.825   Installing the file.
+2026-11-02 08:21:17.825   Successfully installed the file.
+2026-11-02 08:21:17.827   -- File entry --
+2026-11-02 08:21:17.827   Dest filename: C:\VoxVietTest\web\avatars\man-whitehair-medium.webp
+2026-11-02 08:21:17.827   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.827   Installing the file.
+2026-11-02 08:21:17.827   Successfully installed the file.
+2026-11-02 08:21:17.827   -- File entry --
+2026-11-02 08:21:17.827   Dest filename: C:\VoxVietTest\web\avatars\old-man-light.webp
+2026-11-02 08:21:17.827   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.827   Installing the file.
+2026-11-02 08:21:17.829   Successfully installed the file.
+2026-11-02 08:21:17.829   -- File entry --
+2026-11-02 08:21:17.829   Dest filename: C:\VoxVietTest\web\avatars\old-man-medlight.webp
+2026-11-02 08:21:17.829   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.829   Installing the file.
+2026-11-02 08:21:17.829   Successfully installed the file.
+2026-11-02 08:21:17.829   -- File entry --
+2026-11-02 08:21:17.829   Dest filename: C:\VoxVietTest\web\avatars\old-woman-light.webp
+2026-11-02 08:21:17.829   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.829   Installing the file.
+2026-11-02 08:21:17.831   Successfully installed the file.
+2026-11-02 08:21:17.831   -- File entry --
+2026-11-02 08:21:17.831   Dest filename: C:\VoxVietTest\web\avatars\woman-artist-light.webp
+2026-11-02 08:21:17.831   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.831   Installing the file.
+2026-11-02 08:21:17.833   Successfully installed the file.
+2026-11-02 08:21:17.833   -- File entry --
+2026-11-02 08:21:17.833   Dest filename: C:\VoxVietTest\web\avatars\woman-cook-light.webp
+2026-11-02 08:21:17.833   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.833   Installing the file.
+2026-11-02 08:21:17.835   Successfully installed the file.
+2026-11-02 08:21:17.835   -- File entry --
+2026-11-02 08:21:17.835   Dest filename: C:\VoxVietTest\web\avatars\woman-curly-light.webp
+2026-11-02 08:21:17.835   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.835   Installing the file.
+2026-11-02 08:21:17.837   Successfully installed the file.
+2026-11-02 08:21:17.837   -- File entry --
+2026-11-02 08:21:17.837   Dest filename: C:\VoxVietTest\web\avatars\woman-curly-medlight.webp
+2026-11-02 08:21:17.837   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.837   Installing the file.
+2026-11-02 08:21:17.839   Successfully installed the file.
+2026-11-02 08:21:17.839   -- File entry --
+2026-11-02 08:21:17.839   Dest filename: C:\VoxVietTest\web\avatars\woman-headscarf-medlight.webp
+2026-11-02 08:21:17.839   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.839   Installing the file.
+2026-11-02 08:21:17.843   Successfully installed the file.
+2026-11-02 08:21:17.843   -- File entry --
+2026-11-02 08:21:17.843   Dest filename: C:\VoxVietTest\web\avatars\woman-light.webp
+2026-11-02 08:21:17.843   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.843   Installing the file.
+2026-11-02 08:21:17.844   Successfully installed the file.
+2026-11-02 08:21:17.844   -- File entry --
+2026-11-02 08:21:17.844   Dest filename: C:\VoxVietTest\web\avatars\woman-office-light.webp
+2026-11-02 08:21:17.844   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.844   Installing the file.
+2026-11-02 08:21:17.846   Successfully installed the file.
+2026-11-02 08:21:17.846   -- File entry --
+2026-11-02 08:21:17.846   Dest filename: C:\VoxVietTest\web\avatars\woman-ok-light.webp
+2026-11-02 08:21:17.846   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.846   Installing the file.
+2026-11-02 08:21:17.846   Successfully installed the file.
+2026-11-02 08:21:17.846   -- File entry --
+2026-11-02 08:21:17.846   Dest filename: C:\VoxVietTest\web\avatars\woman-raising-medium.webp
+2026-11-02 08:21:17.846   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.846   Installing the file.
+2026-11-02 08:21:17.848   Successfully installed the file.
+2026-11-02 08:21:17.848   -- File entry --
+2026-11-02 08:21:17.848   Dest filename: C:\VoxVietTest\web\avatars\woman-singer-medlight.webp
+2026-11-02 08:21:17.848   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.848   Installing the file.
+2026-11-02 08:21:17.850   Successfully installed the file.
+2026-11-02 08:21:17.850   -- File entry --
+2026-11-02 08:21:17.850   Dest filename: C:\VoxVietTest\web\avatars\woman-student-medlight.webp
+2026-11-02 08:21:17.852   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.852   Installing the file.
+2026-11-02 08:21:17.852   Successfully installed the file.
+2026-11-02 08:21:17.852   -- File entry --
+2026-11-02 08:21:17.852   Dest filename: C:\VoxVietTest\web\avatars\woman-teacher-light.webp
+2026-11-02 08:21:17.852   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.852   Installing the file.
+2026-11-02 08:21:17.854   Successfully installed the file.
+2026-11-02 08:21:17.854   -- File entry --
+2026-11-02 08:21:17.854   Dest filename: C:\VoxVietTest\web\avatars\woman-tech-medlight.webp
+2026-11-02 08:21:17.854   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.854   Installing the file.
+2026-11-02 08:21:17.854   Successfully installed the file.
+2026-11-02 08:21:17.854   -- File entry --
+2026-11-02 08:21:17.854   Dest filename: C:\VoxVietTest\web\avatars\woman-tipping-medlight.webp
+2026-11-02 08:21:17.854   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.854   Installing the file.
+2026-11-02 08:21:17.856   Successfully installed the file.
+2026-11-02 08:21:17.856   -- File entry --
+2026-11-02 08:21:17.856   Dest filename: C:\VoxVietTest\web\css\app.css
+2026-11-02 08:21:17.856   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.856   Installing the file.
+2026-11-02 08:21:17.856   Creating directory: C:\VoxVietTest\web\css
+2026-11-02 08:21:17.858   Successfully installed the file.
+2026-11-02 08:21:17.858   -- File entry --
+2026-11-02 08:21:17.858   Dest filename: C:\VoxVietTest\web\fonts\BeVietnamPro-Medium.woff2
+2026-11-02 08:21:17.858   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.858   Installing the file.
+2026-11-02 08:21:17.858   Creating directory: C:\VoxVietTest\web\fonts
+2026-11-02 08:21:17.860   Successfully installed the file.
+2026-11-02 08:21:17.860   -- File entry --
+2026-11-02 08:21:17.860   Dest filename: C:\VoxVietTest\web\fonts\BeVietnamPro-Regular.woff2
+2026-11-02 08:21:17.860   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.860   Installing the file.
+2026-11-02 08:21:17.862   Successfully installed the file.
+2026-11-02 08:21:17.862   -- File entry --
+2026-11-02 08:21:17.862   Dest filename: C:\VoxVietTest\web\fonts\BeVietnamPro-SemiBold.woff2
+2026-11-02 08:21:17.862   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.862   Installing the file.
+2026-11-02 08:21:17.865   Successfully installed the file.
+2026-11-02 08:21:17.865   -- File entry --
+2026-11-02 08:21:17.865   Dest filename: C:\VoxVietTest\web\fonts\OFL.txt
+2026-11-02 08:21:17.865   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.865   Installing the file.
+2026-11-02 08:21:17.866   Successfully installed the file.
+2026-11-02 08:21:17.866   -- File entry --
+2026-11-02 08:21:17.866   Dest filename: C:\VoxVietTest\web\js\api.js
+2026-11-02 08:21:17.866   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.866   Installing the file.
+2026-11-02 08:21:17.866   Creating directory: C:\VoxVietTest\web\js
+2026-11-02 08:21:17.867   Successfully installed the file.
+2026-11-02 08:21:17.867   -- File entry --
+2026-11-02 08:21:17.867   Dest filename: C:\VoxVietTest\web\js\app.js
+2026-11-02 08:21:17.867   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.867   Installing the file.
+2026-11-02 08:21:17.869   Successfully installed the file.
+2026-11-02 08:21:17.869   -- File entry --
+2026-11-02 08:21:17.869   Dest filename: C:\VoxVietTest\web\js\recorder.js
+2026-11-02 08:21:17.869   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.869   Installing the file.
+2026-11-02 08:21:17.870   Successfully installed the file.
+2026-11-02 08:21:17.870   -- File entry --
+2026-11-02 08:21:17.870   Dest filename: C:\VoxVietTest\web\js\tape.js
+2026-11-02 08:21:17.870   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.870   Installing the file.
+2026-11-02 08:21:17.870   Successfully installed the file.
+2026-11-02 08:21:17.870   -- File entry --
+2026-11-02 08:21:17.870   Dest filename: C:\VoxVietTest\web\js\voicepicker.js
+2026-11-02 08:21:17.870   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.870   Installing the file.
+2026-11-02 08:21:17.872   Successfully installed the file.
+2026-11-02 08:21:17.872   -- File entry --
+2026-11-02 08:21:17.872   Dest filename: C:\VoxVietTest\data\giong_co_san.json
+2026-11-02 08:21:17.872   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.872   Installing the file.
+2026-11-02 08:21:17.872   Creating directory: C:\VoxVietTest\data
+2026-11-02 08:21:17.872   Successfully installed the file.
+2026-11-02 08:21:17.872   -- File entry --
+2026-11-02 08:21:17.872   Dest filename: C:\VoxVietTest\data\lexicon.default.json
+2026-11-02 08:21:17.872   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.872   Installing the file.
+2026-11-02 08:21:17.874   Successfully installed the file.
+2026-11-02 08:21:17.874   -- File entry --
+2026-11-02 08:21:17.874   Dest filename: C:\VoxVietTest\data\recordings\.gitkeep
+2026-11-02 08:21:17.874   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.874   Installing the file.
+2026-11-02 08:21:17.874   Creating directory: C:\VoxVietTest\data\recordings
+2026-11-02 08:21:17.874   Successfully installed the file.
+2026-11-02 08:21:17.874   -- File entry --
+2026-11-02 08:21:17.874   Dest filename: C:\VoxVietTest\data\recording_script\script_vi_en.txt
+2026-11-02 08:21:17.874   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.874   Installing the file.
+2026-11-02 08:21:17.874   Creating directory: C:\VoxVietTest\data\recording_script
+2026-11-02 08:21:17.876   Successfully installed the file.
+2026-11-02 08:21:17.876   -- File entry --
+2026-11-02 08:21:17.876   Dest filename: C:\VoxVietTest\data\voices\.gitkeep
+2026-11-02 08:21:17.876   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.876   Installing the file.
+2026-11-02 08:21:17.876   Creating directory: C:\VoxVietTest\data\voices
+2026-11-02 08:21:17.878   Successfully installed the file.
+2026-11-02 08:21:17.878   -- File entry --
+2026-11-02 08:21:17.878   Dest filename: C:\VoxVietTest\installer\setup.ps1
+2026-11-02 08:21:17.878   Time stamp of our file: 2026-11-02 08:19:44.000
+2026-11-02 08:21:17.878   Installing the file.
+2026-11-02 08:21:17.878   Creating directory: C:\VoxVietTest\installer
+2026-11-02 08:21:17.878   Successfully installed the file.
+2026-11-02 08:21:17.878   -- File entry --
+2026-11-02 08:21:17.878   Dest filename: C:\VoxVietTest\runtime\uv.exe
+2026-11-02 08:21:17.878   Time stamp of our file: 2025-10-21 16:34:24.000
+2026-11-02 08:21:17.878   Installing the file.
+2026-11-02 08:21:17.878   Creating directory: C:\VoxVietTest\runtime
+2026-11-02 08:21:19.598   Successfully installed the file.
+2026-11-02 08:21:19.600   -- Icon entry --
+2026-11-02 08:21:19.600   Dest filename: C:\Users\runneradmin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VoxViet Studio.lnk
+2026-11-02 08:21:19.600   Creating the icon.
+2026-11-02 08:21:19.697   Successfully created the icon.
+2026-11-02 08:21:19.704   -- Icon entry --
+2026-11-02 08:21:19.704   Dest filename: C:\Users\runneradmin\Desktop\VoxViet Studio.lnk
+2026-11-02 08:21:19.704   Creating the icon.
+2026-11-02 08:21:19.705   Successfully created the icon.
+2026-11-02 08:21:19.713   -- Icon entry --
+2026-11-02 08:21:19.713   Dest filename: C:\Users\runneradmin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\VoxViet Studio - sửa bản cài.lnk
+2026-11-02 08:21:19.715   Creating the icon.
+2026-11-02 08:21:19.741   Successfully created the icon.
+2026-11-02 08:21:19.745   Saving uninstall information.
+2026-11-02 08:21:19.745   Creating new uninstall key: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall\{6BB632F6-503D-4DD4-B6B7-24C889B5AD9E}_is1
+2026-11-02 08:21:19.745   Writing uninstall key values.
+2026-11-02 08:21:19.745   Detected previous administrative 64-bit install? No
+2026-11-02 08:21:19.745   Detected previous administrative 32-bit install? No
+2026-11-02 08:21:19.753   Installation process succeeded.
+2026-11-02 08:21:50.170   setup.ps1 exit code: 0
+2026-11-02 08:21:50.170   Need to restart Windows? No
+2026-11-02 08:21:50.178   Deinitializing Setup.
+2026-11-02 08:21:50.192   Log closed.

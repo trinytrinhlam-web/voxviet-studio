@@ -1,0 +1,10 @@
+Ngôn ngữ trình cài: tiếng Việt
+
+
+Preprocessing
+
+Name                            Length
+----                            ------
+VoxVietStudio-Setup-0.7.1.exe 15644478
+
+

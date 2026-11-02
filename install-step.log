@@ -1,0 +1,26 @@
+**********************
+PowerShell transcript start
+Start time: 20261102082116
+Username: runnervmdaln5\runneradmin
+RunAs User: runnervmdaln5\runneradmin
+Configuration Name: 
+Machine: runnervmdaln5 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\08bdbe0b-922f-4614-a794-042e740f9911.ps1'
+Process ID: 5780
+PSVersion: 7.6.7
+PSEdition: Core
+GitCommitId: 7.6.7
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Mã thoát trình cài: 0
+
+lõi giọng OK
+**********************
+PowerShell transcript end
+End time: 20261102082150
+**********************

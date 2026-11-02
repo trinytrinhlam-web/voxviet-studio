@@ -1,0 +1,11 @@
+commit: 7494b3afce75d92d187b29ab5aef77a51398c66e
+ref: main
+version: 0.7.1
+run: https://github.com/trinytrinhlam-web/voxviet-studio/actions/runs/41412226895
+uv: success
+tests: success
+build: success
+install: success
+smoke: success
+uninstall: success
+release: success
